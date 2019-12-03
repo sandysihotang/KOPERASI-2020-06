@@ -24,6 +24,8 @@ import {
   QItemSection,
   QItemLabel,
   QSpinnerAudio,
+  QChatMessage,
+  QSpinnerDots,
 } from 'quasar';
 
 Vue.use(Quasar, {
@@ -43,6 +45,8 @@ Vue.use(Quasar, {
     QItemSection,
     QItemLabel,
     QSpinnerAudio,
+    QChatMessage,
+    QSpinnerDots,
   },
   directives: {
   },
