@@ -1,9 +1,9 @@
 import Vue from 'vue';
+import Pusher from 'pusher-js';
 import App from './App.vue';
 import router from './router';
 import store from './store';
 import './quasar';
-import Pusher from 'pusher-js';
 
 
 Pusher.logToConsole = false;
