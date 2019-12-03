@@ -12,9 +12,10 @@ const pusher = new Pusher('b62a6641110833445445', {
   forceTLS: true,
 });
 
-var channel = pusher.subscribe('my-channel');
-channel.bind('my-event', e => {
-  console.log(e);
+const channel = pusher.subscribe('my-channel');
+// eslint-disable-next-line no-unused-vars
+channel.bind('my-event', (e) => {
+  // console.log(e);
 });
 Vue.config.productionTip = false;
 
