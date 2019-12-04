@@ -26,6 +26,13 @@ import {
   QSpinnerAudio,
   QChatMessage,
   QSpinnerDots,
+  QInput,
+  QAvatar,
+  QSpace,
+  QMenu,
+  QScrollArea,
+  QFooter,
+  Ripple,
 } from 'quasar';
 
 Vue.use(Quasar, {
@@ -47,9 +54,15 @@ Vue.use(Quasar, {
     QSpinnerAudio,
     QChatMessage,
     QSpinnerDots,
+    QInput,
+    QAvatar,
+    QSpace,
+    QMenu,
+    QScrollArea,
+    QFooter,
   },
   directives: {
+    Ripple,
   },
-  plugins: {
-  },
+  plugins: {},
 });
