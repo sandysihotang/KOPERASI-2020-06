@@ -23,7 +23,7 @@
 
           <q-space/>
 
-          <q-btn round flat icon="search"/>
+          <q-btn round flat icon="search" v-on:click="test"/>
           <q-btn round flat>
             <q-icon name="attachment" class="rotate-135"/>
           </q-btn>
@@ -213,6 +213,14 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    test() {
+      this.$http.get('/api/getUser')
+        .then((e) => {
+          console.log(e);
+        });
+    },
   },
   computed: {
     currentConversation() {

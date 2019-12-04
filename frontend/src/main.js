@@ -10,7 +10,7 @@ import './quasar';
 
 const http = axios.create({
   // comment base url if your task deploy to prod
-  baseURL: 'http://localhost:8089',
+  // baseURL: 'http://localhost:8089',
 });
 
 Pusher.logToConsole = false;
