@@ -17,6 +17,7 @@
     "npm-cli": "^0.1.0",
     "pusher-js": "^5.0.3",
     "quasar": "^1.0.0",
+    "sass-loader": "^8.0.0",
     "vue": "^2.6.10",
     "vue-axios": "^2.1.5",
     "vue-router": "^3.1.3",
