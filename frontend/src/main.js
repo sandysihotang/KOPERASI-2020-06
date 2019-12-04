@@ -21,8 +21,9 @@ const pusher = new Pusher('b62a6641110833445445', {
 
 const channel = pusher.subscribe('my-channel');
 
+// eslint-disable-next-line no-unused-vars
 channel.bind('my-event', (e) => {
-  console.log(e);
+  // console.log(e);
 });
 Vue.config.productionTip = false;
 
