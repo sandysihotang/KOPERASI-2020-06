@@ -154,7 +154,8 @@
       </q-drawer>
 
       <q-page-container class="bg-grey-2">
-        <router-view/>
+<!--        <router-view/>-->
+        {{ messages }}
       </q-page-container>
 
       <q-footer>
