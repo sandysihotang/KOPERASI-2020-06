@@ -212,13 +212,14 @@ export default {
           sent: true,
         },
       ],
+      messages:[],
     };
   },
   methods: {
     test() {
       this.$http.get('/api/getUser')
         .then((e) => {
-          console.log(e.data);
+          this.messages = e.data;
         });
     },
   },
