@@ -218,7 +218,7 @@ export default {
     test() {
       this.$http.get('/api/getUser')
         .then((e) => {
-          console.log(e);
+          console.log(e.data);
         });
     },
   },
