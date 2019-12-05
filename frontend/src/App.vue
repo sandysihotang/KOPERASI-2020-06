@@ -212,7 +212,7 @@ export default {
           sent: true,
         },
       ],
-      messages:[],
+      messages: [],
     };
   },
   methods: {
