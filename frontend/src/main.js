@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Pusher from 'pusher-js';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
-import App from './App.vue';
+import About from './views/About.vue';
 import router from './router';
 import store from './store';
 import './quasar';
@@ -32,5 +32,5 @@ Vue.use(VueAxios, http);
 new Vue({
   router,
   store,
-  render: h => h(App),
+  render: h => h(About),
 }).$mount('#app');
