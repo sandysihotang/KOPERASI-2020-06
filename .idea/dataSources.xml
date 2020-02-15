@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="PostgreSQL - postgres@localhost" uuid="1555b560-6f44-4597-9697-e131cc7e6ef8">
-      <driver-ref>postgresql</driver-ref>
+    <data-source source="LOCAL" name="KOPERASI_SERBA_USAHA" uuid="efa63350-6741-4912-82b3-16ca25bed96c">
+      <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/koperasi_serba_usaha</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="KOPERASI_SERBA_USAHA_PROD" uuid="71d57cc0-efec-41f1-910a-f2ec56a36a32">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://db4free.net:3306/koperasi_serba_u</jdbc-url>
     </data-source>
   </component>
 </project>
