@@ -1,9 +1,9 @@
-D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\controllers\UserController.java
-D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\repositories\UserRepositories.java
-D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\controllers\HelloController.java
-D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\controllers\OneToOneMassegesController.java
-D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\massages\OneToOneMassages.java
+D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\config\AuthorizationServerConfiguration.java
+D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\model\User.java
+D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\service\UserDetailServiceImpl.java
+D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\model\AuthUserDetail.java
+D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\model\Role.java
+D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\model\Permission.java
 D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\Application.java
-D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\entities\User.java
-D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\controllers\HomeController.java
-D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\services\UserService.java
+D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\config\WebSecurityConfiguration.java
+D:\API\SpringBootVueQuasar\backend\src\main\java\io\github\sandy\repository\UserDetailRepository.java

@@ -33,6 +33,10 @@ import {
   QScrollArea,
   QFooter,
   Ripple,
+  QCard,
+  QCardSection,
+  QForm,
+  QCardActions,
 } from 'quasar';
 
 Vue.use(Quasar, {
@@ -60,6 +64,10 @@ Vue.use(Quasar, {
     QMenu,
     QScrollArea,
     QFooter,
+    QCard,
+    QCardSection,
+    QForm,
+    QCardActions,
   },
   directives: {
     Ripple,
