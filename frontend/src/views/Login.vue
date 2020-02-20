@@ -36,8 +36,7 @@
 </template>
 
 <script>
-// eslint-disable-next-line no-unused-vars
-const axios = require('axios').default;
+// import axios from 'axios';
 
 export default {
   name: 'Login',
@@ -49,17 +48,23 @@ export default {
   },
   methods: {
     login() {
-      this.$http.post('oauth/token', {
+      const data = {
         grant_type: 'password',
+        client_id: 'mobile',
+        client_secret: 'pin',
         username: this.username,
         password: this.password,
-      },
-      {
+      };
+      // this.$http.get('hello');
+      this.$http.post('oauth/token', JSON.stringify(data), {
         auth: {
           username: 'mobile',
           password: 'pin',
         },
-      });
+      })
+        .then((e) => {
+          console.log(e);
+        });
     },
   },
 };
