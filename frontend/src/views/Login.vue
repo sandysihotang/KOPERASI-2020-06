@@ -48,15 +48,12 @@ export default {
   },
   methods: {
     login() {
-      const data = {
-        grant_type: 'password',
-        client_id: 'mobile',
-        client_secret: 'pin',
-        username: this.username,
-        password: this.password,
-      };
+      const form = new FormData();
+      form.set('grant_type', 'password');
+      form.set('username', this.username);
+      form.set('password', this.password);
       // this.$http.get('hello');
-      this.$http.post('oauth/token', JSON.stringify(data), {
+      this.$http.post('oauth/token', form, {
         auth: {
           username: 'mobile',
           password: 'pin',
