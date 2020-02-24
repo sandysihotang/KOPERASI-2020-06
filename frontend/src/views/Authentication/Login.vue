@@ -34,7 +34,7 @@
                   </q-form>
                 </q-card-section>
                 <q-card-actions class="q-px-lg">
-                  <q-btn :loading="loading" @click="login"  unelevated
+                  <q-btn :loading="loading" @click="login2"  unelevated
                          size="lg"
                          color="purple-4" class="full-width text-white" label="Sign In">
                     <template v-slot:loading>
@@ -67,6 +67,9 @@ export default {
     };
   },
   methods: {
+    login2() {
+      this.$http.post('/register');
+    },
     login() {
       this.loading = true;
       const credential = this.checkCredential();

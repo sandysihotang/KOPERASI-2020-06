@@ -44,4 +44,5 @@ public class AuthorizationServerConfiguration implements AuthorizationServerConf
         endPoint.tokenStore(jdbcTokenStore());
         endPoint.authenticationManager(authenticationManager);
     }
+
 }
