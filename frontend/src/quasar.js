@@ -37,6 +37,7 @@ import {
   QCardSection,
   QForm,
   QCardActions,
+  QSpinnerHourglass,
 } from 'quasar';
 
 Vue.use(Quasar, {
@@ -68,6 +69,7 @@ Vue.use(Quasar, {
     QCardSection,
     QForm,
     QCardActions,
+    QSpinnerHourglass,
   },
   directives: {
     Ripple,

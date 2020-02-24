@@ -1,12 +1,7 @@
 <template>
   <div>
-<!--    <q-btn color="blue" label="S"/>-->
-<!--    <br>-->
-<!--      <q-spinner-audio-->
-<!--        color="primary"-->
-<!--        size="2em"-->
-  <!--      />-->
-    </div>
+    <router-view></router-view>
+  </div>
 </template>
 
 <style>

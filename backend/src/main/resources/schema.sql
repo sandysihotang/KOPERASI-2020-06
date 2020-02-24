@@ -112,3 +112,12 @@ create table if not exists oauth_approvals
     expiresAt      TIMESTAMP,
     lastModifiedAt TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS `user_detail` (
+    `id` int primary key auto_increment,
+    `first_name` varchar(191) NOT NULL,
+    `last_name` varchar(191) NOT NULL,
+    `address` varchar(191) NOT NULL,
+    `no_telepon` varchar(191) NOT NULL,
+    `user_id` int(11) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES USER(ID)
+    );

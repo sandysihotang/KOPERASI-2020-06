@@ -13,6 +13,8 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @OneToOne(mappedBy = "user")
+    private UserDetail userDetail;
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -47,6 +49,15 @@ public class User implements Serializable {
         this.credentialsNonExpired = user.isCredentialsNonExpired();
         this.accountNonLocked = user.isAccountNonLocked();
         this.roles = user.getRoles();
+        this.userDetail= user.getUserDetail();
+    }
+
+    public UserDetail getUserDetail() {
+        return userDetail;
+    }
+
+    public void setUserDetail(UserDetail userDetail) {
+        this.userDetail = userDetail;
     }
 
     public Integer getId() {

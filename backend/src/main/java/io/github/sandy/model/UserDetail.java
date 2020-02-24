@@ -1,22 +1,33 @@
-package io.github.sandy.entity;
+package io.github.sandy.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "user_detail")
-public class UserDetail extends BaseIdEntity {
+public class UserDetail implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
     @Column(name = "first_name")
     private String firstName;
+
     @Column(name = "last_name")
     private String lastName;
+
     @Column(name = "address")
     private String address;
+
     @Column(name = "no_telepon")
     private String noTelepon;
 
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public UserDetail() {
+    }
 
     public UserDetail(String firstName, String lastName, String address, String noTelepon, User user) {
         this.firstName = firstName;
@@ -26,7 +37,12 @@ public class UserDetail extends BaseIdEntity {
         this.user = user;
     }
 
-    public UserDetail() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getFirstName() {
