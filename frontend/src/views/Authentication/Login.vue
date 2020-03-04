@@ -34,7 +34,7 @@
                   </q-form>
                 </q-card-section>
                 <q-card-actions class="q-px-lg">
-                  <q-btn :loading="loading" @click="login2"  unelevated
+                  <q-btn :loading="loading" @click="login"  unelevated
                          size="lg"
                          color="purple-4" class="full-width text-white" label="Sign In">
                     <template v-slot:loading>
@@ -55,6 +55,8 @@
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   name: 'Login',
   data() {
@@ -67,9 +69,7 @@ export default {
     };
   },
   methods: {
-    login2() {
-      this.$http.post('/register');
-    },
+    ...mapActions(['setToken', 'setUser']),
     login() {
       this.loading = true;
       const credential = this.checkCredential();
@@ -85,11 +85,23 @@ export default {
           },
         })
           .then((e) => {
-            console.log(e);
+            this.setToken(e.data);
+            this.$http.get('api/login/currentuser', {
+              headers: {
+                Accept: 'application/json',
+                Authorization: `bearer ${e.data.access_token}`,
+              },
+            })
+              .then((res) => {
+                this.setUser(res.data.userAuthentication.principal.userDetail);
+                window.location.href = '/';
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             this.loading = false;
           })
-          .catch((err) => {
-            console.log(err);
+          .catch(() => {
             this.loading = false;
           });
       } else {
