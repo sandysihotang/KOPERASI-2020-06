@@ -1,5 +1,5 @@
-import swal from 'vue-sweetalert2';
 import Vue from 'vue';
+import swal from 'vue-sweetalert2';
 import VueRouter from 'vue-router';
 import Login from '../views/Authentication/Login.vue';
 
