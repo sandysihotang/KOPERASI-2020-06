@@ -35,15 +35,13 @@ const router = new VueRouter({
 router.beforeEach(
   (to, from, next) => {
     if (to.matched.some(record => record.meta.forAuth)) {
-      console.log(Store.getters.getToken);
-      if (Store.getters.getToken == null) {
+      if (!Store.getters.isAuthenticated) {
         next({
           path: '/login',
         });
       } else next();
     } else if (to.matched.some(record => record.meta.forVisitor)) {
-      console.log(Store.getters.getToken);
-      if (Store.getters.getToken != null) {
+      if (Store.getters.isAuthenticated) {
         next({
           path: '/',
         });

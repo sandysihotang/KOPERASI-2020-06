@@ -1,16 +1,27 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+// import createPersistedState from 'vuex-persistedstate';
+// import * as Cookies from 'js-cookie';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  // plugins: [
+  //   createPersistedState({
+  //     getState: key => Cookies.getJSON(key),
+  //     setState: (key, state) => Cookies.set(key, state, {
+  //       expires: 30000,
+  //       secure: true,
+  //     }),
+  //   }),
+  // ],
   state: {
     header: {
       Accept: 'application/json',
       Authorization: `bearer ${localStorage.getItem('token')}`,
     },
     user: JSON.parse(localStorage.getItem('user')),
-    isAuthentication: localStorage.getItem('isAuth'),
+    isAuthentication: (localStorage.getItem('isAuth') === 'true'),
   },
   mutations: {
     // eslint-disable-next-line no-empty-pattern
@@ -45,15 +56,11 @@ export default new Vuex.Store({
       // eslint-disable-next-line radix
       const exp = parseInt(expiration);
       if (Date.now() > exp) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('expiration');
-        localStorage.removeItem('user');
-        localStorage.removeItem('isAuth');
-        localStorage.removeItem('authorization');
+        localStorage.clear();
         return null;
       }
       return token;
     },
-    isAuthenticated: state => !!state.isAuthentication,
+    isAuthenticated: state => state.isAuthentication,
   },
 });
