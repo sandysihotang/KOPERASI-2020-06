@@ -58,4 +58,24 @@ public class AuthUserDetail extends User implements UserDetails {
     public boolean isEnabled() {
         return super.isEnabled();
     }
+
+    @Override
+    public Integer getId() {
+        return super.getId();
+    }
+
+    @Override
+    public String getEmail() {
+        return super.getEmail();
+    }
+
+    @Override
+    public List<Role> getRoles() {
+        return super.getRoles();
+    }
+    @Override
+    public UserDetail getUserDetail() {
+        return super.getUserDetail();
+    }
+
 }

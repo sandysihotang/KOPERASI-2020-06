@@ -1,6 +1,10 @@
 package io.github.sandy.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -10,10 +14,11 @@ import java.util.List;
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(mappedBy = "user")
+    @JsonIgnoreProperties({"user"})
+    @OneToOne(mappedBy = "user", fetch =FetchType.LAZY)
     private UserDetail userDetail;
     @Column(name = "username")
     private String username;

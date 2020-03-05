@@ -2,8 +2,8 @@ SET sql_mode = '';
 
 create table if not exists oauth_client_details
 (
-    client_id               varchar(255) not null,
-    client_secret           varchar(255) not null,
+    client_id               varchar(255) NULL,
+    client_secret           varchar(255) NULL,
     web_server_redirect_uri varchar(2048) default null,
     scope                   varchar(255)  default null,
     access_token_validity   int(11) default null,
@@ -18,7 +18,7 @@ create table if not exists oauth_client_details
 
 create table if not exists permission
 (
-    id   int(11) not null auto_increment,
+    id   int(11) NULL auto_increment,
     name varchar(512) default null,
     primary key (id),
     unique key name (name)
@@ -26,7 +26,7 @@ create table if not exists permission
 
 create table if not exists role
 (
-    id   int(11) not null auto_increment,
+    id   int(11) NULL auto_increment,
     name varchar(255) default null,
     primary key (id),
     unique key name (name)
@@ -34,14 +34,14 @@ create table if not exists role
 
 create table if not exists user
 (
-    id                    int(11) not null auto_increment,
-    username              varchar(100)  not null,
-    password              varchar(1024) not null,
-    email                 varchar(1024) not null,
-    enabled               tinyint(4)    not null,
-    accountNonExpired     tinyint(4)    not null,
-    credentialsNonExpired tinyint(4)    not null,
-    accountNonLocked      tinyint(4)    not null,
+    id                    int(11) NULL auto_increment,
+    username              varchar(100)  NULL,
+    password              varchar(1024) NULL,
+    email                 varchar(1024) NULL,
+    enabled               tinyint(4)    NOT NULL DEFAULT 1,
+    accountNonExpired     tinyint(4)    NOT NULL DEFAULT 1,
+    credentialsNonExpired tinyint(4)    NOT NULL DEFAULT 1,
+    accountNonLocked      tinyint(4)    NOT NULL DEFAULT 1,
     primary key (id),
     unique key username (username)
 ) engine=innodb;
@@ -107,6 +107,7 @@ create table if not exists oauth_approvals
 (
     userId         VARCHAR(256),
     clientId       VARCHAR(256),
+
     scope          VARCHAR(256),
     status         VARCHAR(10),
     expiresAt      TIMESTAMP,
@@ -114,10 +115,10 @@ create table if not exists oauth_approvals
 );
 CREATE TABLE IF NOT EXISTS `user_detail` (
     `id` int primary key auto_increment,
-    `first_name` varchar(191) NOT NULL,
-    `last_name` varchar(191) NOT NULL,
-    `address` varchar(191) NOT NULL,
-    `no_telepon` varchar(191) NOT NULL,
-    `user_id` int(11) NOT NULL,
+    `first_name` varchar(191) NULL,
+    `last_name` varchar(191) NULL,
+    `address` varchar(191) NULL,
+    `no_telepon` varchar(191) NULL,
+    `user_id` int(11) NULL,
     FOREIGN KEY (user_id) REFERENCES user(id)
     );
