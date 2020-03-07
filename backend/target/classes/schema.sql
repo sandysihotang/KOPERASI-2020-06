@@ -120,5 +120,5 @@ CREATE TABLE IF NOT EXISTS `user_detail` (
     `address` varchar(191) NULL,
     `no_telepon` varchar(191) NULL,
     `user_id` int(11) NULL,
-    FOREIGN KEY (user_id) REFERENCES USER(ID)
+    FOREIGN KEY (user_id) REFERENCES user(id)
     );

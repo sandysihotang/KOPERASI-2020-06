@@ -11,7 +11,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="backend" target="11" />
+      <module name="backend" target="8" />
       <module name="DeepChat" target="1.8" />
       <module name="frontend" target="1.8" />
     </bytecodeTargetLevel>
