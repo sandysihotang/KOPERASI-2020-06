@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import swal from 'vue-sweetalert2';
 import VueRouter from 'vue-router';
-import Store from '../store/index';
 
 Vue.use(VueRouter);
 Vue.use(swal);
@@ -35,15 +34,13 @@ const router = new VueRouter({
 router.beforeEach(
   (to, from, next) => {
     if (to.matched.some(record => record.meta.forAuth)) {
-      console.log(Store.getters.getToken);
-      if (Store.getters.getToken == null) {
+      if (!Vue.auth.isAuthenticated()) {
         next({
           path: '/login',
         });
       } else next();
     } else if (to.matched.some(record => record.meta.forVisitor)) {
-      console.log(Store.getters.getToken);
-      if (Store.getters.getToken != null) {
+      if (Vue.auth.isAuthenticated()) {
         next({
           path: '/',
         });

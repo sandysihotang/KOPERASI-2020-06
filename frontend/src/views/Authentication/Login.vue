@@ -55,8 +55,6 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex';
-
 export default {
   name: 'Login',
   data() {
@@ -69,7 +67,6 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['setToken', 'setUser']),
     login() {
       this.loading = true;
       const credential = this.checkCredential();
@@ -85,15 +82,12 @@ export default {
           },
         })
           .then((e) => {
-            this.setToken(e.data);
+            this.$auth.setToken(e.data.access_token, e.data.expires_in + Date.now());
             this.$http.get('api/login/currentuser', {
-              headers: {
-                Accept: 'application/json',
-                Authorization: `bearer ${e.data.access_token}`,
-              },
+              headers: this.$auth.getHeader(),
             })
               .then((res) => {
-                this.setUser(res.data.userAuthentication.principal.userDetail);
+                this.$auth.setAuthenticatedUser(res.data.userAuthentication.principal.userDetail);
                 window.location.href = '/';
               })
               .catch((err) => {
