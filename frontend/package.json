@@ -24,7 +24,6 @@
     "vue-sweetalert2": "^1.6.4",
     "vuex": "^3.0.1",
     "vuex-persistedstate": "latest",
-    "js-cookie": "latest",
     "js-cookie": "latest"
   },
   "devDependencies": {
