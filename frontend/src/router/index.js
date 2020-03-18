@@ -17,11 +17,22 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: () => import('../views/Authentication/Register.vue'),
+    meta: {
+      forVisitor: true,
+    },
   },
   {
     path: '/',
     name: 'Home',
-    component: () => import('../views/Home.vue'),
+    component: () => import('../views/Dashboard.vue'),
+    meta: {
+      forVisitor: true,
+    },
+  },
+  {
+    path: '/saas',
+    name: 'Home',
+    component: () => import('../views/Dashboard.vue'),
     meta: {
       forAuth: true,
     },
@@ -30,22 +41,38 @@ const routes = [
 
 const router = new VueRouter({
   routes,
+  // eslint-disable-next-line no-unused-vars
+  scrollBehavior(to, from, next) {
+    if (to.hash) {
+      return { selector: to.hash };
+    }
+    return {
+      x: 0,
+      y: 0,
+    };
+  },
 });
 router.beforeEach(
   (to, from, next) => {
-    if (to.matched.some(record => record.meta.forAuth)) {
+    if (to.matched.some(record => record.meta.forVisitor)) {
       if (!Vue.auth.isAuthenticated()) {
         next({
           path: '/login',
         });
-      } else next();
-    } else if (to.matched.some(record => record.meta.forVisitor)) {
+      } else {
+        next();
+      }
+    } else if (to.matched.some(record => record.meta.forAuth)) {
       if (Vue.auth.isAuthenticated()) {
         next({
           path: '/',
         });
-      } else next();
-    } else next();
+      } else {
+        next();
+      }
+    } else {
+      next();
+    }
   },
 );
 export default router;
