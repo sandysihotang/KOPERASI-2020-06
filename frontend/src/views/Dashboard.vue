@@ -12,7 +12,7 @@
           <q-route-tab to="#contact" label="Kontak"/>
           <q-route-tab to="#service" label="Service"/>
         </q-tabs>
-        <q-btn color="dark-orange" elevated text-color="white" icon="person">Masuk</q-btn>
+        <q-btn color="dark-orange" elevated text-color="white" icon="person" :to="'/login'">Masuk</q-btn>
       </q-toolbar>
     </q-header>
 

@@ -31,7 +31,7 @@ const routes = [
   },
   {
     path: '/saas',
-    name: 'Home',
+    name: 'Ck',
     component: () => import('../views/Dashboard.vue'),
     meta: {
       forAuth: true,
@@ -55,17 +55,17 @@ const router = new VueRouter({
 router.beforeEach(
   (to, from, next) => {
     if (to.matched.some(record => record.meta.forVisitor)) {
-      if (!Vue.auth.isAuthenticated()) {
+      if (Vue.auth.isAuthenticated()) {
         next({
-          path: '/login',
+          path: '/saas',
         });
       } else {
         next();
       }
     } else if (to.matched.some(record => record.meta.forAuth)) {
-      if (Vue.auth.isAuthenticated()) {
+      if (!Vue.auth.isAuthenticated()) {
         next({
-          path: '/',
+          path: '/login',
         });
       } else {
         next();

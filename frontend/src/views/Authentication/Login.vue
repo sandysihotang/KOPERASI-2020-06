@@ -82,7 +82,7 @@ export default {
           },
         })
           .then((e) => {
-            this.$auth.setToken(e.data.access_token, e.data.expires_in + Date.now());
+            this.$auth.setToken(e.data.access_token, (e.data.expires_in * 1000) + Date.now());
             this.$http.get('api/login/currentuser', {
               headers: this.$auth.getHeader(),
             })

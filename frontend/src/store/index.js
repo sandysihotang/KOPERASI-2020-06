@@ -14,6 +14,8 @@ export default function (Vue) {
       }
       // eslint-disable-next-line radix
       if (Date.now() > parseInt(expiration)) {
+        // eslint-disable-next-line radix
+        console.log(`${Date.now()} ${parseInt(expiration)}`);
         localStorage.clear();
         return null;
       }
