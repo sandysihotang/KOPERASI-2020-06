@@ -38,6 +38,9 @@ import {
   QForm,
   QCardActions,
   QSpinnerHourglass,
+  QTabs,
+  QRouteTab,
+  QParallax,
 } from 'quasar';
 
 Vue.use(Quasar, {
@@ -70,6 +73,9 @@ Vue.use(Quasar, {
     QForm,
     QCardActions,
     QSpinnerHourglass,
+    QTabs,
+    QRouteTab,
+    QParallax,
   },
   directives: {
     Ripple,
