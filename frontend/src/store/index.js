@@ -1,6 +1,5 @@
 export default function (Vue) {
   let data = {};
-  // eslint-disable-next-line no-param-reassign
   Vue.auth = {
     setToken(token, expiration) {
       localStorage.setItem('token', token);
@@ -12,9 +11,7 @@ export default function (Vue) {
       if (!token || !expiration) {
         return null;
       }
-      // eslint-disable-next-line radix
       if (Date.now() > parseInt(expiration)) {
-        // eslint-disable-next-line radix
         console.log(`${Date.now()} ${parseInt(expiration)}`);
         localStorage.clear();
         return null;
