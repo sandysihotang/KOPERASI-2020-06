@@ -41,6 +41,8 @@ import {
   QTabs,
   QRouteTab,
   QParallax,
+  QToggle,
+
 } from 'quasar';
 
 Vue.use(Quasar, {
@@ -76,9 +78,11 @@ Vue.use(Quasar, {
     QTabs,
     QRouteTab,
     QParallax,
+    QToggle,
   },
   directives: {
     Ripple,
   },
-  plugins: {},
+  plugins: {
+  },
 });

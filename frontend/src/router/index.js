@@ -32,7 +32,7 @@ const routes = [
   {
     path: '/saas',
     name: 'Ck',
-    component: () => import('../views/Dashboard.vue'),
+    component: () => import('../components/AuthenticatedUser/Koperasi/App.vue'),
     meta: {
       forAuth: true,
     },
