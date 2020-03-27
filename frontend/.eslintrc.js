@@ -17,6 +17,7 @@ module.exports = {
     radix: "off",
     'no-trailing-spaces': "off",
     'no-shadow': "off",
+    'no-unused-vars': "off",
   },
   parserOptions: {
     parser: 'babel-eslint',

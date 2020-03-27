@@ -42,7 +42,7 @@ import {
   QRouteTab,
   QParallax,
   QToggle,
-
+  QSeparator,
 } from 'quasar';
 
 Vue.use(Quasar, {
@@ -79,6 +79,7 @@ Vue.use(Quasar, {
     QRouteTab,
     QParallax,
     QToggle,
+    QSeparator,
   },
   directives: {
     Ripple,
