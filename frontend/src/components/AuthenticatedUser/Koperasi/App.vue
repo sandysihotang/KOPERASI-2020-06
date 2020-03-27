@@ -13,13 +13,13 @@
     <q-drawer show-if-above v-model="left" side="left" bordered>
       <q-scroll-area class="fit">
         <q-list padding>
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple :to="'/dashboard'">
             <q-item-section avatar>
               <q-icon color="primary" name="fa fa-chart-bar"/>
             </q-item-section>
             <q-item-section>Dashboard</q-item-section>
           </q-item>
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple :to="'/anggotakoprasi'">
             <q-item-section avatar>
               <q-icon color="primary" name="person"/>
             </q-item-section>

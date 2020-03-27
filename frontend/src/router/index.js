@@ -30,18 +30,21 @@ const routes = [
     },
   },
   {
-    path: '/saas',
+    path: '/dashboard',
     name: 'Ck',
     component: () => import('../components/AuthenticatedUser/Koperasi/App.vue'),
     meta: {
       forAuth: true,
     },
+    children: [{
+      path: '',
+      component: () => import('../components/AuthenticatedUser/Koperasi/Layout/Dashboard.vue'),
+    }],
   },
 ];
 
 const router = new VueRouter({
   routes,
-  // eslint-disable-next-line no-unused-vars
   scrollBehavior(to, from, next) {
     if (to.hash) {
       return { selector: to.hash };
@@ -57,7 +60,7 @@ router.beforeEach(
     if (to.matched.some(record => record.meta.forVisitor)) {
       if (Vue.auth.isAuthenticated()) {
         next({
-          path: '/saas',
+          path: '/dashboard',
         });
       } else {
         next();
