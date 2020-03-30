@@ -39,6 +39,9 @@ const routes = [
     children: [{
       path: '',
       component: () => import('../components/AuthenticatedUser/Koperasi/Layout/Dashboard.vue'),
+    }, {
+      path: '/anggotakoperasi',
+      component: () => import('../components/AuthenticatedUser/Koperasi/Layout/AnggotaKoperasi.vue'),
     }],
   },
 ];

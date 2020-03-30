@@ -19,7 +19,7 @@
             </q-item-section>
             <q-item-section>Dashboard</q-item-section>
           </q-item>
-          <q-item clickable v-ripple :to="'/anggotakoprasi'">
+          <q-item clickable v-ripple :to="'/anggotakoperasi'">
             <q-item-section avatar>
               <q-icon color="primary" name="person"/>
             </q-item-section>
