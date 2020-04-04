@@ -61,6 +61,7 @@ create table if not exists permission_role
 
 create table if not exists role_user
 (
+    id      int primary key auto_increment,
     role_id int(11) default null,
     user_id int(11) default null,
     key     role_id(role_id),
@@ -113,12 +114,13 @@ create table if not exists oauth_approvals
     expiresAt      TIMESTAMP,
     lastModifiedAt TIMESTAMP
 );
-CREATE TABLE IF NOT EXISTS `user_detail` (
-    `id` int primary key auto_increment,
-    `first_name` varchar(191) NULL,
-    `last_name` varchar(191) NULL,
-    `address` varchar(191) NULL,
-    `no_telepon` varchar(191) NULL,
-    `user_id` int(11) NULL,
-    FOREIGN KEY (user_id) REFERENCES user(id)
-    );
+CREATE TABLE IF NOT EXISTS user_detail
+(
+    id         int primary key auto_increment,
+    first_name varchar(191) NULL,
+    last_name  varchar(191) NULL,
+    address    varchar(191) NULL,
+    no_telepon varchar(191) NULL,
+    user_id    int(11) NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id)
+);

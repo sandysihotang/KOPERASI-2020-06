@@ -88,14 +88,23 @@ export default {
             })
               .then((res) => {
                 this.$auth.setAuthenticatedUser(res.data.userAuthentication.principal.userDetail);
+                this.$auth.setUserRole(res.data.userAuthentication.principal.roles[0].name);
                 window.location.href = '/';
               })
               .catch((err) => {
-                console.log(err);
               });
             this.loading = false;
           })
-          .catch(() => {
+          .catch((error) => {
+            if (error.response.data.error_description === 'User is disabled') {
+              this.$swal({
+                position: 'center',
+                type: 'error',
+                title: 'Silahkan Tunggu Konfirmasi dari Diskoperindag daerah anda',
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
             this.loading = false;
           });
       } else {

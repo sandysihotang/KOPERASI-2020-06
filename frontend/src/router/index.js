@@ -30,11 +30,11 @@ const routes = [
     },
   },
   {
-    path: '/dashboard',
-    name: 'Ck',
+    path: '/dashboardkoperasi',
+    name: 'dashboardkoperasi',
     component: () => import('../components/AuthenticatedUser/Koperasi/App.vue'),
     meta: {
-      forAuth: true,
+      forKoperasi: true,
     },
     children: [{
       path: '',
@@ -43,6 +43,25 @@ const routes = [
       path: '/anggotakoperasi',
       component: () => import('../components/AuthenticatedUser/Koperasi/Layout/AnggotaKoperasi.vue'),
     }],
+  },
+  {
+    path: '*',
+    name: 'notfound',
+    component: () => import('../views/NotFound.vue'),
+  },
+  {
+    path: '/dashboardadmin',
+    name: 'dashboaradmin',
+    component: () => import('../components/AuthenticatedUser/Diskoperindag/App.vue'),
+    meta: {
+      forAdmin: true,
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('../components/AuthenticatedUser/Diskoperindag/Layout/AccKoperasiPending.vue'),
+      },
+    ],
   },
 ];
 
@@ -62,16 +81,38 @@ router.beforeEach(
   (to, from, next) => {
     if (to.matched.some(record => record.meta.forVisitor)) {
       if (Vue.auth.isAuthenticated()) {
+        if (Vue.auth.getUserRole() === 'ROLE_koperasi') {
+          next({
+            path: '/dashboardkoperasi',
+          });
+        } else if (Vue.auth.getUserRole() === 'ROLE_admin') {
+          next({
+            path: '/dashboardadmin',
+          });
+        }
+      } else {
+        next();
+      }
+    } else if (to.matched.some(record => record.meta.forKoperasi)) {
+      if (!Vue.auth.isAuthenticated()) {
         next({
-          path: '/dashboard',
+          path: '/login',
+        });
+      } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_admin') {
+        next({
+          path: '/dashboardadmin',
         });
       } else {
         next();
       }
-    } else if (to.matched.some(record => record.meta.forAuth)) {
+    } else if (to.matched.some(record => record.meta.forAdmin)) {
       if (!Vue.auth.isAuthenticated()) {
         next({
           path: '/login',
+        });
+      } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_koperasi') {
+        next({
+          path: '/dashboardkoperasi',
         });
       } else {
         next();

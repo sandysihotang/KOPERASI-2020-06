@@ -1,5 +1,6 @@
 package io.github.sandy;
 
+import io.github.sandy.model.RoleUser;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
