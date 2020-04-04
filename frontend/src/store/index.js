@@ -5,6 +5,12 @@ export default function (Vue) {
       localStorage.setItem('token', token);
       localStorage.setItem('expiration', expiration);
     },
+    setUserRole(role) {
+      localStorage.setItem('role', role);
+    },
+    getUserRole() {
+      return localStorage.getItem('role');
+    },
     getToken() {
       const token = localStorage.getItem('token');
       const expiration = localStorage.getItem('expiration');
@@ -19,6 +25,7 @@ export default function (Vue) {
       return token;
     },
     setAuthenticatedUser(obj) {
+      console.log(obj);
       data = obj;
     },
     getAuthenticatedUser() {

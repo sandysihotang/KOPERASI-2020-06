@@ -9,6 +9,7 @@ import '@quasar/extras/ionicons-v4/ionicons-v4.css';
 import '@quasar/extras/mdi-v3/mdi-v3.css';
 import '@quasar/extras/eva-icons/eva-icons.css';
 import {
+  QTable,
   Quasar,
   QLayout,
   QHeader,
@@ -43,11 +44,15 @@ import {
   QParallax,
   QToggle,
   QSeparator,
+  QStepper,
+  QStep,
+  QStepperNavigation,
 } from 'quasar';
 
 Vue.use(Quasar, {
   config: {},
   components: {
+    QTable,
     QLayout,
     QHeader,
     QDrawer,
@@ -80,6 +85,9 @@ Vue.use(Quasar, {
     QParallax,
     QToggle,
     QSeparator,
+    QStepper,
+    QStep,
+    QStepperNavigation,
   },
   directives: {
     Ripple,

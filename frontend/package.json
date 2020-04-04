@@ -12,8 +12,6 @@
   "dependencies": {
     "@quasar/extras": "^1.6.0",
     "axios": "^0.19.2",
-    "bootstrap": "^4.4.1",
-    "bootstrap-vue": "^2.9.0",
     "core-js": "^3.3.2",
     "node-sass": "^4.13.0",
     "npm-cli": "^0.1.0",

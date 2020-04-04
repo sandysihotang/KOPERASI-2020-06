@@ -1,8 +1,8 @@
 <template>
     <div class="q-pa-md">
-      <div class="row">
+      <div class="row justify-between">
         <div class="col-md-4">
-          <q-card flat bordered style="height: 250px; width: 100%">
+          <q-card flat bordered style="height: 250px;">
             <q-card-section>
               <div class="text-caption">Laba Rugi {{ new Date() }}</div>
             </q-card-section>
@@ -39,7 +39,7 @@
           </q-card>
         </div>
       </div>
-      <div class="row q-mt-lg">
+      <div class="row q-mt-lg justify-between">
         <div class="col-md-4">
           <q-card flat bordered style="height: 250px;">
             <q-card-section>
@@ -78,7 +78,7 @@
           </q-card>
         </div>
       </div>
-      <div class="row q-mt-lg-lg">
+      <div class="row q-mt-lg justify-between">
         <div class="col-md-4">
           <q-card flat bordered style="height: 250px;">
             <q-card-section>
