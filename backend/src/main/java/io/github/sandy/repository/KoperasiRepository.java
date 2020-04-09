@@ -1,4 +1,7 @@
 package io.github.sandy.repository;
 
-public interface KoperasiRepository {
+import io.github.sandy.model.Koperasi;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface KoperasiRepository extends JpaRepository<Koperasi,Integer> {
 }

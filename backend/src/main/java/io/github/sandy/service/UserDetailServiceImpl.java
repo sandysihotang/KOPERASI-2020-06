@@ -7,17 +7,16 @@ import io.github.sandy.repository.DetailUserRepository;
 import io.github.sandy.repository.RoleRepository;
 import io.github.sandy.repository.RoleUserRepository;
 import io.github.sandy.repository.UserRepository;
-import io.github.sandy.request.RequestLogin;
+import io.github.sandy.request.Requestbody;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,8 +32,12 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Autowired
     AuthorizationServerConfiguration auth;
+
     @Autowired
     DetailUserRepository detailUserRepository;
+
+    @Autowired
+    JavaMailSender javaMailSender;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -45,15 +48,15 @@ public class UserDetailServiceImpl implements UserDetailsService {
         return userDetails;
     }
 
-    public Err check(RequestLogin requestLogin) {
+    public Err check(Requestbody requestbody) {
         HashMap<String, String> data = new HashMap<>();
-        data.put("Username", requestLogin.getUsername());
-        data.put("Password", requestLogin.getPassword());
-        data.put("Firstname", requestLogin.getFirstName());
-        data.put("Lastname", requestLogin.getLastName());
-        data.put("Alamat", requestLogin.getAlamat());
-        data.put("Email", requestLogin.getEmail());
-        data.put("Telepon", requestLogin.getTelepon());
+        data.put("Username", requestbody.getUsername());
+        data.put("Password", requestbody.getPassword());
+        data.put("Firstname", requestbody.getFirstName());
+        data.put("Lastname", requestbody.getLastName());
+        data.put("Alamat", requestbody.getAlamat());
+        data.put("Email", requestbody.getEmail());
+        data.put("Telepon", requestbody.getTelepon());
         for (String i : data.keySet()) {
             if (data.get(i).isEmpty()) {
                 return new Err(404, i + " Must be Field");
@@ -94,15 +97,15 @@ public class UserDetailServiceImpl implements UserDetailsService {
     }
 
 
-    public Err userCreate(RequestLogin requestLogin) {
+    public Err userCreate(Requestbody requestbody) {
         User user = new User();
-        user.setUsername(requestLogin.getUsername());
-        user.setPassword(auth.passwordEncoder.encode(requestLogin.getPassword()));
+        user.setUsername(requestbody.getUsername());
+        user.setPassword(auth.passwordEncoder.encode(requestbody.getPassword()));
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
         user.setEnabled(false);
-        user.setEmail(requestLogin.getEmail());
+        user.setEmail(requestbody.getEmail());
         userRepository.save(user);
 
         Role role = roleRepository.findFirstByName("ROLE_koperasi");
@@ -110,12 +113,22 @@ public class UserDetailServiceImpl implements UserDetailsService {
         roleUserRepository.save(roleUser);
 
         UserDetail userDetail = new UserDetail();
-        userDetail.setFirstName(requestLogin.getFirstName());
-        userDetail.setLastName(requestLogin.getLastName());
+        userDetail.setFirstName(requestbody.getFirstName());
+        userDetail.setLastName(requestbody.getLastName());
         userDetail.setUser(user);
-        userDetail.setAddress(requestLogin.getAlamat());
-        userDetail.setNoTelepon(requestLogin.getTelepon());
+        userDetail.setAddress(requestbody.getAlamat());
+        userDetail.setNoTelepon(requestbody.getTelepon());
         detailUserRepository.save(userDetail);
         return new Err(200, "");
+    }
+
+    public void setEnableAcc(int id){
+        User user = userRepository.getOne(id);
+
+        MailSender mailSender = new MailSender();
+        mailSender.sendEmailEnableAccount(javaMailSender,user.getEmail());
+
+        user.setEnabled(true);
+        userRepository.save(user);
     }
 }

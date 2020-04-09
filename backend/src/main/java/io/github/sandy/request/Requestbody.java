@@ -1,6 +1,11 @@
 package io.github.sandy.request;
 
-public class RequestLogin {
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Date;
+
+public class Requestbody {
+    private int id;
     private String username;
     private String password;
     private String firstName;
@@ -8,19 +13,71 @@ public class RequestLogin {
     private String email;
     private String telepon;
     private String alamat;
+    private String date;
+    private String name;
+    private String pendiri;
+    private String izin;
+    private String jenis;
+    private MultipartFile image;
 
 
-    public RequestLogin() {
+    public Requestbody() {
     }
 
-    public RequestLogin(String username, String password, String firstName, String lastName, String email, String telepon, String alamat) {
-        this.username = username;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.telepon = telepon;
-        this.alamat = alamat;
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPendiri() {
+        return pendiri;
+    }
+
+    public void setPendiri(String pendiri) {
+        this.pendiri = pendiri;
+    }
+
+    public String getIzin() {
+        return izin;
+    }
+
+    public void setIzin(String izin) {
+        this.izin = izin;
+    }
+
+    public String getJenis() {
+        return jenis;
+    }
+
+    public void setJenis(String jenis) {
+        this.jenis = jenis;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {
