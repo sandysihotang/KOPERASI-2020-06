@@ -45,6 +45,20 @@ const routes = [
     }],
   },
   {
+    path: '/daftarkoperasi',
+    name: 'daftarkoperasi',
+    component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/DaftarKoperasi.vue'),
+    meta: {
+      forKoperasi: true,
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/Layout/FormDaftar.vue'),
+      },
+    ],
+  },
+  {
     path: '*',
     name: 'notfound',
     component: () => import('../views/NotFound.vue'),
@@ -82,9 +96,15 @@ router.beforeEach(
     if (to.matched.some(record => record.meta.forVisitor)) {
       if (Vue.auth.isAuthenticated()) {
         if (Vue.auth.getUserRole() === 'ROLE_koperasi') {
-          next({
-            path: '/dashboardkoperasi',
-          });
+          if (parseInt(Vue.auth.isHaveKoperasi()) === 0) {
+            next({
+              path: '/daftarkoperasi',
+            });
+          } else {
+            next({
+              path: '/dashboardkoperasi',
+            });
+          }
         } else if (Vue.auth.getUserRole() === 'ROLE_admin') {
           next({
             path: '/dashboardadmin',
@@ -102,18 +122,34 @@ router.beforeEach(
         next({
           path: '/dashboardadmin',
         });
-      } else {
-        next();
-      }
+      } else if (Vue.auth.getUserRole() === 'ROLE_koperasi') {
+        if (parseInt(Vue.auth.isHaveKoperasi()) === 0) {
+          next({
+            path: '/daftarkoperasi',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2) {
+          next({
+            path: '/',
+          });
+        } else {
+          next();
+        }
+      } else next();
     } else if (to.matched.some(record => record.meta.forAdmin)) {
       if (!Vue.auth.isAuthenticated()) {
         next({
           path: '/login',
         });
       } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_koperasi') {
-        next({
-          path: '/dashboardkoperasi',
-        });
+        if (parseInt(Vue.auth.isHaveKoperasi()) === 0) {
+          next({
+            path: '/daftarkoperasi',
+          });
+        } else {
+          next({
+            path: '/dashboardkoperasi',
+          });
+        }
       } else {
         next();
       }

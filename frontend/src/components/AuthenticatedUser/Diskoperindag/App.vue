@@ -19,7 +19,7 @@
             </q-item-section>
             <q-item-section>Daftar Koperasi di Toba</q-item-section>
           </q-item>
-          <q-item clickable v-ripple :to="'/anggotakoperasi'">
+          <q-item clickable v-ripple :to="'/dashboardadmin'">
             <q-item-section avatar>
               <q-icon color="primary" name="person"/>
             </q-item-section>
