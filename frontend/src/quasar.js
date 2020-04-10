@@ -9,6 +9,7 @@ import '@quasar/extras/ionicons-v4/ionicons-v4.css';
 import '@quasar/extras/mdi-v3/mdi-v3.css';
 import '@quasar/extras/eva-icons/eva-icons.css';
 import {
+  Loading,
   QTable,
   Quasar,
   QLayout,
@@ -46,12 +47,24 @@ import {
   QSeparator,
   QStepper,
   QStep,
+  QTr,
+  QTd,
   QStepperNavigation,
+  QTooltip,
+  QSelect,
+  QPopupProxy,
+  QDate,
+  QUploader,
 } from 'quasar';
 
 Vue.use(Quasar, {
   config: {},
   components: {
+    QUploader,
+    QDate,
+    QPopupProxy,
+    QSelect,
+    QTooltip,
     QTable,
     QLayout,
     QHeader,
@@ -61,6 +74,8 @@ Vue.use(Quasar, {
     QToolbar,
     QToolbarTitle,
     QBtn,
+    QTr,
+    QTd,
     QIcon,
     QList,
     QItem,
@@ -93,5 +108,6 @@ Vue.use(Quasar, {
     Ripple,
   },
   plugins: {
+    Loading,
   },
 });

@@ -13,17 +13,17 @@
     <q-drawer show-if-above v-model="left" side="left" bordered>
       <q-scroll-area class="fit">
         <q-list padding>
-          <q-item clickable v-ripple :to="'/dashboard'">
-            <q-item-section avatar>
-              <q-icon color="primary" name="fa fa-chart-bar"/>
-            </q-item-section>
-            <q-item-section>Daftar Koperasi di Toba</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple :to="'/anggotakoperasi'">
+          <q-item clickable v-ripple :to="'/dashboardadmin'">
             <q-item-section avatar>
               <q-icon color="primary" name="person"/>
             </q-item-section>
             <q-item-section>Account Koperasi yang masih pending</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple :to="'/semuakoperasi'">
+            <q-item-section avatar>
+              <q-icon color="primary" name="fa fa-chart-bar"/>
+            </q-item-section>
+            <q-item-section>Daftar Koperasi di Toba</q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>

@@ -8,6 +8,12 @@ export default function (Vue) {
     setUserRole(role) {
       localStorage.setItem('role', role);
     },
+    setHaveKoperasi(have) {
+      localStorage.setItem('havekoperasi', have);
+    },
+    isHaveKoperasi() {
+      return localStorage.getItem('havekoperasi');
+    },
     getUserRole() {
       return localStorage.getItem('role');
     },
@@ -18,14 +24,13 @@ export default function (Vue) {
         return null;
       }
       if (Date.now() > parseInt(expiration)) {
-        console.log(`${Date.now()} ${parseInt(expiration)}`);
         localStorage.clear();
+        window.location.href = '/';
         return null;
       }
       return token;
     },
     setAuthenticatedUser(obj) {
-      console.log(obj);
       data = obj;
     },
     getAuthenticatedUser() {
