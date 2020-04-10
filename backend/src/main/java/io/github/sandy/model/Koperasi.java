@@ -36,9 +36,9 @@ public class Koperasi implements Serializable {
     @Column(name = "email")
     private String email;
 
-    @JsonIgnoreProperties({"koperasi"})
+    @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user")
+    @JoinColumn(name = "id_user", referencedColumnName = "id")
     private User user;
 
     public Koperasi() {

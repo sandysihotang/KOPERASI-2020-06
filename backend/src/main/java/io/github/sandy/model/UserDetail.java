@@ -1,9 +1,6 @@
 package io.github.sandy.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonBackReference;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonManagedReference;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,7 +24,7 @@ public class UserDetail implements Serializable {
     @Column(name = "no_telepon")
     private String noTelepon;
 
-    @JsonIgnoreProperties({"user_detail"})
+    @JsonIgnoreProperties({"user_detail", "hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

@@ -56,6 +56,10 @@ const routes = [
         path: '',
         component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/Layout/FormDaftar.vue'),
       },
+      {
+        path: '/pendingactivation',
+        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/Layout/PendingActivation.vue'),
+      },
     ],
   },
   {
@@ -74,6 +78,10 @@ const routes = [
       {
         path: '',
         component: () => import('../components/AuthenticatedUser/Diskoperindag/Layout/AccKoperasiPending.vue'),
+      },
+      {
+        path: '/semuakoperasi',
+        component: () => import('../components/AuthenticatedUser/Diskoperindag/Layout/DaftarKoperasi.vue'),
       },
     ],
   },
@@ -100,10 +108,16 @@ router.beforeEach(
             next({
               path: '/daftarkoperasi',
             });
-          } else {
+          } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2) {
+            next({
+              path: '/pendingactivation',
+            });
+          } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
             next({
               path: '/dashboardkoperasi',
             });
+          } else {
+            next();
           }
         } else if (Vue.auth.getUserRole() === 'ROLE_admin') {
           next({
@@ -123,13 +137,17 @@ router.beforeEach(
           path: '/dashboardadmin',
         });
       } else if (Vue.auth.getUserRole() === 'ROLE_koperasi') {
-        if (parseInt(Vue.auth.isHaveKoperasi()) === 0) {
+        if (parseInt(Vue.auth.isHaveKoperasi()) === 0 && to.path !== '/daftarkoperasi') {
           next({
             path: '/daftarkoperasi',
           });
-        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2) {
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2 && to.path !== '/pendingactivation') {
           next({
-            path: '/',
+            path: '/pendingactivation',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3 && to.path !== '/dashboardkoperasi') {
+          next({
+            path: '/dashboardkoperasi',
           });
         } else {
           next();
@@ -145,10 +163,12 @@ router.beforeEach(
           next({
             path: '/daftarkoperasi',
           });
-        } else {
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2) {
           next({
-            path: '/dashboardkoperasi',
+            path: '/pendingactivation',
           });
+        } else {
+          next();
         }
       } else {
         next();

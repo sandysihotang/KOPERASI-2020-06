@@ -1,6 +1,7 @@
 package io.github.sandy.controller;
 
 import io.github.sandy.ErrorCode.Err;
+import io.github.sandy.model.Koperasi;
 import io.github.sandy.model.User;
 import io.github.sandy.repository.KoperasiRepository;
 import io.github.sandy.repository.UserRepository;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 public class KoperasiController {
@@ -41,6 +43,20 @@ public class KoperasiController {
 
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/api/getallkoperasi", method = RequestMethod.GET)
+    public List<Koperasi> get() {
+        return koperasiRepository.findByIsHaveKoperasi();
+    }
+
+    @RequestMapping(value = "/api/changestatekoperasi" , method = RequestMethod.POST)
+    public ResponseEntity<Err> changeState(@RequestBody Requestbody requestbody, HttpServletRequest request){
+        Principal principal = request.getUserPrincipal();
+        String user = principal.getName();
+        koperasiService.changeStateKoperasi(requestbody.getId(), requestbody.isState());
+        return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
+    }
+
     @Bean
     public MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();

@@ -21,4 +21,11 @@ public class MailSender {
         msg.setText("Acoount anda telah diaktifkan oleh admin <br> anda sudah dapat login kesistem");
         javaMailSender.send(msg);
     }
+    public void sendEmailSetStateKoperasi(JavaMailSender javaMailSender, String email, String message){
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setTo(email);
+        msg.setSubject("Account Koperasi");
+        msg.setText(message);
+        javaMailSender.send(msg);
+    }
 }

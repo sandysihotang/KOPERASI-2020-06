@@ -17,11 +17,11 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JsonIgnoreProperties({"user"})
+    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
     @OneToOne(mappedBy = "user", fetch =FetchType.LAZY)
     private UserDetail userDetail;
 
-    @JsonIgnoreProperties({"user"})
+    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
     @OneToOne(mappedBy = "user", fetch =FetchType.LAZY)
     private Koperasi koperasi;
 

@@ -19,7 +19,15 @@ public class Requestbody {
     private String izin;
     private String jenis;
     private MultipartFile image;
+    private boolean state;
 
+    public boolean isState() {
+        return state;
+    }
+
+    public void setState(boolean state) {
+        this.state = state;
+    }
 
     public Requestbody() {
     }
