@@ -34,7 +34,7 @@
                   </q-form>
                 </q-card-section>
                 <q-card-actions class="q-px-lg">
-                  <q-btn :loading="loading" @click="login2"  unelevated
+                  <q-btn :loading="loading" @click="login"  unelevated
                          size="lg"
                          color="purple-4" class="full-width text-white" label="Sign In">
                     <template v-slot:loading>
@@ -67,9 +67,6 @@ export default {
     };
   },
   methods: {
-    login2() {
-      this.$http.post('/register');
-    },
     login() {
       this.loading = true;
       const credential = this.checkCredential();
@@ -85,11 +82,29 @@ export default {
           },
         })
           .then((e) => {
-            console.log(e);
+            this.$auth.setToken(e.data.access_token, (e.data.expires_in * 1000) + Date.now());
+            this.$http.get('api/login/currentuser', {
+              headers: this.$auth.getHeader(),
+            })
+              .then((res) => {
+                this.$auth.setAuthenticatedUser(res.data.userAuthentication.principal.userDetail);
+                this.$auth.setUserRole(res.data.userAuthentication.principal.roles[0].name);
+                window.location.href = '/';
+              })
+              .catch((err) => {
+              });
             this.loading = false;
           })
-          .catch((err) => {
-            console.log(err);
+          .catch((error) => {
+            if (error.response.data.error_description === 'User is disabled') {
+              this.$swal({
+                position: 'center',
+                type: 'error',
+                title: 'Silahkan Tunggu Konfirmasi dari Diskoperindag daerah anda',
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
             this.loading = false;
           });
       } else {
