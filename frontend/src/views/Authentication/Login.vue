@@ -89,9 +89,18 @@ export default {
               .then((res) => {
                 this.$auth.setAuthenticatedUser(res.data.userAuthentication.principal.userDetail);
                 this.$auth.setUserRole(res.data.userAuthentication.principal.roles[0].name);
+                this.$auth.setHaveKoperasi(res.data.userAuthentication.principal.haveKoperasi);
                 window.location.href = '/';
               })
               .catch((err) => {
+                this.$swal({
+                  position: 'center',
+                  type: 'error',
+                  title: 'Ada gangguan jaringan silahkan refresh (F5)',
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+                this.loading = false;
               });
             this.loading = false;
           })

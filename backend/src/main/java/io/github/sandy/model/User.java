@@ -17,9 +17,14 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JsonIgnoreProperties({"user"})
+    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
     @OneToOne(mappedBy = "user", fetch =FetchType.LAZY)
     private UserDetail userDetail;
+
+    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
+    @OneToOne(mappedBy = "user", fetch =FetchType.LAZY)
+    private Koperasi koperasi;
+
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -35,6 +40,9 @@ public class User implements Serializable {
     @Column(name = "accountNonLocked")
     private boolean accountNonLocked;
 
+    @Column(name = "haveKoperasi")
+    private int haveKoperasi;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_user", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
@@ -43,6 +51,22 @@ public class User implements Serializable {
     private List<Role> roles;
 
     public User() {
+    }
+
+    public Koperasi getKoperasi() {
+        return koperasi;
+    }
+
+    public void setKoperasi(Koperasi koperasi) {
+        this.koperasi = koperasi;
+    }
+
+    public int getHaveKoperasi() {
+        return haveKoperasi;
+    }
+
+    public void setHaveKoperasi(int haveKoperasi) {
+        this.haveKoperasi = haveKoperasi;
     }
 
     public User(User user) {
@@ -55,14 +79,7 @@ public class User implements Serializable {
         this.accountNonLocked = user.isAccountNonLocked();
         this.roles = user.getRoles();
         this.userDetail= user.getUserDetail();
-    }
-
-    public UserDetail getUserDetail() {
-        return userDetail;
-    }
-
-    public void setUserDetail(UserDetail userDetail) {
-        this.userDetail = userDetail;
+        this.haveKoperasi = user.getHaveKoperasi();
     }
 
     public Integer getId() {
@@ -71,6 +88,14 @@ public class User implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public UserDetail getUserDetail() {
+        return userDetail;
+    }
+
+    public void setUserDetail(UserDetail userDetail) {
+        this.userDetail = userDetail;
     }
 
     public String getUsername() {
@@ -128,6 +153,7 @@ public class User implements Serializable {
     public void setAccountNonLocked(boolean accountNonLocked) {
         this.accountNonLocked = accountNonLocked;
     }
+
 
     public List<Role> getRoles() {
         return roles;

@@ -1,57 +1,146 @@
 <template>
   <div class="q-pa-md">
     <q-table
-      title="Account Koperasi yang pending"
+      title="Account yang pending"
       :data="data"
       :columns="columns"
       row-key="name"
-    />
+      :filter="filter"
+    >
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td key="name" :props="props">
+            {{ `${props.row.userDetail.firstName} ${props.row.userDetail.lastName}` }}
+          </q-td><q-td key="username" :props="props">
+            {{ props.row.username }}
+          </q-td>
+          <q-td key="address" :props="props">
+            {{ props.row.userDetail.address }}
+          </q-td>
+          <q-td key="email" :props="props">
+            {{ props.row.email }}
+          </q-td>
+          <q-td key="aksi" :props="props">
+            <div class="row">
+              <div class="col">
+                <q-btn class="glossy" @click="terima(props.row.id)" round color="primary" icon="check" size="10px">
+                  <q-tooltip content-class="bg-accent">Terima</q-tooltip>
+                </q-btn>
+              </div>
+              <div class="col">
+                <q-btn class="glossy" @click="tolak(props.row.id)" round color="deep-orange" icon="close" size="10px">
+                  <q-tooltip content-class="bg-accent">Tolak</q-tooltip>
+                </q-btn>
+              </div>
+            </div>
+          </q-td>
+        </q-tr>
+      </template>
+      <template v-slot:top-right>
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+          <template v-slot:append>
+            <q-icon name="search"/>
+          </template>
+        </q-input>
+      </template>
+    </q-table>
   </div>
 </template>
 
 <script>
+
 export default {
   data() {
     return {
+      filter: '',
       columns: [
         {
           name: 'name',
-          required: true,
-          label: 'Dessert (100g serving)',
-          align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
+          label: 'Nama Lengkap',
+          align: 'center',
+          field: 'name',
           sortable: true,
         },
         {
-          name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true,
+          name: 'username',
+          label: 'Username',
+          align: 'center',
+          field: 'username',
+          sortable: true,
         },
         {
-          name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true,
-        },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        {
-          name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
+          name: 'address',
+          align: 'center',
+          label: 'Alamat',
+          field: 'address',
+          sortable: true,
         },
         {
-          name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
+          name: 'email',
+          align: 'center',
+          label: 'Email',
+          field: 'email',
+          sortable: true,
+        },
+        {
+          name: 'aksi',
+          align: 'center',
+          label: 'Plihan',
+          field: 'aksi',
         },
       ],
-      data: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%',
-        },
-      ],
+      data: [],
     };
+  },
+  methods: {
+    show() {
+      this.$q.loading.show();
+      setTimeout(() => this.$q.loading.hide(), 2000);
+    },
+    getData() {
+      this.$http.get('/api/getnonauthenticateduser', {
+        headers: this.$auth.getHeader(),
+      })
+        .then((res) => {
+          this.data = res.data;
+        });
+    },
+    terima(id) {
+      this.$q.loading.show();
+      this.$http.post('/api/terimaacc', { id }, {
+        headers: this.$auth.getHeader(),
+      })
+        .then(() => {
+          this.getData();
+          this.$q.loading.hide();
+          this.$swal({
+            position: 'center',
+            type: 'success',
+            title: 'Akun berhasil diterima',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        })
+        .catch(() => {
+          this.getData();
+          this.$q.loading.hide();
+          this.$swal({
+            position: 'center',
+            type: 'error',
+            title: 'Telah terjadi Error silahkan refreh (F5)',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        });
+    },
+    tolak(id) {
+      console.log(id);
+    },
+  },
+  created() {
+    this.$q.loading.show();
+    this.getData();
+    this.$q.loading.hide();
   },
 };
 </script>

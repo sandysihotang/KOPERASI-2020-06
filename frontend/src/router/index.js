@@ -53,6 +53,24 @@ const routes = [
     }],
   },
   {
+    path: '/daftarkoperasi',
+    name: 'daftarkoperasi',
+    component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/DaftarKoperasi.vue'),
+    meta: {
+      forKoperasi: true,
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/Layout/FormDaftar.vue'),
+      },
+      {
+        path: '/pendingactivation',
+        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/Layout/PendingActivation.vue'),
+      },
+    ],
+  },
+  {
     path: '*',
     name: 'notfound',
     component: () => import('../views/NotFound.vue'),
@@ -68,6 +86,10 @@ const routes = [
       {
         path: '',
         component: () => import('../components/AuthenticatedUser/Diskoperindag/Layout/AccKoperasiPending.vue'),
+      },
+      {
+        path: '/semuakoperasi',
+        component: () => import('../components/AuthenticatedUser/Diskoperindag/Layout/DaftarKoperasi.vue'),
       },
     ],
   },
@@ -90,9 +112,21 @@ router.beforeEach(
     if (to.matched.some(record => record.meta.forVisitor)) {
       if (Vue.auth.isAuthenticated()) {
         if (Vue.auth.getUserRole() === 'ROLE_koperasi') {
-          next({
-            path: '/dashboardkoperasi',
-          });
+          if (parseInt(Vue.auth.isHaveKoperasi()) === 0) {
+            next({
+              path: '/daftarkoperasi',
+            });
+          } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2) {
+            next({
+              path: '/pendingactivation',
+            });
+          } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
+            next({
+              path: '/dashboardkoperasi',
+            });
+          } else {
+            next();
+          }
         } else if (Vue.auth.getUserRole() === 'ROLE_admin') {
           next({
             path: '/dashboardadmin',
@@ -110,18 +144,40 @@ router.beforeEach(
         next({
           path: '/dashboardadmin',
         });
-      } else {
-        next();
-      }
+      } else if (Vue.auth.getUserRole() === 'ROLE_koperasi') {
+        if (parseInt(Vue.auth.isHaveKoperasi()) === 0 && to.path !== '/daftarkoperasi') {
+          next({
+            path: '/daftarkoperasi',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2 && to.path !== '/pendingactivation') {
+          next({
+            path: '/pendingactivation',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3 && to.path !== '/dashboardkoperasi') {
+          next({
+            path: '/dashboardkoperasi',
+          });
+        } else {
+          next();
+        }
+      } else next();
     } else if (to.matched.some(record => record.meta.forAdmin)) {
       if (!Vue.auth.isAuthenticated()) {
         next({
           path: '/login',
         });
       } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_koperasi') {
-        next({
-          path: '/dashboardkoperasi',
-        });
+        if (parseInt(Vue.auth.isHaveKoperasi()) === 0) {
+          next({
+            path: '/daftarkoperasi',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2) {
+          next({
+            path: '/pendingactivation',
+          });
+        } else {
+          next();
+        }
       } else {
         next();
       }

@@ -124,3 +124,18 @@ CREATE TABLE IF NOT EXISTS user_detail
     user_id    int(11) NULL,
     FOREIGN KEY (user_id) REFERENCES user (id)
 );
+
+CREATE TABLE if not exists koperasi
+(
+    id                     int(11) primary key auto_increment,
+    nama_koperasi          varchar(191) NOT NULL,
+    alamat_koperasi        varchar(191) NOT NULL,
+    tahun_berdiri_koperasi date         NOT NULL,
+    no_izin_koperasi       varchar(191) NOT NULL,
+    nama_pendiri           varchar(191) NOT NULL,
+    logo_koperasi          text,
+    jenis_koperasi         int(11) NOT NULL,
+    id_user                int(11) NOT NULL,
+    email                  varchar(191) NOT NULL,
+    FOREIGN KEY (id_user) REFERENCES user (id)
+);
