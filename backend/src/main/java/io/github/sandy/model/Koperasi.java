@@ -41,15 +41,11 @@ public class Koperasi implements Serializable {
     @JoinColumn(name = "id_user", referencedColumnName = "id")
     private User user;
 
+    @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
+    @OneToOne(mappedBy = "koperasi", fetch =FetchType.LAZY)
+    private FieldDaftarAnggota fieldDaftarAnggota;
+
     public Koperasi() {
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Integer getId() {
@@ -116,11 +112,27 @@ public class Koperasi implements Serializable {
         this.jenisKoperasi = jenisKoperasi;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public FieldDaftarAnggota getFieldDaftarAnggota() {
+        return fieldDaftarAnggota;
+    }
+
+    public void setFieldDaftarAnggota(FieldDaftarAnggota fieldDaftarAnggota) {
+        this.fieldDaftarAnggota = fieldDaftarAnggota;
     }
 }
