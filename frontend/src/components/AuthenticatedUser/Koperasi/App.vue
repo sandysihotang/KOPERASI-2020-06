@@ -14,7 +14,7 @@
     <q-drawer show-if-above v-model="left" side="left" bordered>
       <q-scroll-area class="fit">
         <q-list padding>
-          <q-item clickable v-ripple :to="'/dashboard'">
+          <q-item clickable v-ripple :to="'/dashboardkoperasi'">
             <q-item-section avatar>
               <q-icon color="primary" name="fa fa-chart-bar"/>
             </q-item-section>
@@ -25,6 +25,12 @@
               <q-icon color="primary" name="person"/>
             </q-item-section>
             <q-item-section>Anggota Koperasi</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple :to="'/pengaturanpendaftarananggota'">
+            <q-item-section avatar>
+              <q-icon color="primary" name="settings"/>
+            </q-item-section>
+            <q-item-section>Pengaturan Field Pendaftaran</q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>
