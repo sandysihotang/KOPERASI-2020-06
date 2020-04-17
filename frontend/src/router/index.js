@@ -16,7 +16,7 @@ const routes = [
   {
     path: '/create',
     name: 'Pinjaman',
-    component: () => import('../views/Pinjaman.vue'),
+    // component: () => import('../views/Pinjaman.vue'),
     meta: {
       forVisitor: true,
     },
@@ -50,6 +50,15 @@ const routes = [
     }, {
       path: '/anggotakoperasi',
       component: () => import('../components/AuthenticatedUser/Koperasi/Layout/AnggotaKoperasi.vue'),
+      meta: {
+        roolTo: true,
+      },
+    }, {
+      path: '/pengaturanpendaftarananggota',
+      component: () => import('../components/AuthenticatedUser/Koperasi/Layout/PengaturanFieldDaftarKoperasi.vue'),
+      meta: {
+        roolTo: true,
+      },
     }],
   },
   {
@@ -99,7 +108,7 @@ const router = new VueRouter({
   routes,
   scrollBehavior(to, from, next) {
     if (to.hash) {
-      return { selector: to.hash };
+      return {selector: to.hash};
     }
     return {
       x: 0,
@@ -153,10 +162,12 @@ router.beforeEach(
           next({
             path: '/pendingactivation',
           });
-        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3 && to.path !== '/dashboardkoperasi') {
-          next({
-            path: '/dashboardkoperasi',
-          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
+          if (to.path !== '/dashboardkoperasi' && from.path !== '/dashboardkoperasi' && !to.matched.some(record => record.meta.roolTo)) {
+            next({
+              path: '/dashboardkoperasi',
+            });
+          } else next();
         } else {
           next();
         }
@@ -174,6 +185,10 @@ router.beforeEach(
         } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2) {
           next({
             path: '/pendingactivation',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
+          next({
+            path: '/dashboardkoperasi',
           });
         } else {
           next();
