@@ -25,6 +25,10 @@ public class User implements Serializable {
     @OneToOne(mappedBy = "user", fetch =FetchType.LAZY)
     private Koperasi koperasi;
 
+    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
+    @OneToOne(mappedBy = "user", fetch =FetchType.LAZY)
+    private AnggotaKoperasi anggotaKoperasi;
+
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -80,6 +84,14 @@ public class User implements Serializable {
         this.roles = user.getRoles();
         this.userDetail= user.getUserDetail();
         this.haveKoperasi = user.getHaveKoperasi();
+    }
+
+    public AnggotaKoperasi getAnggotaKoperasi() {
+        return anggotaKoperasi;
+    }
+
+    public void setAnggotaKoperasi(AnggotaKoperasi anggotaKoperasi) {
+        this.anggotaKoperasi = anggotaKoperasi;
     }
 
     public Integer getId() {

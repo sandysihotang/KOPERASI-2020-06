@@ -93,17 +93,18 @@ export default {
     };
   },
   methods: {
-    show() {
-      this.$q.loading.show();
-      setTimeout(() => this.$q.loading.hide(), 2000);
-    },
     getData() {
+      this.$q.loading.show();
       this.$http.get('/api/getnonauthenticateduser', {
         headers: this.$auth.getHeader(),
       })
         .then((res) => {
           this.data = res.data;
-        });
+          this.$q.loading.hide();
+        })
+      .catch(() => {
+        this.$q.loading.hide();
+      });
     },
     terima(id) {
       this.$q.loading.show();
@@ -138,9 +139,7 @@ export default {
     },
   },
   created() {
-    this.$q.loading.show();
     this.getData();
-    this.$q.loading.hide();
   },
 };
 </script>
