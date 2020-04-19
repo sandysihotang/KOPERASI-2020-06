@@ -18,8 +18,7 @@ public class FieldDaftarAnggota implements Serializable {
     private Integer id;
 
     @Column(name = "pattern_field", columnDefinition = "JSON")
-    @Convert(converter = StringMapConverter.class)
-    private Map<String, String> patternField;
+    private String patternField;
 
     @JsonIgnoreProperties({"field_daftar_anggota", "hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
@@ -37,12 +36,11 @@ public class FieldDaftarAnggota implements Serializable {
         this.id = id;
     }
 
-
-    public Map<String, String> getPatternField() {
+    public String getPatternField() {
         return patternField;
     }
 
-    public void setPatternField(Map<String, String> patternField) {
+    public void setPatternField(String patternField) {
         this.patternField = patternField;
     }
 

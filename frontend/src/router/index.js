@@ -36,22 +36,33 @@ const routes = [
     meta: {
       forKoperasi: true,
     },
-    children: [{
-      path: '',
-      component: () => import('../components/AuthenticatedUser/Koperasi/Layout/Dashboard.vue'),
-    }, {
-      path: '/anggotakoperasi',
-      component: () => import('../components/AuthenticatedUser/Koperasi/Layout/AnggotaKoperasi.vue'),
-      meta: {
-        roolTo: true,
+    children: [
+      {
+        path: '',
+        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/Dashboard.vue'),
       },
-    }, {
-      path: '/pengaturanpendaftarananggota',
-      component: () => import('../components/AuthenticatedUser/Koperasi/Layout/PengaturanFieldDaftarKoperasi.vue'),
-      meta: {
-        roolTo: true,
+      {
+        path: '/anggotakoperasi',
+        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/AnggotaKoperasi.vue'),
+        meta: {
+          roolTo: true,
+        },
       },
-    }],
+      {
+        path: '/pengaturanpendaftarananggota',
+        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/PengaturanFieldDaftarKoperasi.vue'),
+        meta: {
+          roolTo: true,
+        },
+      },
+      {
+        path: '/daftaranggota',
+        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarAnggotaKoperasi.vue'),
+        meta: {
+          roolTo: true,
+        },
+      }
+    ],
   },
   {
     path: '/daftarkoperasi',
@@ -159,11 +170,15 @@ router.beforeEach(
             next({
               path: '/dashboardkoperasi',
             });
-          } else next();
+          } else {
+            next();
+          }
         } else {
           next();
         }
-      } else next();
+      } else {
+        next();
+      }
     } else if (to.matched.some(record => record.meta.forAdmin)) {
       if (!Vue.auth.isAuthenticated()) {
         next({

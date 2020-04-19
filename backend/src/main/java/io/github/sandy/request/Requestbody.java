@@ -20,6 +20,24 @@ public class Requestbody {
     private String jenis;
     private MultipartFile image;
     private boolean state;
+    private String formField;
+    private String fieldData;
+
+    public String getFormField() {
+        return formField;
+    }
+
+    public String getFieldData() {
+        return fieldData;
+    }
+
+    public void setFieldData(String fieldData) {
+        this.fieldData = fieldData;
+    }
+
+    public void setFormField(String formField) {
+        this.formField = formField;
+    }
 
     public boolean isState() {
         return state;

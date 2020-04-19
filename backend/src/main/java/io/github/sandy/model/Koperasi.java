@@ -1,9 +1,11 @@
 package io.github.sandy.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "koperasi")
@@ -36,6 +38,15 @@ public class Koperasi implements Serializable {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "have_field_register_member")
+    private boolean haveFieldRegisterMember;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "koperasi", fetch = FetchType.EAGER)
+    private List<AnggotaKoperasi> anggotaKoperasis;
+
+
+
     @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", referencedColumnName = "id")
@@ -46,6 +57,22 @@ public class Koperasi implements Serializable {
     private FieldDaftarAnggota fieldDaftarAnggota;
 
     public Koperasi() {
+    }
+
+    public List<AnggotaKoperasi> getAnggotaKoperasis() {
+        return anggotaKoperasis;
+    }
+
+    public void setAnggotaKoperasis(List<AnggotaKoperasi> anggotaKoperasis) {
+        this.anggotaKoperasis = anggotaKoperasis;
+    }
+
+    public boolean isHaveFieldRegisterMember() {
+        return haveFieldRegisterMember;
+    }
+
+    public void setHaveFieldRegisterMember(boolean haveFieldRegisterMember) {
+        this.haveFieldRegisterMember = haveFieldRegisterMember;
     }
 
     public Integer getId() {
