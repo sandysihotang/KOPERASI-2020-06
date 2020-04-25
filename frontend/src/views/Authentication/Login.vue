@@ -34,7 +34,7 @@
                   </q-form>
                 </q-card-section>
                 <q-card-actions class="q-px-lg">
-                  <q-btn :loading="loading" @click="login"  unelevated
+                  <q-btn :loading="loading" @click="login" unelevated
                          size="lg"
                          color="purple-4" class="full-width text-white" label="Sign In">
                     <template v-slot:loading>
@@ -55,57 +55,56 @@
   </div>
 </template>
 <script>
-export default {
-  name: 'Login',
-  data() {
-    return {
-      form: {
-        username: null,
-        password: null,
-      },
-      loading: false,
-    };
-  },
-  methods: {
-    login() {
-      this.loading = true;
-      const credential = this.checkCredential();
-      if (credential) {
-        const data = new FormData();
-        data.set('grant_type', 'password');
-        data.set('username', this.form.username);
-        data.set('password', this.form.password);
-        this.$http.post('oauth/token', data, {
-          auth: {
-            username: 'mobile',
-            password: 'pin',
-          },
-        })
-          .then((e) => {
-            this.$auth.setToken(e.data.access_token, (e.data.expires_in * 1000) + Date.now());
-            this.$http.get('api/login/currentuser', {
-              headers: this.$auth.getHeader(),
-            })
-              .then((res) => {
-                this.$auth.setAuthenticatedUser(res.data.userAuthentication.principal.userDetail);
-                this.$auth.setUserRole(res.data.userAuthentication.principal.roles[0].name);
-                this.$auth.setHaveKoperasi(res.data.userAuthentication.principal.haveKoperasi);
-                window.location.href = '/';
-              })
-              .catch((err) => {
-                this.$swal({
-                  position: 'center',
-                  type: 'error',
-                  title: 'Ada gangguan jaringan silahkan refresh (F5)',
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-                this.loading = false;
-              });
-            this.loading = false;
+  export default {
+    name: 'Login',
+    data() {
+      return {
+        form: {
+          username: null,
+          password: null,
+        },
+        loading: false,
+      };
+    },
+    methods: {
+      login() {
+        this.loading = true;
+        const credential = this.checkCredential();
+        if (credential) {
+          const data = new FormData();
+          data.set('grant_type', 'password');
+          data.set('username', this.form.username);
+          data.set('password', this.form.password);
+          this.$http.post('oauth/token', data, {
+            auth: {
+              username: 'mobile',
+              password: 'pin',
+            },
           })
-          .catch((error) => {
-            if (error.response.data.error_description === 'User is disabled') {
+            .then((e) => {
+              this.$auth.setToken(e.data.access_token, (e.data.expires_in * 1000) + Date.now());
+              this.$http.get('api/login/currentuser', {
+                headers: this.$auth.getHeader(),
+              })
+                .then((res) => {
+                  this.$auth.setAuthenticatedUser(res.data.userAuthentication.principal.userDetail);
+                  this.$auth.setUserRole(res.data.userAuthentication.principal.roles[0].name);
+                  this.$auth.setHaveKoperasi(res.data.userAuthentication.principal.haveKoperasi);
+                  window.location.href = '/';
+                })
+                .catch((err) => {
+                  this.$swal({
+                    position: 'center',
+                    type: 'error',
+                    title: 'Ada gangguan jaringan silahkan refresh (F5)',
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+                  this.loading = false;
+                });
+              this.loading = false;
+            })
+            .catch((error) => {
               this.$swal({
                 position: 'center',
                 type: 'error',
@@ -113,25 +112,24 @@ export default {
                 showConfirmButton: false,
                 timer: 1500,
               });
-            }
-            this.loading = false;
+              this.loading = false;
+            });
+        } else {
+          this.$swal({
+            position: 'center',
+            type: 'error',
+            title: 'Silahkan isi Username dan Password',
+            showConfirmButton: false,
+            timer: 1500,
           });
-      } else {
-        this.$swal({
-          position: 'center',
-          type: 'error',
-          title: 'Silahkan isi Username dan Password',
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        this.loading = false;
-      }
+          this.loading = false;
+        }
+      },
+      checkCredential() {
+        return !(!this.form.username || !this.form.password);
+      },
     },
-    checkCredential() {
-      return !(!this.form.username || !this.form.password);
-    },
-  },
-};
+  };
 </script>
 
 <style>

@@ -2,10 +2,16 @@ package io.github.sandy.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "koperasi")
@@ -42,10 +48,16 @@ public class Koperasi implements Serializable {
     private boolean haveFieldRegisterMember;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "koperasi", fetch = FetchType.EAGER)
-    private List<AnggotaKoperasi> anggotaKoperasis;
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
+    private Set<AnggotaKoperasi> anggotaKoperasis = new HashSet<>();
 
-
+    @JsonManagedReference
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
+    private Set<KoperasiPengaturanPinjaman> koperasiPengaturanPinjaman = new HashSet<>();
 
     @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
@@ -53,18 +65,26 @@ public class Koperasi implements Serializable {
     private User user;
 
     @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
-    @OneToOne(mappedBy = "koperasi", fetch =FetchType.LAZY)
+    @OneToOne(mappedBy = "koperasi", fetch = FetchType.LAZY)
     private FieldDaftarAnggota fieldDaftarAnggota;
 
     public Koperasi() {
     }
 
-    public List<AnggotaKoperasi> getAnggotaKoperasis() {
+    public Set<AnggotaKoperasi> getAnggotaKoperasis() {
         return anggotaKoperasis;
     }
 
-    public void setAnggotaKoperasis(List<AnggotaKoperasi> anggotaKoperasis) {
+    public void setAnggotaKoperasis(Set<AnggotaKoperasi> anggotaKoperasis) {
         this.anggotaKoperasis = anggotaKoperasis;
+    }
+
+    public Set<KoperasiPengaturanPinjaman> getKoperasiPengaturanPinjaman() {
+        return koperasiPengaturanPinjaman;
+    }
+
+    public void setKoperasiPengaturanPinjaman(Set<KoperasiPengaturanPinjaman> koperasiPengaturanPinjaman) {
+        this.koperasiPengaturanPinjaman = koperasiPengaturanPinjaman;
     }
 
     public boolean isHaveFieldRegisterMember() {

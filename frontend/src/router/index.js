@@ -32,7 +32,7 @@ const routes = [
   {
     path: '/dashboardkoperasi',
     name: 'dashboardkoperasi',
-    component: () => import('../components/AuthenticatedUser/Koperasi/App.vue'),
+    component: () => import('../components/AuthenticatedUser/Koperasi/KSU/App.vue'),
     meta: {
       forKoperasi: true,
     },
@@ -61,6 +61,13 @@ const routes = [
         meta: {
           roolTo: true,
         },
+      },
+      {
+        path: '/pengaturanpinjaman',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/PengaturanPinjaman.vue'),
+        meta: {
+          roolTo: true,
+        },
       }
     ],
   },
@@ -81,6 +88,15 @@ const routes = [
         component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/Layout/PendingActivation.vue'),
       },
     ],
+  },
+  {
+    path: '/dashboardanggotakoperasi',
+    name: 'AnggotaKoperasi',
+    component: () => import('../components/AuthenticatedUser/Anggota/App.vue'),
+    meta: {
+      forAnggota: true,
+    },
+    children: []
   },
   {
     path: '*',
@@ -143,6 +159,10 @@ router.beforeEach(
           next({
             path: '/dashboardadmin',
           });
+        } else if (Vue.auth.getUserRole() === 'ROLE_anggota') {
+          next({
+            path: '/dashboardanggotakoperasi',
+          });
         }
       } else {
         next();
@@ -155,6 +175,10 @@ router.beforeEach(
       } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_admin') {
         next({
           path: '/dashboardadmin',
+        });
+      } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_anggota') {
+        next({
+          path: '/dashboardanggotakoperasi',
         });
       } else if (Vue.auth.getUserRole() === 'ROLE_koperasi') {
         if (parseInt(Vue.auth.isHaveKoperasi()) === 0 && to.path !== '/daftarkoperasi') {
@@ -184,6 +208,10 @@ router.beforeEach(
         next({
           path: '/login',
         });
+      } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_anggota') {
+        next({
+          path: '/dashboardanggotakoperasi',
+        });
       } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_koperasi') {
         if (parseInt(Vue.auth.isHaveKoperasi()) === 0) {
           next({
@@ -196,6 +224,34 @@ router.beforeEach(
         } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
           next({
             path: '/dashboardkoperasi',
+          });
+        } else {
+          next();
+        }
+      } else {
+        next();
+      }
+    } else if (to.matched.some(record => record.meta.forAnggota)) {
+      if (!Vue.auth.isAuthenticated()) {
+        next({
+          path: '/login',
+        });
+      } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_koperasi') {
+        if (parseInt(Vue.auth.isHaveKoperasi()) === 0) {
+          next({
+            path: '/daftarkoperasi',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2) {
+          next({
+            path: '/pendingactivation',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
+          next({
+            path: '/dashboardkoperasi',
+          });
+        } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_admin') {
+          next({
+            path: '/dashboardadmin',
           });
         } else {
           next();

@@ -116,7 +116,7 @@ create table if not exists oauth_approvals
 );
 CREATE TABLE IF NOT EXISTS user_detail
 (
-    id         int null auto_increment,
+    id         int          null auto_increment,
     first_name varchar(191) NULL,
     last_name  varchar(191) NULL,
     address    varchar(191) NULL,
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS user_detail
 
 CREATE TABLE if not exists koperasi
 (
-    id                         int(11) null auto_increment,
+    id                         int(11)      null auto_increment,
     nama_koperasi              varchar(191) NOT NULL,
     alamat_koperasi            varchar(191) NOT NULL,
     tahun_berdiri_koperasi     date         NOT NULL,
@@ -145,7 +145,7 @@ CREATE TABLE if not exists koperasi
 
 CREATE TABLE IF NOT EXISTS field_daftar_anggota
 (
-    id            int(11) null auto_increment,
+    id            int(11)                                            null auto_increment,
     koperasi_id   int(11)                                            NOT NULL,
     pattern_field longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
     primary key (id),
@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS field_daftar_anggota
 
 CREATE TABLE IF NOT EXISTS anggota_koperasi
 (
-    id          int(11) NULL auto_increment,
+    id          int(11)                                            NULL auto_increment,
     id_koperasi int(11)                                            NOT NULL,
     data        longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
     id_user     int(11)                                            NOT NULL,
@@ -162,3 +162,25 @@ CREATE TABLE IF NOT EXISTS anggota_koperasi
     foreign key (id_koperasi) references koperasi (id),
     foreign key (id_user) references user (id)
 );
+CREATE TABLE IF NOT EXISTS pengaturan_pinjaman
+(
+    id                 int(11) NULL AUTO_INCREMENT,
+    bunga_pinjaman     double  NOT NULL,
+    min_tenor          int(11) NOT NULL,
+    max_tenor          int(11) NOT NULL,
+    ambang_batas_denda int(11) NOT NULL,
+    persentase_denda   double  NOT NULL,
+    primary key (id)
+);
+
+CREATE TABLE IF NOT EXISTS koperasi_pengaturan_pinjaman
+(
+    id            int(11)    NULL AUTO_INCREMENT,
+    id_koperasi   int(11)    NOT NULL,
+    id_pengaturan int(11)    NOT NULL,
+    status        tinyint(1) NOT NULL,
+    primary key (id),
+    foreign key (id_koperasi) references koperasi (id),
+    foreign key (id_pengaturan) references pengaturan_pinjaman (id)
+
+)

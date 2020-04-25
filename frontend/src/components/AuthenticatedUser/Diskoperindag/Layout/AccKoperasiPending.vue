@@ -11,7 +11,8 @@
         <q-tr :props="props">
           <q-td key="name" :props="props">
             {{ `${props.row.userDetail.firstName} ${props.row.userDetail.lastName}` }}
-          </q-td><q-td key="username" :props="props">
+          </q-td>
+          <q-td key="username" :props="props">
             {{ props.row.username }}
           </q-td>
           <q-td key="address" :props="props">
@@ -23,14 +24,17 @@
           <q-td key="aksi" :props="props">
             <div class="row">
               <div class="col">
-                <q-btn class="glossy" @click="terima(props.row.id)" round color="primary" icon="check" size="10px">
-                  <q-tooltip content-class="bg-accent">Terima</q-tooltip>
-                </q-btn>
+                <!--                <q-btn class="glossy" @click="terima(props.row.id)" round color="primary" icon="check" size="10px">-->
+                <!--                  <q-tooltip content-class="bg-accent">Terima</q-tooltip>-->
+                <!--                </q-btn>-->
               </div>
               <div class="col">
-                <q-btn class="glossy" @click="tolak(props.row.id)" round color="deep-orange" icon="close" size="10px">
-                  <q-tooltip content-class="bg-accent">Tolak</q-tooltip>
-                </q-btn>
+                <q-btn color="primary" label="view" @click="viewDetail(props.row.id)"/>
+              </div>
+              <div class="col">
+                <!--                <q-btn class="glossy" @click="tolak(props.row.id)" round color="deep-orange" icon="close" size="10px">-->
+                <!--                  <q-tooltip content-class="bg-accent">Tolak</q-tooltip>-->
+                <!--                </q-btn>-->
               </div>
             </div>
           </q-td>
@@ -49,99 +53,102 @@
 
 <script>
 
-export default {
-  data() {
-    return {
-      filter: '',
-      columns: [
-        {
-          name: 'name',
-          label: 'Nama Lengkap',
-          align: 'center',
-          field: 'name',
-          sortable: true,
-        },
-        {
-          name: 'username',
-          label: 'Username',
-          align: 'center',
-          field: 'username',
-          sortable: true,
-        },
-        {
-          name: 'address',
-          align: 'center',
-          label: 'Alamat',
-          field: 'address',
-          sortable: true,
-        },
-        {
-          name: 'email',
-          align: 'center',
-          label: 'Email',
-          field: 'email',
-          sortable: true,
-        },
-        {
-          name: 'aksi',
-          align: 'center',
-          label: 'Plihan',
-          field: 'aksi',
-        },
-      ],
-      data: [],
-    };
-  },
-  methods: {
-    getData() {
-      this.$q.loading.show();
-      this.$http.get('/api/getnonauthenticateduser', {
-        headers: this.$auth.getHeader(),
-      })
-        .then((res) => {
-          this.data = res.data;
-          this.$q.loading.hide();
+  export default {
+    data() {
+      return {
+        filter: '',
+        columns: [
+          {
+            name: 'name',
+            label: 'Nama Lengkap',
+            align: 'center',
+            field: 'name',
+            sortable: true,
+          },
+          {
+            name: 'username',
+            label: 'Username',
+            align: 'center',
+            field: 'username',
+            sortable: true,
+          },
+          {
+            name: 'address',
+            align: 'center',
+            label: 'Alamat',
+            field: 'address',
+            sortable: true,
+          },
+          {
+            name: 'email',
+            align: 'center',
+            label: 'Email',
+            field: 'email',
+            sortable: true,
+          },
+          {
+            name: 'aksi',
+            align: 'center',
+            label: 'Plihan',
+            field: 'aksi',
+          },
+        ],
+        data: [],
+      };
+    },
+    methods: {
+      viewDetail(id) {
+        this.$router.push(`/detail/${id}`);
+      },
+      getData() {
+        this.$q.loading.show();
+        this.$http.get('/api/getnonauthenticateduser', {
+          headers: this.$auth.getHeader(),
         })
-      .catch(() => {
-        this.$q.loading.hide();
-      });
-    },
-    terima(id) {
-      this.$q.loading.show();
-      this.$http.post('/api/terimaacc', { id }, {
-        headers: this.$auth.getHeader(),
-      })
-        .then(() => {
-          this.getData();
-          this.$q.loading.hide();
-          this.$swal({
-            position: 'center',
-            type: 'success',
-            title: 'Akun berhasil diterima',
-            showConfirmButton: false,
-            timer: 1500,
+          .then((res) => {
+            this.data = res.data;
+            this.$q.loading.hide();
+          })
+          .catch(() => {
+            this.$q.loading.hide();
           });
+      },
+      terima(id) {
+        this.$q.loading.show();
+        this.$http.post('/api/terimaacc', { id }, {
+          headers: this.$auth.getHeader(),
         })
-        .catch(() => {
-          this.getData();
-          this.$q.loading.hide();
-          this.$swal({
-            position: 'center',
-            type: 'error',
-            title: 'Telah terjadi Error silahkan refreh (F5)',
-            showConfirmButton: false,
-            timer: 1500,
+          .then(() => {
+            this.getData();
+            this.$q.loading.hide();
+            this.$swal({
+              position: 'center',
+              type: 'success',
+              title: 'Akun berhasil diterima',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          })
+          .catch(() => {
+            this.getData();
+            this.$q.loading.hide();
+            this.$swal({
+              position: 'center',
+              type: 'error',
+              title: 'Telah terjadi Error silahkan refreh (F5)',
+              showConfirmButton: false,
+              timer: 1500,
+            });
           });
-        });
+      },
+      tolak(id) {
+        console.log(id);
+      },
     },
-    tolak(id) {
-      console.log(id);
+    created() {
+      this.getData();
     },
-  },
-  created() {
-    this.getData();
-  },
-};
+  };
 </script>
 
 <style scoped>

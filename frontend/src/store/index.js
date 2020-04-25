@@ -25,7 +25,7 @@ export default function (Vue) {
       }
       if (Date.now() > parseInt(expiration)) {
         localStorage.clear();
-        window.location.href = '/';
+        this.$router.push('/');
         return null;
       }
       return token;

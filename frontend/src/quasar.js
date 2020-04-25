@@ -55,11 +55,21 @@ import {
   QPopupProxy,
   QDate,
   QUploader,
+  QTab,
+  QTabPanel,
+  QTabPanels,
+  QBadge,
+  QExpansionItem
 } from 'quasar';
 
 Vue.use(Quasar, {
   config: {},
   components: {
+    QExpansionItem,
+    QBadge,
+    QTab,
+    QTabPanel,
+    QTabPanels,
     QUploader,
     QDate,
     QPopupProxy,
