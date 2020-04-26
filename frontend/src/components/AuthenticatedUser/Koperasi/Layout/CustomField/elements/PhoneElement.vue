@@ -1,7 +1,7 @@
 <template>
   <div class="row q-col-gutter-sm q-form-phone q-form-builder-element">
     <div class="col-12 col-md-6 col-lg-3">
-      <q-input v-model="innerValue" type="tel" :label="getLabel" mask="(###) ### - ####" :debounce="debounce" :rules="getRules()" :ref="id">
+      <q-input v-model="innerValue" type="tel" :label="getLabel" mask="(###) ### - ####" unmasked-value :debounce="debounce" :rules="getRules()" :ref="id">
         <template v-slot:append>
           <q-icon name="phone" />
         </template>
