@@ -178,7 +178,7 @@
           })
       },
       onInput(val, id) {
-        console.debug(`${id}: ${JSON.stringify(val)}`)
+        // console.debug(`${id}: ${JSON.stringify(val)}`)
       },
       getElement(field) {
         const nameParts = field.field_type.split('_');

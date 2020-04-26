@@ -142,7 +142,6 @@
           });
       },
       tolak(id) {
-        console.log(id);
       },
     },
     created() {

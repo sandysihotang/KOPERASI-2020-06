@@ -1,9 +1,8 @@
 io\github\sandy\model\Permission.class
-io\github\sandy\repository\UserDetailRepository.class
 io\github\sandy\model\User.class
-io\github\sandy\service\UserDetailServiceImpl.class
 io\github\sandy\model\Role.class
-io\github\sandy\config\AuthorizationServerConfiguration.class
-io\github\sandy\Application.class
 io\github\sandy\model\AuthUserDetail.class
 io\github\sandy\config\WebSecurityConfiguration.class
+io\github\sandy\service\UserDetailServiceImpl.class
+io\github\sandy\config\AuthorizationServerConfiguration.class
+io\github\sandy\Application.class
