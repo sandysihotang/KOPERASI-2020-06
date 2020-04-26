@@ -1,11 +1,8 @@
 package io.github.sandy.controller;
 
 import io.github.sandy.ErrorCode.Err;
-import io.github.sandy.model.AnggotaKoperasi;
-import io.github.sandy.model.Koperasi;
-import io.github.sandy.repository.DaftarAnggotaKoperasiRepository;
-import io.github.sandy.repository.KoperasiRepository;
-import io.github.sandy.repository.UserRepository;
+import io.github.sandy.model.*;
+import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
 import io.github.sandy.service.KoperasiService;
 import io.github.sandy.service.UserDetailServiceImpl;
@@ -13,14 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class KoperasiController {
@@ -41,6 +40,15 @@ public class KoperasiController {
 
     @Autowired
     DaftarAnggotaKoperasiRepository daftarAnggotaKoperasiRepository;
+
+    @Autowired
+    AngotaKoperasiRepository angotaKoperasiRepository;
+
+    @Autowired
+    KoperasiPengaturanPinjamanRepository koperasiPengaturanPinjamanRepository;
+
+    @Autowired
+    PengaturanPinjamanRepository pengaturanPinjamanRepository;
 
     @RequestMapping(value = "/api/createkoperasi", method = RequestMethod.POST)
     @ResponseBody
@@ -85,7 +93,7 @@ public class KoperasiController {
     }
 
     @RequestMapping(value = "/api/getdatamember", method = RequestMethod.GET)
-    public List<AnggotaKoperasi> getData(HttpServletRequest request) {
+    public Set<AnggotaKoperasi> getData(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String user = principal.getName();
         Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(user).get().getKoperasi().getId());
@@ -109,8 +117,76 @@ public class KoperasiController {
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/api/getstatekoperasi", method = RequestMethod.GET)
+    public String getStateKoperasi(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        return koperasiRepository.findFirstByUser(user).getNamaKoperasi();
+    }
+
+    @RequestMapping(value = "/api/getnamekoperasi", method = RequestMethod.GET)
+    public String getNameKoperasi(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        AnggotaKoperasi anggotaKoperasi = angotaKoperasiRepository.findFirstByUser(user).get();
+        return anggotaKoperasi.getKoperasi().getNamaKoperasi();
+    }
+
+    @RequestMapping(value = "/api/getnameanggota", method = RequestMethod.GET)
+    public String getNameMember(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        User user = userRepository.findByUsername(principal.getName()).get();
+        return user.getUserDetail().getFirstName() + " " + user.getUserDetail().getLastName();
+    }
+
+    @RequestMapping(value = "/api/getpengaturanpinjaman", method = RequestMethod.GET)
+    public PengaturanPinjaman getPengaturanPeminjaman(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        User user = userRepository.findByUsername(principal.getName()).get();
+        Koperasi koperasi = koperasiRepository.findFirstByUser(user);
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(koperasi, true)) {
+            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(koperasi, true).get();
+            return pengaturanPinjamanRepository.findFirstById(koperasiPengaturanPinjaman.getPengaturanPinjaman().getId()).get();
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "/api/getpengaturanpinjamanreqpinjaman", method = RequestMethod.GET)
+    public PengaturanPinjaman getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        User user = userRepository.findByUsername(principal.getName()).get();
+        AnggotaKoperasi anggotaKoperasi = angotaKoperasiRepository.findFirstByUser(user).get();
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(anggotaKoperasi.getKoperasi(), true)) {
+            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(anggotaKoperasi.getKoperasi(), true).get();
+            return pengaturanPinjamanRepository.findFirstById(koperasiPengaturanPinjaman.getPengaturanPinjaman().getId()).get();
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "/api/savepengaturanpinjaman", method = RequestMethod.POST)
+    public void savePengaturanPeminjaman(HttpServletRequest request, @RequestBody Requestbody requestbody) {
+        Principal principal = request.getUserPrincipal();
+        User user = userRepository.findByUsername(principal.getName()).get();
+        Koperasi koperasi = koperasiRepository.findFirstByUser(user);
+        koperasiService.savePengaturanPeminjaman(koperasi, requestbody);
+    }
+
     @Bean
     public MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
 }
+
+//@Configuration
+//@EnableScheduling
+//@ConditionalOnProperty(name = "scheduling.enabled", matchIfMissing = true)
+//class Schedule {
+//    private static final Logger log = LoggerFactory.getLogger(Schedule.class);
+//    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+//    @Scheduled(fixedRate = 5000L)
+//    public void reportCurruntTime(){
+//        log.info("the time is now {}" + dateFormat.format(new Date()));
+//    }
+//}

@@ -22,6 +22,11 @@ public class Requestbody {
     private boolean state;
     private String formField;
     private String fieldData;
+    private Double bungaPinjaman;
+    private Integer minTenor;
+    private Integer maxTenor;
+    private Integer ambangBatasDenda;
+    private Double persentaseDenda;
 
     public String getFormField() {
         return formField;
@@ -29,6 +34,46 @@ public class Requestbody {
 
     public String getFieldData() {
         return fieldData;
+    }
+
+    public Double getBungaPinjaman() {
+        return bungaPinjaman;
+    }
+
+    public void setBungaPinjaman(Double bungaPinjaman) {
+        this.bungaPinjaman = bungaPinjaman;
+    }
+
+    public Integer getMinTenor() {
+        return minTenor;
+    }
+
+    public void setMinTenor(Integer minTenor) {
+        this.minTenor = minTenor;
+    }
+
+    public Integer getMaxTenor() {
+        return maxTenor;
+    }
+
+    public void setMaxTenor(Integer maxTenor) {
+        this.maxTenor = maxTenor;
+    }
+
+    public Integer getAmbangBatasDenda() {
+        return ambangBatasDenda;
+    }
+
+    public void setAmbangBatasDenda(Integer ambangBatasDenda) {
+        this.ambangBatasDenda = ambangBatasDenda;
+    }
+
+    public Double getPersentaseDenda() {
+        return persentaseDenda;
+    }
+
+    public void setPersentaseDenda(Double persentaseDenda) {
+        this.persentaseDenda = persentaseDenda;
     }
 
     public void setFieldData(String fieldData) {

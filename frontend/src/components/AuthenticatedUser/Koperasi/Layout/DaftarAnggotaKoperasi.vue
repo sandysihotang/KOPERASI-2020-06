@@ -150,7 +150,7 @@
       save() {
         this.$q.loading.show();
         for (let i = 0; i < this.fields.length; i++) {
-          if (this.fieldData[this.fields[i].cid].length === 0) {
+          if (this.fieldData[this.fields[i].cid] === undefined) {
             this.$q.loading.hide()
             this.showAlert('Lengkapi Data Koperasi', 'error')
             return
@@ -178,7 +178,7 @@
           })
       },
       onInput(val, id) {
-        console.debug(`${id}: ${JSON.stringify(val)}`)
+        // console.debug(`${id}: ${JSON.stringify(val)}`)
       },
       getElement(field) {
         const nameParts = field.field_type.split('_');

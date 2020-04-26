@@ -38,6 +38,12 @@ public class KoperasiService {
     @Autowired
     AngotaKoperasiRepository angotaKoperasiRepository;
 
+    @Autowired
+    KoperasiPengaturanPinjamanRepository koperasiPengaturanPinjamanRepository;
+
+    @Autowired
+    PengaturanPinjamanRepository pengaturanPinjamanRepository;
+
     public Err createKoperasi(Requestbody requestbody, String uname) {
         User user = userRepository.findByUsername(uname).get();
 
@@ -95,7 +101,7 @@ public class KoperasiService {
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
-        user.setEnabled(false);
+        user.setEnabled(true);
         user.setEmail(requestbody.getEmail());
         userRepository.save(user);
 
@@ -117,5 +123,27 @@ public class KoperasiService {
         anggotaKoperasi.setUser(user);
 
         angotaKoperasiRepository.save(anggotaKoperasi);
+    }
+
+    public void savePengaturanPeminjaman(Koperasi koperasi, Requestbody requestbody) {
+        PengaturanPinjaman pengaturanPinjaman = new PengaturanPinjaman();
+        pengaturanPinjaman.setBungaPinjaman(requestbody.getBungaPinjaman()/100);
+        pengaturanPinjaman.setAmbangBatasDenda(requestbody.getAmbangBatasDenda());
+        pengaturanPinjaman.setMaxTenor(requestbody.getMaxTenor());
+        pengaturanPinjaman.setMinTenor(requestbody.getMinTenor());
+        pengaturanPinjaman.setPersentaseDenda(requestbody.getPersentaseDenda()/100);
+
+        pengaturanPinjamanRepository.save(pengaturanPinjaman);
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(koperasi, true)) {
+            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(koperasi, true).get();
+            KoperasiPengaturanPinjaman update = koperasiPengaturanPinjamanRepository.getOne(koperasiPengaturanPinjaman.getId());
+            update.setStatus(false);
+            koperasiPengaturanPinjamanRepository.save(update);
+        }
+        KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = new KoperasiPengaturanPinjaman();
+        koperasiPengaturanPinjaman.setStatus(true);
+        koperasiPengaturanPinjaman.setKoperasi(koperasi);
+        koperasiPengaturanPinjaman.setPengaturanPinjaman(pengaturanPinjaman);
+        koperasiPengaturanPinjamanRepository.save(koperasiPengaturanPinjaman);
     }
 }
