@@ -69,28 +69,32 @@
           <q-item>
             <q-item-section>Angsuran Pokok</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>Rp.1213</q-item-section>
-          </q-item><q-item>
-          <q-item-section>Bunga(%)</q-item-section>
-          <q-item-section>:</q-item-section>
-          <q-item-section>Rp.1213</q-item-section>
-        </q-item><q-item>
-          <q-item-section>Bunga Angsuran</q-item-section>
-          <q-item-section>:</q-item-section>
-          <q-item-section>Rp.1213</q-item-section>
-        </q-item><q-item>
-          <q-item-section>Total Angsuran</q-item-section>
-          <q-item-section>:</q-item-section>
-          <q-item-section>Rp.1213</q-item-section>
-        </q-item><q-item>
-          <q-item-section>Total Bunga/Jasa</q-item-section>
-          <q-item-section>:</q-item-section>
-          <q-item-section>Rp.1213</q-item-section>
-        </q-item>
+            <q-item-section>Rp.{{ price/100 / tenor}}</q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>Bunga(%)</q-item-section>
+            <q-item-section>:</q-item-section>
+            <q-item-section>{{persentase}} %</q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>Bunga Angsuran</q-item-section>
+            <q-item-section>:</q-item-section>
+            <q-item-section>Rp.{{ price/100 * persentase / 100 }}</q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>Total Angsuran</q-item-section>
+            <q-item-section>:</q-item-section>
+            <q-item-section>Rp.{{ (price/100 / tenor) + (price/100 * persentase / 100) }}</q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>Total Bunga/Jasa</q-item-section>
+            <q-item-section>:</q-item-section>
+            <q-item-section>Rp.Rp.{{ price / 100 * persentase / 100 * tenor }}</q-item-section>
+          </q-item>
           <q-item>
             <q-item-section>Total Pinjaman</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>Rp.1213</q-item-section>
+            <q-item-section>Rp.{{ (price/100) + (price/100 * persentase / 100 * tenor) }}</q-item-section>
           </q-item>
         </q-list>
       </q-card>
@@ -106,13 +110,37 @@
         showPeminjaman: false,
         price: null,
         tenor: null,
-        showHandle: false
+        showHandle: false,
+        persentase: null
       }
     },
     methods: {
       handle(s) {
         this.showHandle = s.length !== 0
+      },
+      getSettings() {
+        this.$q.loading.show();
+        this.$http.get('/api/getpengaturanpinjamanreqpinjaman', {
+          headers: this.$auth.getHeader(),
+        })
+          .then((res) => {
+            this.persentase = res.data.bungaPinjaman
+            this.$q.loading.hide()
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+            this.$swal({
+              position: 'center',
+              type: 'error',
+              title: 'Terjadi Kesalhan, refresh (F5)',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          })
       }
+    },
+    created() {
+      this.getSettings()
     }
   }
 </script>

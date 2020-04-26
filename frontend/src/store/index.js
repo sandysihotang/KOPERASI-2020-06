@@ -1,3 +1,5 @@
+import router from '../router';
+
 export default function (Vue) {
   let data = {};
   Vue.auth = {
@@ -25,7 +27,7 @@ export default function (Vue) {
       }
       if (Date.now() > parseInt(expiration)) {
         localStorage.clear();
-        this.$router.push('/');
+        router.push('/');
         return null;
       }
       return token;

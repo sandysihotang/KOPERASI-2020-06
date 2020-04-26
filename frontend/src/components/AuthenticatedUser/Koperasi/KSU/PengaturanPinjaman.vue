@@ -116,16 +116,43 @@
     },
     methods: {
       save() {
-        this.$q.loading.show();
-        this.$http.post('/api/savepengaturanpinjaman', this.form, {
-          headers: this.$auth.getHeader(),
+        this.$swal.fire({
+          title: 'Anda yakin?',
+          text: 'Ingin menyimpan Pengaturan ini?',
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Ya, Simpan!',
         })
-          .then((res) => {
-            this.$q.loading.hide()
-          })
-          .catch(() => {
-            this.$q.loading.hide()
-          })
+          .then((result) => {
+            if (result.value) {
+              this.$q.loading.show();
+              this.$http.post('/api/savepengaturanpinjaman', this.form, {
+                headers: this.$auth.getHeader(),
+              })
+                .then((res) => {
+                  this.$q.loading.hide()
+                  this.$swal({
+                    position: 'center',
+                    type: 'success',
+                    title: 'Berhasil menyimpan pengaturan',
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+                })
+                .catch(() => {
+                  this.$q.loading.hide()
+                  this.$swal({
+                    position: 'center',
+                    type: 'error',
+                    title: 'Gagal menyimpan, refresh (F5)',
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+                })
+            }
+          });
       },
       getData() {
         this.$q.loading.show();

@@ -32,10 +32,10 @@
             label="Pengaturan">
             <q-list padding>
               <q-item clickable v-ripple :to="'/pengaturanpendaftarananggota'">
-                <q-item-section>Pengaturan Form Pendaftaran Anggota</q-item-section>
+                <q-item-section>Form Pendaftaran Anggota</q-item-section>
               </q-item>
               <q-item clickable v-ripple :to="'/pengaturanpinjaman'">
-                <q-item-section>Pengaturan Pinjaman</q-item-section>
+                <q-item-section>Pinjaman</q-item-section>
               </q-item>
             </q-list>
           </q-expansion-item>

@@ -6,17 +6,10 @@ import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
 import io.github.sandy.service.KoperasiService;
 import io.github.sandy.service.UserDetailServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
@@ -155,6 +148,18 @@ public class KoperasiController {
         Koperasi koperasi = koperasiRepository.findFirstByUser(user);
         if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(koperasi, true)) {
             KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(koperasi, true).get();
+            return pengaturanPinjamanRepository.findFirstById(koperasiPengaturanPinjaman.getPengaturanPinjaman().getId()).get();
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "/api/getpengaturanpinjamanreqpinjaman", method = RequestMethod.GET)
+    public PengaturanPinjaman getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        User user = userRepository.findByUsername(principal.getName()).get();
+        AnggotaKoperasi anggotaKoperasi = angotaKoperasiRepository.findFirstByUser(user).get();
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(anggotaKoperasi.getKoperasi(), true)) {
+            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(anggotaKoperasi.getKoperasi(), true).get();
             return pengaturanPinjamanRepository.findFirstById(koperasiPengaturanPinjaman.getPengaturanPinjaman().getId()).get();
         }
         return null;
