@@ -43,7 +43,7 @@
               filled
               v-model="price"
               label="Total pinjaman"
-              mask="Rp #.##"
+              mask="Rp #,###,###,###.##"
               fill-mask="0"
               reverse-fill-mask
               unmasked-value
@@ -69,7 +69,7 @@
           <q-item>
             <q-item-section>Angsuran Pokok</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>Rp.{{ price/100 / tenor}}</q-item-section>
+            <q-item-section>{{ toIDR((price / 100) / tenor)}}</q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Bunga(%)</q-item-section>
@@ -79,23 +79,26 @@
           <q-item>
             <q-item-section>Bunga Angsuran</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>Rp.{{ price/100 * persentase / 100 }}</q-item-section>
+            <q-item-section>{{ toIDR((price/100) * persentase / 100) }}</q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Angsuran</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>Rp.{{ (price/100 / tenor) + (price/100 * persentase / 100) }}</q-item-section>
+            <q-item-section>{{ toIDR(((price/100) / tenor) + ((price/100) * persentase / 100)) }}
+            </q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Bunga/Jasa</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>Rp.Rp.{{ price / 100 * persentase / 100 * tenor }}</q-item-section>
+            <q-item-section>{{ toIDR((price / 100) * persentase / 100 * tenor) }}</q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Pinjaman</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>Rp.{{ (price/100) + (price/100 * persentase / 100 * tenor) }}</q-item-section>
+            <q-item-section>{{ toIDR((price/100) + ((price/100) * persentase / 100 * tenor)) }}
+            </q-item-section>
           </q-item>
+          <q-btn color="primary" class="full-width" @click="ajukanPinjaman">Ajukan Pinjaman</q-btn>
         </q-list>
       </q-card>
     </div>
@@ -106,6 +109,7 @@
   export default {
     data() {
       return {
+        id: null,
         tab: 'mails',
         showPeminjaman: false,
         price: null,
@@ -117,6 +121,8 @@
     methods: {
       handle(s) {
         this.showHandle = s.length !== 0
+      },
+      ajukanPinjaman() {
       },
       getSettings() {
         this.$q.loading.show();
@@ -137,6 +143,25 @@
               timer: 1500,
             });
           })
+      },
+      toIDR(num) {
+        const nums = `${num}`
+        let ans = ''
+        let coma = 0
+        for (let i = nums.length - 1; i >= 0; i--) {
+          ans = `${ans}${nums[i]}`
+          if (coma === 2 && i !== 0) {
+            ans = `${ans},`
+            coma = 0;
+          } else {
+            coma++;
+          }
+        }
+        let res = 'Rp '
+        for (let i = ans.length - 1; i >= 0; i--) {
+          res = `${res}${ans[i]}`
+        }
+        return res;
       }
     },
     created() {

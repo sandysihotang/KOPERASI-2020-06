@@ -59,12 +59,14 @@ import {
   QTabPanel,
   QTabPanels,
   QBadge,
-  QExpansionItem
+  QExpansionItem,
+  QField
 } from 'quasar';
 
 Vue.use(Quasar, {
   config: {},
   components: {
+    QField,
     QExpansionItem,
     QBadge,
     QTab,
