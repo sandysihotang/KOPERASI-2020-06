@@ -171,6 +171,8 @@ router.beforeEach(
           next({
             path: '/dashboardanggotakoperasi',
           });
+        } else {
+          next();
         }
       } else {
         next();

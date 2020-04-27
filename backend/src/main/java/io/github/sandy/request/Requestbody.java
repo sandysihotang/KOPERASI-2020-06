@@ -27,6 +27,24 @@ public class Requestbody {
     private Integer maxTenor;
     private Integer ambangBatasDenda;
     private Double persentaseDenda;
+    private String jaminan;
+    private Integer price;
+
+    public String getJaminan() {
+        return jaminan;
+    }
+
+    public void setJaminan(String jaminan) {
+        this.jaminan = jaminan;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
 
     public String getFormField() {
         return formField;
