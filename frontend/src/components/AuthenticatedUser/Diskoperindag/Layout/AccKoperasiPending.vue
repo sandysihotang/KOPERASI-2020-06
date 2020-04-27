@@ -24,17 +24,15 @@
           <q-td key="aksi" :props="props">
             <div class="row">
               <div class="col">
-                <!--                <q-btn class="glossy" @click="terima(props.row.id)" round color="primary" icon="check" size="10px">-->
-                <!--                  <q-tooltip content-class="bg-accent">Terima</q-tooltip>-->
-                <!--                </q-btn>-->
+                                <q-btn class="glossy" @click="terima(props.row.id)" round color="primary" icon="check" size="10px">
+                                  <q-tooltip content-class="bg-accent">Terima</q-tooltip>
+                                </q-btn>
               </div>
               <div class="col">
-                <q-btn color="primary" label="view" @click="viewDetail(props.row.id)"/>
-              </div>
-              <div class="col">
-                <!--                <q-btn class="glossy" @click="tolak(props.row.id)" round color="deep-orange" icon="close" size="10px">-->
-                <!--                  <q-tooltip content-class="bg-accent">Tolak</q-tooltip>-->
-                <!--                </q-btn>-->
+                <q-btn class="glossy" @click="tolak(props.row.id)" round color="deep-orange"
+                       icon="close" size="10px">
+                  <q-tooltip content-class="bg-accent">Tolak</q-tooltip>
+                </q-btn>
               </div>
             </div>
           </q-td>
@@ -97,9 +95,6 @@
       };
     },
     methods: {
-      viewDetail(id) {
-        this.$router.push(`/detail/${id}`);
-      },
       getData() {
         this.$q.loading.show();
         this.$http.get('/api/getnonauthenticateduser', {

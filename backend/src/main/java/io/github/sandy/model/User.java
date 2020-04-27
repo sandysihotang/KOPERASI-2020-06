@@ -2,12 +2,17 @@ package io.github.sandy.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonBackReference;
-import org.codehaus.jackson.annotate.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -47,6 +52,12 @@ public class User implements Serializable {
     @Column(name = "haveKoperasi")
     private int haveKoperasi;
 
+    @JsonManagedReference
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<Pinjaman> pinjaman = new HashSet<>();
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_user", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
@@ -71,6 +82,15 @@ public class User implements Serializable {
 
     public void setHaveKoperasi(int haveKoperasi) {
         this.haveKoperasi = haveKoperasi;
+    }
+
+
+    public Set<Pinjaman> getPinjaman() {
+        return pinjaman;
+    }
+
+    public void setPinjaman(Set<Pinjaman> pinjaman) {
+        this.pinjaman = pinjaman;
     }
 
     public User(User user) {

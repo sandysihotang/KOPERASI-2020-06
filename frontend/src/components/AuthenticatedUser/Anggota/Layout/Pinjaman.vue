@@ -51,6 +51,12 @@
             />
             <q-input
               filled
+              v-model="jaminan"
+              label="Jaminan"
+              input-class="text-right"
+            />
+            <q-input
+              filled
               v-model="tenor"
               label="Tenor (Bulan)"
               mask="## Bln"
@@ -115,7 +121,8 @@
         price: null,
         tenor: null,
         showHandle: false,
-        persentase: null
+        persentase: null,
+        jaminan: null
       }
     },
     methods: {
@@ -123,6 +130,30 @@
         this.showHandle = s.length !== 0
       },
       ajukanPinjaman() {
+        if (parseInt(this.price) === 0 && parseInt(this.tenor) && this.jaminan.length === 0) {
+          this.$swal({
+            position: 'center',
+            type: 'error',
+            title: 'Silahkan isi semua field Peminjaman!',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          return
+        }
+        this.$q.loading.show()
+        this.$http.post('/api/requestpeminjaman', {
+          id: this.id,
+          jaminan: this.jaminan,
+          price: this.price
+        }, {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.$q.loading.hide()
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
       },
       getSettings() {
         this.$q.loading.show();
@@ -131,6 +162,7 @@
         })
           .then((res) => {
             this.persentase = res.data.bungaPinjaman
+            this.id = res.data.id
             this.$q.loading.hide()
           })
           .catch(() => {

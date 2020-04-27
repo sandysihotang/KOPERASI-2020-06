@@ -8,6 +8,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,6 +40,12 @@ public class PengaturanPinjaman implements Serializable {
     @OneToMany(mappedBy = "pengaturanPinjaman", fetch = FetchType.EAGER)
     private Set<KoperasiPengaturanPinjaman> koperasiPengaturanPinjaman;
 
+    @JsonManagedReference
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "pengaturanPinjaman", fetch = FetchType.EAGER)
+    private Set<Pinjaman> pinjaman = new HashSet<>();
+
     public PengaturanPinjaman() {
     }
 
@@ -60,6 +67,14 @@ public class PengaturanPinjaman implements Serializable {
 
     public void setKoperasiPengaturanPinjaman(Set<KoperasiPengaturanPinjaman> koperasiPengaturanPinjaman) {
         this.koperasiPengaturanPinjaman = koperasiPengaturanPinjaman;
+    }
+
+    public Set<Pinjaman> getPinjaman() {
+        return pinjaman;
+    }
+
+    public void setPinjaman(Set<Pinjaman> pinjaman) {
+        this.pinjaman = pinjaman;
     }
 
     public void setBungaPinjaman(Double bungaPinjaman) {
