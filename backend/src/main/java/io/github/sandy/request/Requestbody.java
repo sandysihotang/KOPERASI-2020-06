@@ -29,6 +29,7 @@ public class Requestbody {
     private Double persentaseDenda;
     private String jaminan;
     private Integer price;
+    private Integer tenor;
 
     public String getJaminan() {
         return jaminan;
@@ -56,6 +57,14 @@ public class Requestbody {
 
     public Double getBungaPinjaman() {
         return bungaPinjaman;
+    }
+
+    public Integer getTenor() {
+        return tenor;
+    }
+
+    public void setTenor(Integer tenor) {
+        this.tenor = tenor;
     }
 
     public void setBungaPinjaman(Double bungaPinjaman) {

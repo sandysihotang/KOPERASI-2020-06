@@ -189,12 +189,16 @@ CREATE TABLE IF NOT EXISTS peminjaman
     id                     int(11)      NOT NULL AUTO_INCREMENT,
     jumlah_pinjaman        double       NOT NULL,
     jaminan                varchar(191) NOT NULL,
+    kode_pinjaman          VARCHAR(191) NOT NULL,
     id_user                int(11)      NOT NULL,
+    id_koperasi            int(11)      NOT NULL,
     id_pengaturan_pinjaman int(11)      NOT NULL,
     status                 int(11)      NOT NULL,
+    tenor                  int(11)      NOT NULL,
     created_at             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at             DATETIME  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (id_user) REFERENCES user (id),
-    FOREIGN KEY (id_pengaturan_pinjaman) REFERENCES pengaturan_pinjaman (id)
+    FOREIGN KEY (id_pengaturan_pinjaman) REFERENCES pengaturan_pinjaman (id),
+    FOREIGN KEY (id_koperasi) REFERENCES koperasi(id)
 );

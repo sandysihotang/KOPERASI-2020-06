@@ -23,15 +23,15 @@ public class User implements Serializable {
     private Integer id;
 
     @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
-    @OneToOne(mappedBy = "user", fetch =FetchType.LAZY)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private UserDetail userDetail;
 
     @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
-    @OneToOne(mappedBy = "user", fetch =FetchType.LAZY)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Koperasi koperasi;
 
     @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
-    @OneToOne(mappedBy = "user", fetch =FetchType.LAZY)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private AnggotaKoperasi anggotaKoperasi;
 
     @Column(name = "username")
@@ -52,7 +52,8 @@ public class User implements Serializable {
     @Column(name = "haveKoperasi")
     private int haveKoperasi;
 
-    @JsonManagedReference
+    //    @JsonManagedReference
+    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
     @Fetch(FetchMode.JOIN)
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
@@ -102,7 +103,7 @@ public class User implements Serializable {
         this.credentialsNonExpired = user.isCredentialsNonExpired();
         this.accountNonLocked = user.isAccountNonLocked();
         this.roles = user.getRoles();
-        this.userDetail= user.getUserDetail();
+        this.userDetail = user.getUserDetail();
         this.haveKoperasi = user.getHaveKoperasi();
     }
 

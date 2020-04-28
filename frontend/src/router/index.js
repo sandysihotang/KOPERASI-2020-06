@@ -68,6 +68,13 @@ const routes = [
         meta: {
           roolTo: true,
         },
+      },
+      {
+        path: '/pengajuanpinjaman',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/PengajuanPinjaman.vue'),
+        meta: {
+          roolTo: true,
+        },
       }
     ],
   },

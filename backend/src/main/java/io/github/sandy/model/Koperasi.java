@@ -57,6 +57,12 @@ public class Koperasi implements Serializable {
     @Fetch(FetchMode.JOIN)
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "koperasi")
+    private Set<Pinjaman> pinjaman = new HashSet<>();
+
+    @JsonManagedReference
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
     private Set<KoperasiPengaturanPinjaman> koperasiPengaturanPinjaman = new HashSet<>();
 
     @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
@@ -77,6 +83,14 @@ public class Koperasi implements Serializable {
 
     public void setAnggotaKoperasis(Set<AnggotaKoperasi> anggotaKoperasis) {
         this.anggotaKoperasis = anggotaKoperasis;
+    }
+
+    public Set<Pinjaman> getPinjaman() {
+        return pinjaman;
+    }
+
+    public void setPinjaman(Set<Pinjaman> pinjaman) {
+        this.pinjaman = pinjaman;
     }
 
     public Set<KoperasiPengaturanPinjaman> getKoperasiPengaturanPinjaman() {

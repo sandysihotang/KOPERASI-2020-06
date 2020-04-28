@@ -1,5 +1,6 @@
 package io.github.sandy.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -40,7 +41,7 @@ public class PengaturanPinjaman implements Serializable {
     @OneToMany(mappedBy = "pengaturanPinjaman", fetch = FetchType.EAGER)
     private Set<KoperasiPengaturanPinjaman> koperasiPengaturanPinjaman;
 
-    @JsonManagedReference
+    @JsonIgnoreProperties({"pengaturan_pinjaman", "hibernateLazyInitializer", "handler"})
     @Fetch(FetchMode.JOIN)
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "pengaturanPinjaman", fetch = FetchType.EAGER)

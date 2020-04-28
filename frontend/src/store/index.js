@@ -27,7 +27,7 @@ export default function (Vue) {
       }
       if (Date.now() > parseInt(expiration)) {
         localStorage.clear();
-        router.push('/');
+        window.location.href = '/';
         return null;
       }
       return token;

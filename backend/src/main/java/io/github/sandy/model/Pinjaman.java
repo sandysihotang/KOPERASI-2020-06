@@ -1,6 +1,7 @@
 package io.github.sandy.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -21,18 +22,31 @@ public class Pinjaman implements Serializable {
     @Column(name = "jaminan")
     private String jaminan;
 
-    @JsonBackReference
+    //    @JsonBackReference
+    @JsonIgnoreProperties({"pinjaman", "hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
 
-    @JsonBackReference
+    //    @JsonBackReference
+    @JsonIgnoreProperties({"pinjaman", "hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_pengaturan_pinjaman", nullable = false)
     private PengaturanPinjaman pengaturanPinjaman;
 
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_koperasi", nullable = false)
+    private Koperasi koperasi;
+
     @Column(name = "status")
     private Integer status;
+
+    @Column(name = "kode_pinjaman")
+    private String kodePinjaman;
+
+    @Column(name = "tenor")
+    private Integer tenor;
 
     @CreatedDate
     @Column(name = "created_at")
@@ -49,12 +63,36 @@ public class Pinjaman implements Serializable {
         return createdAt;
     }
 
+    public String getKodePinjaman() {
+        return kodePinjaman;
+    }
+
+    public Koperasi getKoperasi() {
+        return koperasi;
+    }
+
+    public void setKoperasi(Koperasi koperasi) {
+        this.koperasi = koperasi;
+    }
+
+    public void setKodePinjaman(String kodePinjaman) {
+        this.kodePinjaman = kodePinjaman;
+    }
+
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
     public Date getUpdatedAt() {
         return updatedAt;
+    }
+
+    public Integer getTenor() {
+        return tenor;
+    }
+
+    public void setTenor(Integer tenor) {
+        this.tenor = tenor;
     }
 
     public void setUpdatedAt(Date updatedAt) {
