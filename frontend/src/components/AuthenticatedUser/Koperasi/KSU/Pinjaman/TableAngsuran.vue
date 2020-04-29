@@ -10,91 +10,97 @@
           row-key="name"
         />
       </q-card-section>
-    </q-card>
-    <q-card class="full-width">
       <q-card-section>
-        <q-input
-          filled
-          v-model="price"
-          label="Total pinjaman"
-          mask="Rp #,###,###,###.##"
-          fill-mask="0"
-          reverse-fill-mask
-          unmasked-value
-          input-class="text-right"
-        />
-        <q-input
-          filled
-          v-model="tenor"
-          label="Tenor (Bulan)"
-          mask="## Bln"
-          fill-mask="0"
-          reverse-fill-mask
-          unmasked-value
-          input-class="text-right"
-        />
-        <q-select
-          filled
-          v-model="model"
-          :options="options"
-          stack-label
-        />
-      </q-card-section>
-      <q-card-section>
-        <q-list bordered separator>
-          <q-item>
-            <q-item-section>Angsuran Pokok</q-item-section>
-            <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price / 100) / tenor)}}</q-item-section>
-          </q-item>
-          <q-item>
-            <q-item-section>Bunga(%)</q-item-section>
-            <q-item-section>:</q-item-section>
-            <q-item-section>{{persentase}} %</q-item-section>
-          </q-item>
-          <q-item>
-            <q-item-section>Bunga Angsuran</q-item-section>
-            <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price/100) * persentase / 100) }}</q-item-section>
-          </q-item>
-          <q-item>
-            <q-item-section>Total Angsuran</q-item-section>
-            <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR(((price/100) / tenor) + ((price/100) * persentase / 100)) }}
-            </q-item-section>
-          </q-item>
-          <q-item>
-            <q-item-section>Total Bunga/Jasa</q-item-section>
-            <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price / 100) * persentase / 100 * tenor) }}</q-item-section>
-          </q-item>
-          <q-item>
-            <q-item-section>Total Pinjaman</q-item-section>
-            <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price/100) + ((price/100) * persentase / 100 * tenor)) }}
-            </q-item-section>
-          </q-item>
-        </q-list>
+        <q-table
+          :dense="$q.screen.lt.md"
+          :data="dataAjuan"
+          :columns="columnsAjuan"
+          row-key="name"/>
       </q-card-section>
     </q-card>
   </div>
 </template>
 
 <script>
+  import moment from 'moment'
+
   export default {
     props: ['user'],
     data() {
       return {
         columns: [],
         data: [],
-        price: null,
-        tenor: null,
-        persentase: null,
-        model: '',
-        options: [
-          'Cancel', 'Approved', 'Rejected', 'On Reviewed', 'Awaiting Approval',
+        dataAjuan: [],
+        columnsAjuan: [
+          {
+            name: 'termin',
+            label: 'Termin Ke #',
+            align: 'center',
+            field: row => row.urutanKe,
+            sortable: true,
+          },
+          {
+            name: 'status',
+            label: 'Status',
+            align: 'center',
+            field: row => (row.status ? 'Paid' : 'Unpaid'),
+            sortable: true,
+          },
+          {
+            name: 'angsuranPokok',
+            label: 'Angsuran Pokok',
+            align: 'center',
+            field: row => this.toIDR(row.angsuranPokok),
+            sortable: true,
+          },
+          {
+            name: 'bunga',
+            label: 'Bunga',
+            align: 'center',
+            field: row => this.toIDR(row.bunga),
+            sortable: true,
+          },
+          {
+            name: 'totalAngsuran',
+            label: 'Total Angsuran',
+            align: 'center',
+            field: row => this.toIDR(row.totalAngsuran),
+            sortable: true,
+          },
+          {
+            name: 'tglJatuhTempo',
+            label: 'Tanggal Jatuh Tempo',
+            align: 'center',
+            field: (row) => {
+              moment.lang('id')
+              return moment(row.tanggalJatuhTempo)
+                .format('dddd, Do MMMM YYYY')
+            },
+            sortable: true,
+          },
+          {
+            name: 'denda',
+            label: 'Denda',
+            align: 'center',
+            field: row => this.toIDR(row.denda === null ? 0 : row.denda),
+            sortable: true,
+          },
+          {
+            name: 'totalTagihan',
+            label: 'Total Tagihan',
+            align: 'center',
+            field: row => this.toIDR(row.totalTagihan === null ? 0 : row.totalTagihan),
+            sortable: true,
+          },
+          {
+            name: 'totalBayar',
+            label: 'Total Bayar',
+            align: 'center',
+            field: row => this.toIDR(row.totalBayar === null ? 0 : row.totalBayar),
+            sortable: true,
+          }
         ]
-      };
+      }
     },
     methods: {
       toIDR(num) {
@@ -115,11 +121,6 @@
           res = `${res}${ans[i]}`
         }
         return res;
-      },
-      reload() {
-        this.price = this.user.jumlahPinjaman * 100
-        this.tenor = this.user.tenor
-        this.persentase = this.user.pengaturanPinjaman.bungaPinjaman
       },
       loadColumn() {
         this.$q.loading.show()
@@ -144,27 +145,6 @@
           .catch((err) => {
             this.$q.loading.hide();
           });
-      },
-      call() {
-        this.$q.loading.show()
-        const status = new Map();
-        status.set('Awaiting Approval', 5)
-        status.set('On Reviewed', 4)
-        status.set('Rejected', 3)
-        status.set('Approved', 2)
-        status.set('Cancel', 1)
-        this.$http.put(`/api/savepinjamanfrompengurus/${this.user.id}`, {
-          price: this.price,
-          tenor: this.tenor,
-          status: status.get(this.model)
-        }, {
-          headers: this.$auth.getHeader()
-        })
-          .then((res) => {
-          })
-          .catch(() => {
-            this.$q.loading.hide()
-          })
       },
       loadData() {
         this.$http.get(`/api/getdatamember/${this.user.id}`, {
@@ -202,16 +182,26 @@
               const ll = JSON.parse(str)
               this.data.push(ll)
             }
-            this.$q.loading.hide();
+            this.loaddataAjuan()
           })
           .catch(() => {
             this.$q.loading.hide();
           })
       },
+      loaddataAjuan() {
+        this.$http.get(`/api/getdataajuan/${this.user.id}`, {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.dataAjuan = res.data
+            this.$q.loading.hide()
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
+      }
     },
     created() {
-      this.reload()
-      this.model = this.options[this.user.status - 1];
       this.loadColumn()
     }
   }

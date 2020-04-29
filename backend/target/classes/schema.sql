@@ -186,19 +186,38 @@ CREATE TABLE IF NOT EXISTS koperasi_pengaturan_pinjaman
 );
 CREATE TABLE IF NOT EXISTS peminjaman
 (
-    id                     int(11)      NOT NULL AUTO_INCREMENT,
-    jumlah_pinjaman        double       NOT NULL,
-    jaminan                varchar(191) NOT NULL,
-    kode_pinjaman          VARCHAR(191) NOT NULL,
-    id_user                int(11)      NOT NULL,
-    id_koperasi            int(11)      NOT NULL,
-    id_pengaturan_pinjaman int(11)      NOT NULL,
-    status                 int(11)      NOT NULL,
-    tenor                  int(11)      NOT NULL,
-    created_at             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at             DATETIME  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id                      int(11)      NOT NULL AUTO_INCREMENT,
+    jumlah_pinjaman         double       NOT NULL,
+    jaminan                 varchar(191) NOT NULL,
+    kode_pinjaman           VARCHAR(191) NOT NULL,
+    id_user                 int(11)      NOT NULL,
+    id_koperasi             int(11)      NOT NULL,
+    id_pengaturan_pinjaman  int(11)      NOT NULL,
+    status                  int(11)      NOT NULL,
+    date_pengajuan_diterima DATE         NULL,
+    tenor                   int(11)      NOT NULL,
+    created_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at              DATETIME  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (id_user) REFERENCES user (id),
     FOREIGN KEY (id_pengaturan_pinjaman) REFERENCES pengaturan_pinjaman (id),
-    FOREIGN KEY (id_koperasi) REFERENCES koperasi(id)
+    FOREIGN KEY (id_koperasi) REFERENCES koperasi (id)
 );
+
+CREATE TABLE IF NOT EXISTS angsuran
+(
+    id                  int(11)    NOT NULL AUTO_INCREMENT,
+    id_pinjaman         int(11)    NOT NULL,
+    angsuran_pokok      double     NOT NULL,
+    bunga               double     NOT NULL,
+    status_bayar        tinyint(1) NOT NULL,
+    tanggal_bayar       date       NULL,
+    tanggal_jatuh_tempo date       NOT NULL,
+    denda               double     NULL,
+    total_bayar         double     NULL,
+    total_angsuran      double     NOT NULL,
+    total_tagihan       double     NOT NULL,
+    urutan_ke           int(11)    NOT NULL,
+    primary key (id),
+    foreign key (id_pinjaman) REFERENCES peminjaman (id)
+)

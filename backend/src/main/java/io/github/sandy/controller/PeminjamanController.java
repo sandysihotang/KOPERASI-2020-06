@@ -1,8 +1,10 @@
 package io.github.sandy.controller;
 
 import io.github.sandy.ErrorCode.Err;
+import io.github.sandy.model.Angsuran;
 import io.github.sandy.model.Pinjaman;
 import io.github.sandy.model.User;
+import io.github.sandy.repository.AngsuranRepository;
 import io.github.sandy.repository.PinjamanRepository;
 import io.github.sandy.repository.UserRepository;
 import io.github.sandy.request.Requestbody;
@@ -27,6 +29,9 @@ public class PeminjamanController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    AngsuranRepository angsuranRepository;
 
     @RequestMapping(value = "/api/requestpeminjaman", method = RequestMethod.POST)
     @ResponseBody
@@ -56,5 +61,16 @@ public class PeminjamanController {
         Principal principal = request.getUserPrincipal();
         User user = userRepository.findByUsername(principal.getName()).get();
         return pinjamanRepository.getAllByKoperasi(user.getKoperasi());
+    }
+
+    @RequestMapping(value = "/api/savepinjamanfrompengurus/{id}", method = RequestMethod.PUT)
+    public void getData(@RequestBody Requestbody requestbody, @PathVariable("id") int id) {
+        peminjamanService.actionfromPengurus(requestbody, id);
+    }
+
+    @RequestMapping(value = "/api/getdataajuan/{id}", method = RequestMethod.GET)
+    public List<Angsuran> getData(@PathVariable("id") int id) {
+        Pinjaman pinjaman = pinjamanRepository.getFirstById(id);
+        return angsuranRepository.getAllByPinjaman(pinjaman);
     }
 }

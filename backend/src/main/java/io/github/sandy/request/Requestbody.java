@@ -20,6 +20,7 @@ public class Requestbody {
     private String jenis;
     private MultipartFile image;
     private boolean state;
+    private int status;
     private String formField;
     private String fieldData;
     private Double bungaPinjaman;
@@ -57,6 +58,14 @@ public class Requestbody {
 
     public Double getBungaPinjaman() {
         return bungaPinjaman;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public Integer getTenor() {

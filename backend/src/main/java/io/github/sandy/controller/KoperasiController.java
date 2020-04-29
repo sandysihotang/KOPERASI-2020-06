@@ -94,6 +94,7 @@ public class KoperasiController {
         String pattern = daftarAnggotaKoperasiRepository.findByKoperasiId(koperasi.getId()).get().getPatternField();
         return pattern;
     }
+
     @RequestMapping(value = "/api/getcolumnmember/{id}", method = RequestMethod.GET)
     public String getColumnPersetujuan(@PathVariable("id") int id) {
         Pinjaman pinjaman = pinjamanRepository.getFirstById(id);

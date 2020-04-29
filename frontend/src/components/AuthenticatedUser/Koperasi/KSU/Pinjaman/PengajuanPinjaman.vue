@@ -38,9 +38,18 @@
     </q-table>
     <q-dialog v-model="persetujuanView" persistent transition-show="scale" transition-hide="scale">
       <q-card style="width: 700px; max-width: 80vw;">
-        <persetujuan-form :user="selected[0]"/>
+        <persetujuan-form :user="selected[0]" ref="saveFunction"/>
         <q-card-actions align="right" class="bg-white text-teal">
-          <q-btn flat label="OK" v-close-popup/>
+          <q-btn flat label="Close" v-close-popup/>
+          <q-btn flat label="Simpan" v-close-popup @click="save"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="tableAngsuran" persistent transition-show="scale" transition-hide="scale">
+      <q-card style="width: 700px; max-width: 80vw;">
+        <table-angsuran :user="selected[0]"/>
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="Close" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -50,14 +59,17 @@
 <script>
   import moment from 'moment';
   import persetujuanForm from './Persetujuan.vue';
+  import tableAngsuran from './TableAngsuran.vue';
 
   export default {
     components: {
-      persetujuanForm
+      persetujuanForm,
+      tableAngsuran
     },
     data() {
       return {
-        status: ['', '', '', '', 'Menunggu Approval'],
+        tableAngsuran: false,
+        status: ['Cancel', 'Approved', 'Rejected', 'On Reviewed', 'Awaiting Approval',],
         selected: [],
         data: [],
         columns: [
@@ -124,6 +136,10 @@
         }
         console.log('s')
       },
+      save() {
+        this.$refs.saveFunction.call()
+        this.getDataPinjaman()
+      },
       pengajuanBaru() {
         if (!this.ck()) {
           this.$swal({
@@ -148,7 +164,7 @@
           });
           return;
         }
-        console.log('s')
+        this.tableAngsuran = true;
       },
       persetujuan() {
         if (!this.ck()) {
