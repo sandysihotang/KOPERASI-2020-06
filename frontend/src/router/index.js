@@ -75,6 +75,13 @@ const routes = [
         meta: {
           roolTo: true,
         },
+      },
+      {
+        path: '/transaksipinjaman',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/TransaksiPinjaman.vue'),
+        meta: {
+          roolTo: true,
+        },
       }
     ],
   },

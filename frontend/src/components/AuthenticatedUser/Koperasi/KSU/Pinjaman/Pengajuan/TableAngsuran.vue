@@ -43,7 +43,7 @@
             name: 'status',
             label: 'Status',
             align: 'center',
-            field: row => (row.status ? 'Paid' : 'Unpaid'),
+            field: row => (row.statusBayar ? 'Paid' : 'Unpaid'),
             sortable: true,
           },
           {

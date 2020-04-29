@@ -15,31 +15,131 @@
         Tagihan
       </q-card-section>
       <q-separator/>
-      <center>
-        <div class="text-purple">
-          <q-icon name="fa fa-smile" size="xl"/>
-        </div>
-        <div class="text-black">
-          Yeay kamu tidak punya tagihan!
-        </div>
-      </center>
+      <div v-if="!tagihan">
+        <center>
+          <div class="text-purple">
+            <q-icon name="fa fa-smile" size="xl"/>
+          </div>
+          <div class="text-black">
+            Yeay kamu tidak punya tagihan!
+          </div>
+        </center>
+      </div>
+      <div v-else>
+        <q-intersection
+          transition="flip-right"
+          class="example-item"
+        >
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar color="primary" text-color="white">
+                <q-icon name="check"/>
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section class="text-black">
+              <q-item-label caption>Kode Pinjaman: #{{ kodePinjaman }}</q-item-label>
+              <q-item-label class="text-caption">Pembayaran berikutnya:{{
+                toIDR(jumlahPembayaranBerikutnya) }}
+              </q-item-label>
+              <q-item-label caption lines="1">
+                <q-chip class="glossy" color="primary" text-color="white">{{ mom(tanggalPembayaranBerikutnya) }}
+                </q-chip>
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-intersection>
+      </div>
     </q-card>
   </div>
 </template>
 <script>
+  import moment from 'moment'
+
   export default {
     data() {
       return {
-        nama: ''
+        nama: '',
+        tagihan: false,
+        kodePinjaman: null,
+        jumlahPembayaranBerikutnya: null,
+        tanggalPembayaranBerikutnya: null,
+        idPinjaman: null
       }
     },
     methods: {
+      mom(date) {
+        moment.lang('id')
+        return moment(date)
+          .format('dddd, Do MMMM YYYY')
+      },
+      toIDR(num) {
+        const nums = `${num}`
+        let ans = ''
+        let coma = 0
+        for (let i = nums.length - 1; i >= 0; i--) {
+          ans = `${ans}${nums[i]}`
+          if (coma === 2 && i !== 0) {
+            ans = `${ans},`
+            coma = 0;
+          } else {
+            coma++;
+          }
+        }
+        let res = 'Rp '
+        for (let i = ans.length - 1; i >= 0; i--) {
+          res = `${res}${ans[i]}`
+        }
+        return res;
+      },
       getName() {
         this.$http.get('/api/getnameanggota', {
           headers: this.$auth.getHeader()
         })
           .then((res) => {
             this.nama = res.data
+            this.existTagihan()
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
+      },
+      existTagihan() {
+        this.$http.get('/api/existtagihan', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.tagihan = res.data
+            if (res.data) {
+              this.getData()
+            } else {
+              this.$q.loading.hide()
+            }
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
+      },
+      getData() {
+        this.$http.get('/api/gettagihan', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.kodePinjaman = res.data.kodePinjaman
+            this.idPinjaman = res.data.id
+            this.getAngsuran()
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
+      },
+      getAngsuran() {
+        this.$http.get(`/api/getangsuranbasedidpinjaman/${this.idPinjaman}`, {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.jumlahPembayaranBerikutnya = res.data.totalAngsuran
+            this.tanggalPembayaranBerikutnya = res.data.tanggalJatuhTempo
             this.$q.loading.hide()
           })
           .catch(() => {

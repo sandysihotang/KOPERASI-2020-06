@@ -34,7 +34,7 @@
               <q-item clickable v-ripple :to="'/pengajuanpinjaman'">
                 <q-item-section>Pengajuan Pinjaman</q-item-section>
               </q-item>
-              <q-item clickable v-ripple :to="'/pengaturanpinjaman'">
+              <q-item clickable v-ripple :to="'/transaksipinjaman'">
                 <q-item-section>Transaksi Pinjaman</q-item-section>
               </q-item>
             </q-list>
