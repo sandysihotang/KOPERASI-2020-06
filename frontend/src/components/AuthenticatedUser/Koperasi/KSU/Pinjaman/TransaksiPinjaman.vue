@@ -2,7 +2,7 @@
   <div>
     <q-table
       :dense="$q.screen.lt.md"
-      title="Daftar Pengajuan Pinjaman"
+      title="Daftar Transaksi Pinjaman"
       :data="data"
       :columns="columns"
       row-key="id"
@@ -12,21 +12,12 @@
       <template v-slot:top-right>
         <div class="row">
           <div class="col">
-            <q-btn size="xs" color="green" label="Cetak Pengajuan" icon="print"
-                   @click="cetakPengajuan"/>
+            <q-btn size="xs" color="green" label="Detail Peminjaman" icon="table"
+                   @click="pembayaran"/>
           </div>
           <div class="col">
-            <q-btn size="xs" color="green" label="Pengajuan Baru" icon="edit"
-                   @click="pengajuanBaru"/>
-          </div>
-          <div class="col">
-            <q-btn size="xs" color="green" label="Tabel Angsuran" icon="table"
-                   @click="tabelAngsuran"/>
-          </div>
-          <div class="col">
-            <q-btn size="xs" color="green" label="Persetujuan"
-                   :disable="getDis()"
-                   icon="check" @click="persetujuan"/>
+            <q-btn size="xs" color="green" label="Pembayaran"
+                   icon="check" @click="tabelAngsuran"/>
           </div>
           <div class="col">
             <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
@@ -38,12 +29,11 @@
         </div>
       </template>
     </q-table>
-    <q-dialog v-model="persetujuanView" persistent transition-show="scale" transition-hide="scale">
+    <q-dialog v-model="pembayaranView" persistent transition-show="scale" transition-hide="scale">
       <q-card style="width: 700px; max-width: 80vw;">
-        <persetujuan-form :user="selected[0]" ref="saveFunction"/>
+        <persetujuan-form :user="selected[0]"/>
         <q-card-actions align="right" class="bg-white text-teal">
           <q-btn flat label="Close" v-close-popup/>
-          <q-btn flat label="Simpan" v-close-popup @click="save"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -60,8 +50,8 @@
 
 <script>
   import moment from 'moment';
-  import persetujuanForm from './Pengajuan/Persetujuan.vue';
-  import tableAngsuran from './Pengajuan/TableAngsuran.vue';
+  import persetujuanForm from './Transaksi/Pembayaran.vue';
+  import tableAngsuran from './Transaksi/TableAngsuran.vue';
 
   export default {
     components: {
@@ -71,7 +61,7 @@
     data() {
       return {
         tableAngsuran: false,
-        status: ['Cancel', 'Approved', 'Rejected', 'On Reviewed', 'Awaiting Approval', 'Close'],
+        status: ['Cancel', 'Approved', 'Rejected', 'On Reviewed', 'Awaiting Approval','Close'],
         selected: [],
         data: [],
         columns: [
@@ -121,46 +111,10 @@
 
         ],
         filter: '',
-        persetujuanView: false
+        pembayaranView: false
       }
     },
     methods: {
-      getDis() {
-        if (this.selected.length > 0) {
-          return this.selected[0].status === 2 || this.selected[0].status === 6;
-        }
-        return true
-      },
-      cetakPengajuan() {
-        if (!this.ck()) {
-          this.$swal({
-            position: 'center',
-            type: 'error',
-            title: 'Pilih item terlebih dahulu',
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          return;
-        }
-        console.log('s')
-      },
-      save() {
-        this.$refs.saveFunction.call()
-        this.getDataPinjaman()
-      },
-      pengajuanBaru() {
-        if (!this.ck()) {
-          this.$swal({
-            position: 'center',
-            type: 'error',
-            title: 'Pilih item terlebih dahulu',
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          return;
-        }
-        console.log('s')
-      },
       tabelAngsuran() {
         if (!this.ck()) {
           this.$swal({
@@ -174,7 +128,7 @@
         }
         this.tableAngsuran = true;
       },
-      persetujuan() {
+      pembayaran() {
         if (!this.ck()) {
           this.$swal({
             position: 'center',
@@ -185,14 +139,14 @@
           });
           return;
         }
-        this.persetujuanView = true;
+        this.pembayaranView = true;
       },
       ck() {
         return this.selected.length > 0
       },
       getDataPinjaman() {
         this.$q.loading.show()
-        this.$http.get('/api/getdatapengajuanpinjaman', {
+        this.$http.get('/api/getdatapengajuanapprove', {
           headers: this.$auth.getHeader()
         })
           .then((res) => {

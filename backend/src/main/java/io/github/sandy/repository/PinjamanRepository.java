@@ -7,20 +7,27 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Set;
 
 
 public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
-    Boolean existsByUserAndStatusNot(User user, Integer status);
+    Boolean existsByUserAndStatusIn(User user, Integer[] status);
 
-    Pinjaman getFirstByUserAndStatusNot(User user, Integer status);
+    Pinjaman getFirstByUserAndStatusIn(User user, Integer[] status);
+
+    List<Pinjaman> getByUserAndStatus(User user, Integer status);
 
 
     @Query(value = "SELECT max(kode_pinjaman) from peminjaman",
             nativeQuery = true)
     String getMaxKodePinjaman();
 
-
     List<Pinjaman> getAllByKoperasi(Koperasi koperasi);
+
+    List<Pinjaman> getAllByKoperasiAndStatus(Koperasi koperasi, Integer status);
+
     Pinjaman getFirstById(int id);
+
+    Boolean existsByUserAndStatus(User user, int status);
+
+    Pinjaman getFirstByUserAndStatus(User user, int status);
 }

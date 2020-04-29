@@ -39,7 +39,8 @@
                       </q-item-section>
 
                       <q-item-section class="text-black">
-                        <q-item-label caption>Kode Pinjaman: {{ dataPinjaman.kodePinjaman }}</q-item-label>
+                        <q-item-label caption>Kode Pinjaman: {{ dataPinjaman.kodePinjaman }}
+                        </q-item-label>
                         <q-item-label class="text-caption">Total pengajuan:{{
                           toIDR(dataPinjaman.jumlahPinjaman) }}
                         </q-item-label>
@@ -57,12 +58,45 @@
           </q-tab-panel>
 
           <q-tab-panel name="alarms">
-            <center class="text-white">
-              <q-icon name="fa fa-search" size="xl"/>
-              <h6>Kamu belum mengajukan pinjaman</h6>
-              <q-btn unelevated rounded color="purple" label="Ajukan Peminjaman" size="xs"
-                     @click="showPeminjaman = true"/>
-            </center>
+            <div v-if="!pinjamanSelesai">
+              <center class="text-white">
+                <q-icon name="fa fa-search" size="xl"/>
+                <h6>Kamu belum mengajukan pinjaman</h6>
+              </center>
+            </div>
+            <div v-else>
+              <div class="q-pa-md flex justify-center">
+                <div class="full-width bg-white">
+                  <q-intersection
+                    v-for="dataSelesai in dataPinjamanSelesai"
+                    transition="flip-right"
+                    class="example-item"
+                    v-bind:key="dataSelesai.id"
+                  >
+                    <q-item clickable v-ripple>
+                      <q-item-section avatar>
+                        <q-avatar color="primary" text-color="white">
+                          <q-icon name="check"/>
+                        </q-avatar>
+                      </q-item-section>
+
+                      <q-item-section class="text-black">
+                        <q-item-label caption>Kode Pinjaman: {{ dataSelesai.kodePinjaman }}
+                        </q-item-label>
+                        <q-item-label class="text-caption">Total pengajuan:{{
+                          toIDR(dataSelesai.jumlahPinjaman) }}
+                        </q-item-label>
+                        <q-item-label caption lines="1">
+                          <q-chip class="glossy" color="primary" text-color="white">{{
+                            status[dataSelesai.status-1] }}
+                          </q-chip>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-intersection>
+                </div>
+              </div>
+            </div>
           </q-tab-panel>
         </q-tab-panels>
       </q-card>
@@ -147,7 +181,8 @@
   export default {
     data() {
       return {
-        status: ['', '', '', '', 'Dalam Persetujuan'],
+        pinjamanSelesai: false,
+        status: ['', 'Berjalan', '', 'Sedang Dicek', 'Dalam Persetujuan', 'Selesai'],
         dataPinjaman: [],
         id: null,
         tab: 'mails',
@@ -158,11 +193,29 @@
         persentase: null,
         jaminan: null,
         adaPinjaman: false,
+        dataPinjamanSelesai: []
       }
     },
     methods: {
       handle(s) {
         this.showHandle = s.length !== 0
+      },
+      existPinjamanSelesai() {
+        this.$http.get('/api/getpinjamanselesai', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.pinjamanSelesai = res.data
+            this.getPinjamanSelesai()
+          })
+      },
+      getPinjamanSelesai() {
+        this.$http.get('/api/getpinjamanselesaidata', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.dataPinjamanSelesai = res.data
+          })
       },
       ajukanPinjaman() {
         if (parseInt(this.price) === 0 && parseInt(this.tenor) && this.jaminan.length === 0) {
@@ -274,6 +327,7 @@
     },
     created() {
       this.getAdaPinjaman()
+      this.existPinjamanSelesai()
     }
   }
 </script>
