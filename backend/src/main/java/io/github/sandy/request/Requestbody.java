@@ -20,6 +20,7 @@ public class Requestbody {
     private String jenis;
     private MultipartFile image;
     private boolean state;
+    private int status;
     private String formField;
     private String fieldData;
     private Double bungaPinjaman;
@@ -29,6 +30,7 @@ public class Requestbody {
     private Double persentaseDenda;
     private String jaminan;
     private Integer price;
+    private Integer tenor;
 
     public String getJaminan() {
         return jaminan;
@@ -56,6 +58,22 @@ public class Requestbody {
 
     public Double getBungaPinjaman() {
         return bungaPinjaman;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public Integer getTenor() {
+        return tenor;
+    }
+
+    public void setTenor(Integer tenor) {
+        this.tenor = tenor;
     }
 
     public void setBungaPinjaman(Double bungaPinjaman) {

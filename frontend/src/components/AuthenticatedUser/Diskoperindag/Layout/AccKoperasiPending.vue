@@ -1,6 +1,7 @@
 <template>
   <div class="q-pa-md">
     <q-table
+      :dense="$q.screen.lt.md"
       title="Account yang pending"
       :data="data"
       :columns="columns"

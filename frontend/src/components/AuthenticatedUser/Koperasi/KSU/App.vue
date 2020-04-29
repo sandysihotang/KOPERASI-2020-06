@@ -28,6 +28,19 @@
           </q-item>
           <q-expansion-item
             expand-separator
+            icon="fas fa-piggy-bank"
+            label="Pinjaman">
+            <q-list padding>
+              <q-item clickable v-ripple :to="'/pengajuanpinjaman'">
+                <q-item-section>Pengajuan Pinjaman</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="'/pengaturanpinjaman'">
+                <q-item-section>Transaksi Pinjaman</q-item-section>
+              </q-item>
+            </q-list>
+          </q-expansion-item>
+          <q-expansion-item
+            expand-separator
             icon="settings"
             label="Pengaturan">
             <q-list padding>

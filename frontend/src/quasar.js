@@ -60,13 +60,22 @@ import {
   QTabPanels,
   QBadge,
   QExpansionItem,
-  QField
+  QField,
+  QChip,
+  QIntersection,
+  QCheckbox,
+  QDialog,
+  ClosePopup
 } from 'quasar';
 
 Vue.use(Quasar, {
   config: {},
   components: {
+    QDialog,
+    QCheckbox,
     QField,
+    QIntersection,
+    QChip,
     QExpansionItem,
     QBadge,
     QTab,
@@ -118,6 +127,7 @@ Vue.use(Quasar, {
   },
   directives: {
     Ripple,
+    ClosePopup
   },
   plugins: {
     Loading,

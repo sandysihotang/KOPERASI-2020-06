@@ -25,6 +25,7 @@
   </div>
   <div v-else class="q-pa-md">
     <q-table
+      :dense="$q.screen.lt.md"
       title="Daftar Anggota Koperasi"
       :data="data"
       :columns="columns"

@@ -50,6 +50,9 @@ public class KoperasiController {
     @Autowired
     PengaturanPinjamanRepository pengaturanPinjamanRepository;
 
+    @Autowired
+    PinjamanRepository pinjamanRepository;
+
     @RequestMapping(value = "/api/createkoperasi", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Err> createKoperasi(@ModelAttribute Requestbody requestbody, HttpServletRequest request) {
@@ -92,12 +95,25 @@ public class KoperasiController {
         return pattern;
     }
 
+    @RequestMapping(value = "/api/getcolumnmember/{id}", method = RequestMethod.GET)
+    public String getColumnPersetujuan(@PathVariable("id") int id) {
+        Pinjaman pinjaman = pinjamanRepository.getFirstById(id);
+        String pattern = daftarAnggotaKoperasiRepository.findByKoperasiId(pinjaman.getKoperasi().getId()).get().getPatternField();
+        return pattern;
+    }
+
     @RequestMapping(value = "/api/getdatamember", method = RequestMethod.GET)
     public Set<AnggotaKoperasi> getData(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String user = principal.getName();
         Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(user).get().getKoperasi().getId());
         return koperasi.getAnggotaKoperasis();
+    }
+
+    @RequestMapping(value = "/api/getdatamember/{id}", method = RequestMethod.GET)
+    public Set<AnggotaKoperasi> getData(@PathVariable("id") int id) {
+        Pinjaman pinjaman = pinjamanRepository.getFirstById(id);
+        return angotaKoperasiRepository.getByUser(pinjaman.getUser());
     }
 
     @RequestMapping(value = "/api/saveanggota", method = RequestMethod.POST)
