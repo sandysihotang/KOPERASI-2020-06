@@ -140,9 +140,7 @@
             showConfirmButton: false,
             timer: 1500,
           });
-          return;
         }
-        console.log('s')
       },
       save() {
         this.$refs.saveFunction.call()
@@ -157,9 +155,7 @@
             showConfirmButton: false,
             timer: 1500,
           });
-          return;
         }
-        console.log('s')
       },
       tabelAngsuran() {
         if (!this.ck()) {
