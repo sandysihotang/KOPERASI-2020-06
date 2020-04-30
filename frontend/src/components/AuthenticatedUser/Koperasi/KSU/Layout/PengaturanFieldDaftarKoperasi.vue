@@ -66,7 +66,7 @@
     TermsElement,
     PageBreakElement,
     SectionBreakElement,
-  } from './CustomField/index';
+  } from './CustomField';
 
   export default {
     name: 'SampleApp',

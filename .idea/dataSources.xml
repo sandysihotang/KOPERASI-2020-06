@@ -7,11 +7,11 @@
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://localhost:3306/koperasi_serba_usaha</jdbc-url>
     </data-source>
-    <data-source source="LOCAL" name="KOPERASI_SERBA_USAHA_PROD" uuid="71d57cc0-efec-41f1-910a-f2ec56a36a32">
-      <driver-ref>mysql.8</driver-ref>
+    <data-source source="LOCAL" name="Prod" uuid="4ecbb1f2-6982-4ba1-bf08-e9a9104c9b54">
+      <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://db4free.net:3306/koperasi_serba_u</jdbc-url>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ec2-54-159-112-44.compute-1.amazonaws.com:5432/d7mkkup5jragm1</jdbc-url>
     </data-source>
   </component>
 </project>

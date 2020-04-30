@@ -32,39 +32,39 @@ const routes = [
   {
     path: '/dashboardkoperasi',
     name: 'dashboardkoperasi',
-    component: () => import('../components/AuthenticatedUser/Koperasi/KSU/App.vue'),
+    component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/App.vue'),
     meta: {
       forKoperasi: true,
     },
     children: [
       {
         path: '',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/Dashboard.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/Dashboard.vue'),
       },
       {
         path: '/anggotakoperasi',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/AnggotaKoperasi.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/AnggotaKoperasi.vue'),
         meta: {
           roolTo: true,
         },
       },
       {
         path: '/pengaturanpendaftarananggota',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/PengaturanFieldDaftarKoperasi.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/PengaturanFieldDaftarKoperasi.vue'),
         meta: {
           roolTo: true,
         },
       },
       {
         path: '/daftaranggota',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarAnggotaKoperasi.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/DaftarAnggotaKoperasi.vue'),
         meta: {
           roolTo: true,
         },
       },
       {
         path: '/pengaturanpinjaman',
-        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/PengaturanPinjaman.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/PengaturanPinjaman.vue'),
         meta: {
           roolTo: true,
         },
@@ -88,18 +88,18 @@ const routes = [
   {
     path: '/daftarkoperasi',
     name: 'daftarkoperasi',
-    component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/DaftarKoperasi.vue'),
+    component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/DaftarKoperasi/DaftarKoperasi.vue'),
     meta: {
       forKoperasi: true,
     },
     children: [
       {
         path: '',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/Layout/FormDaftar.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/DaftarKoperasi/Layout/FormDaftar.vue'),
       },
       {
         path: '/pendingactivation',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/Layout/PendingActivation.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/DaftarKoperasi/Layout/PendingActivation.vue'),
       },
     ],
   },

@@ -25,7 +25,7 @@
 <script>
 import { QInput, QSelect } from 'quasar'
 import FormElement from './FormElement'
-import countryList from '../../../../../data/countries.json'
+import countryList from '../../../../../../data/countries.json'
 
 export default {
   name: 'AddressElement',
