@@ -1,5 +1,6 @@
 package io.github.sandy.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ public class UserDetail implements Serializable {
     @Column(name = "no_telepon")
     private String noTelepon;
 
+    @JsonBackReference
     @JsonIgnoreProperties({"user_detail", "hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

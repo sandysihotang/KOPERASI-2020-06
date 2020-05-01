@@ -11,9 +11,9 @@ import java.util.Optional;
 public interface KoperasiRepository extends JpaRepository<Koperasi,Integer> {
     @Query(
             value = "SELECT * FROM koperasi " +
-                    "INNER JOIN user " +
-                    "ON user.id = koperasi.id_user " +
-                    "WHERE user.haveKoperasi != 0 " ,
+                    "INNER JOIN users " +
+                    "ON users.id = koperasi.id_user " +
+                    "WHERE users.have_koperasi != 0" ,
             nativeQuery = true
     )
     List<Koperasi> findByIsHaveKoperasi();

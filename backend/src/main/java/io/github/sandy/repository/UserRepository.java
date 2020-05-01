@@ -11,10 +11,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User>findByUsername(String s);
 
     @Query(
-            value = "SELECT * FROM user " +
+            value = "SELECT * FROM users " +
                     "INNER JOIN role_user " +
-                    "ON user.id = role_user.user_id " +
-                    "WHERE user.enabled = 0 " +
+                    "ON users.id = role_user.user_id " +
+                    "WHERE users.enabled = true " +
                     "AND role_user.role_id = 2",
             nativeQuery = true
     )
