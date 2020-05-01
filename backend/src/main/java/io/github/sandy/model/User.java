@@ -15,22 +15,22 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"users", "hibernateLazyInitializer", "handler"})
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private UserDetail userDetail;
 
-    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"users", "hibernateLazyInitializer", "handler"})
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Koperasi koperasi;
 
-    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"users", "hibernateLazyInitializer", "handler"})
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private AnggotaKoperasi anggotaKoperasi;
 
@@ -53,7 +53,7 @@ public class User implements Serializable {
     private int haveKoperasi;
 
     //    @JsonManagedReference
-    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"users", "hibernateLazyInitializer", "handler"})
     @Fetch(FetchMode.JOIN)
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)

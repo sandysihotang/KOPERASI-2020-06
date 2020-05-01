@@ -2,7 +2,10 @@ package io.github.sandy.controller;
 
 import io.github.sandy.ErrorCode.Err;
 import io.github.sandy.model.FieldDaftarAnggota;
+import io.github.sandy.model.UserDetail;
 import io.github.sandy.repository.DaftarAnggotaKoperasiRepository;
+import io.github.sandy.repository.DetailUserRepository;
+import io.github.sandy.repository.UserRepository;
 import io.github.sandy.request.Requestbody;
 import io.github.sandy.service.KoperasiService;
 import org.springframework.beans.factory.annotation.Autowired;
