@@ -65,7 +65,8 @@
         })
           .then((data) => {
             this.isHaveMember = data.data
-            this.loadColumn();
+            if (this.isHaveMember === true) this.loadColumn();
+            else this.$q.loading.hide()
           })
           .catch((err) => {
             this.$q.loading.hide();
