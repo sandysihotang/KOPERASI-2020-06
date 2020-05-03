@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             value = "SELECT * FROM users " +
                     "INNER JOIN role_user " +
                     "ON users.id = role_user.user_id " +
-                    "WHERE users.enabled = true " +
+                    "WHERE users.enabled = false " +
                     "AND role_user.role_id = 2",
             nativeQuery = true
     )
