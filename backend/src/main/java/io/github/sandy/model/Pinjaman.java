@@ -76,6 +76,7 @@ public class Pinjaman implements Serializable {
     public Pinjaman() {
     }
 
+
     public Set<Angsuran> getAngsuran() {
         return angsuran;
     }

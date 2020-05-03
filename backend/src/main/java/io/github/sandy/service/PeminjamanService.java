@@ -35,6 +35,7 @@ public class PeminjamanService {
         pinjaman.setUser(user);
         pinjaman.setJaminan(requestbody.getJaminan());
         pinjaman.setStatus(5);
+        pinjaman.setCreatedAt(new Date());
         pinjaman.setKoperasi(koperasi);
         pinjaman.setKodePinjaman(kodePinjaman);
         pinjaman.setTenor(requestbody.getTenor());
