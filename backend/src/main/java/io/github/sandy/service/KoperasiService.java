@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class KoperasiService {
     @Autowired
@@ -54,7 +56,7 @@ public class KoperasiService {
         koperasi.setJenisKoperasi(requestbody.getJenis().trim().equals("Koperasi Serba Usaha (KSU)") ? 1 : 2);
         koperasi.setNamaPendiri(requestbody.getPendiri());
         koperasi.setNoIzinKoperasi(requestbody.getIzin());
-        koperasi.setTahunBerdiriKoperasi(requestbody.getDate());
+        koperasi.setTahunBerdiriKoperasi(new Date(requestbody.getDate()));
         koperasi.setEmail(requestbody.getEmail());
         koperasi.setUser(user);
 
@@ -127,11 +129,11 @@ public class KoperasiService {
 
     public void savePengaturanPeminjaman(Koperasi koperasi, Requestbody requestbody) {
         PengaturanPinjaman pengaturanPinjaman = new PengaturanPinjaman();
-        pengaturanPinjaman.setBungaPinjaman(requestbody.getBungaPinjaman()/100);
+        pengaturanPinjaman.setBungaPinjaman(requestbody.getBungaPinjaman() / 100);
         pengaturanPinjaman.setAmbangBatasDenda(requestbody.getAmbangBatasDenda());
         pengaturanPinjaman.setMaxTenor(requestbody.getMaxTenor());
         pengaturanPinjaman.setMinTenor(requestbody.getMinTenor());
-        pengaturanPinjaman.setPersentaseDenda(requestbody.getPersentaseDenda()/100);
+        pengaturanPinjaman.setPersentaseDenda(requestbody.getPersentaseDenda() / 100);
 
         pengaturanPinjamanRepository.save(pengaturanPinjaman);
         if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(koperasi, true)) {

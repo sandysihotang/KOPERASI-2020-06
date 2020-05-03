@@ -9,6 +9,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +28,7 @@ public class Koperasi implements Serializable {
     private String alamatKoperasi;
 
     @Column(name = "tahun_berdiri_koperasi")
-    private String tahunBerdiriKoperasi;
+    private Date tahunBerdiriKoperasi;
 
     @Column(name = "no_izin_koperasi")
     private String noIzinKoperasi;
@@ -161,11 +162,11 @@ public class Koperasi implements Serializable {
         this.alamatKoperasi = alamatKoperasi;
     }
 
-    public String getTahunBerdiriKoperasi() {
+    public Date getTahunBerdiriKoperasi() {
         return tahunBerdiriKoperasi;
     }
 
-    public void setTahunBerdiriKoperasi(String tahunBerdiriKoperasi) {
+    public void setTahunBerdiriKoperasi(Date tahunBerdiriKoperasi) {
         this.tahunBerdiriKoperasi = tahunBerdiriKoperasi;
     }
 
