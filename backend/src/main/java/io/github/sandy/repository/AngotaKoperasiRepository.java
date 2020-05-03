@@ -11,4 +11,6 @@ public interface AngotaKoperasiRepository extends JpaRepository<AnggotaKoperasi,
     Optional<AnggotaKoperasi> findFirstByUser(User user);
 
     Set<AnggotaKoperasi> getByUser(User user);
+
+    AnggotaKoperasi getFirstByUser(User user);
 }

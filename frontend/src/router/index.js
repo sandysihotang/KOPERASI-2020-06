@@ -32,7 +32,7 @@ const routes = [
   {
     path: '/dashboardkoperasi',
     name: 'dashboardkoperasi',
-    component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/App.vue'),
+    component: () => import('../components/AuthenticatedUser/Koperasi/KSU/App.vue'),
     meta: {
       forKoperasi: true,
     },
@@ -65,6 +65,25 @@ const routes = [
       {
         path: '/pengaturanpinjaman',
         component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/PengaturanPinjaman.vue'),
+        meta: {
+          roolTo: true,
+        },
+      },
+      {
+        path: '/pengaturansimpanan',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/PengaturanSimpanan.vue'),
+        meta: {
+          roolTo: true,
+        },
+      }, {
+        path: '/transaksisimpanan',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/TransaksiSimpanan.vue'),
+        meta: {
+          roolTo: true,
+        },
+      }, {
+        path: '/aktivasisimpanan',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/AktivasiSimpanan.vue'),
         meta: {
           roolTo: true,
         },
@@ -110,7 +129,15 @@ const routes = [
     meta: {
       forAnggota: true,
     },
-    children: []
+    children: [
+      {
+        path: '',
+        component: () => import('../components/AuthenticatedUser/Anggota/Layout/Dashboard.vue'),
+      }, {
+        path: '/history',
+        component: () => import('../components/AuthenticatedUser/Anggota/Layout/History.vue'),
+      },
+    ]
   },
   {
     path: '*',

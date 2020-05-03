@@ -2,8 +2,6 @@ package io.github.sandy.request;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
-
 public class Requestbody {
     private int id;
     private String username;
@@ -31,9 +29,54 @@ public class Requestbody {
     private String jaminan;
     private Integer price;
     private Integer tenor;
+    private Integer pokok;
+    private Integer wajib;
+    private Integer sukarela;
+    private Long jumlahSimpanan;
+    private Integer jumlahTransaksi;
+
+    public Integer getJumlahTransaksi() {
+        return jumlahTransaksi;
+    }
+
+    public void setJumlahTransaksi(Integer jumlahTransaksi) {
+        this.jumlahTransaksi = jumlahTransaksi;
+    }
+
+    public Long getJumlahSimpanan() {
+        return jumlahSimpanan;
+    }
+
+    public void setJumlahSimpanan(Long jumlahSimpanan) {
+        this.jumlahSimpanan = jumlahSimpanan;
+    }
 
     public String getJaminan() {
         return jaminan;
+    }
+
+    public Integer getPokok() {
+        return pokok;
+    }
+
+    public void setPokok(Integer pokok) {
+        this.pokok = pokok;
+    }
+
+    public Integer getWajib() {
+        return wajib;
+    }
+
+    public void setWajib(Integer wajib) {
+        this.wajib = wajib;
+    }
+
+    public Integer getSukarela() {
+        return sukarela;
+    }
+
+    public void setSukarela(Integer sukarela) {
+        this.sukarela = sukarela;
     }
 
     public void setJaminan(String jaminan) {

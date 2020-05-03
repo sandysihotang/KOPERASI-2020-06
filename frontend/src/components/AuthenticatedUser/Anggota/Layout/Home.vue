@@ -5,7 +5,7 @@
         {{nama}}
         <br>
         <h5>
-          <q-badge color="primary" outline label="Total simpanan: Rp. 0"/>
+          <q-badge color="primary" outline :label="`Total simpanan: ${toIDR(saldo)}`"/>
         </h5>
       </center>
     </q-card>
@@ -43,13 +43,55 @@
                 toIDR(jumlahPembayaranBerikutnya) }}
               </q-item-label>
               <q-item-label caption lines="1">
-                <q-chip class="glossy" color="primary" text-color="white">{{ mom(tanggalPembayaranBerikutnya) }}
+                <q-chip class="glossy" color="primary" text-color="white">{{
+                  mom(tanggalPembayaranBerikutnya) }}
                 </q-chip>
               </q-item-label>
             </q-item-section>
           </q-item>
         </q-intersection>
       </div>
+    </q-card>
+    <br>
+    <q-separator/>
+    <q-card>
+      <q-card-section>
+        Transaksi Terkini
+      </q-card-section>
+      <q-separator/>
+      <q-card-section>
+        <q-intersection
+          v-for="a in transaksiTerkini"
+          transition="flip-right"
+          class="example-item"
+          :key="a.id"
+        >
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar color="primary" text-color="white">
+                <q-icon name="check"/>
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section class="text-black">
+              <q-item-label caption>Kode Pinjaman: #{{ a.kodeTransaksi }}</q-item-label>
+              <q-item-label class="text-caption">Total: {{ toIDR(a.jumlahTransaksi) }}
+              </q-item-label>
+              <q-item-label class="text-caption">Jenis: {{ (a.aktivasiSimpanan.jenisSimpanan === 1?
+                'Simpanan Pokok': (a.aktivasiSimpanan.jenisSimpanan === 2 ? 'Simpanan Wajib' :
+                'Simpanan Sukarela')) }}
+              </q-item-label>
+              <q-item-label caption lines="1">
+                <q-chip class="glossy" color="primary" text-color="white">{{
+                  mom(a.createdAt) }}
+                </q-chip>
+              </q-item-label>
+
+              <q-item-label caption>Mode: {{ (a.jenisTransaksi === 1 ? 'Setor Dana' : 'Penarikan Dana') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-intersection>
+      </q-card-section>
     </q-card>
   </div>
 </template>
@@ -64,7 +106,9 @@
         kodePinjaman: null,
         jumlahPembayaranBerikutnya: null,
         tanggalPembayaranBerikutnya: null,
-        idPinjaman: null
+        idPinjaman: null,
+        saldo: null,
+        transaksiTerkini: []
       }
     },
     methods: {
@@ -93,6 +137,7 @@
         return res;
       },
       getName() {
+        this.$q.loading.show()
         this.$http.get('/api/getnameanggota', {
           headers: this.$auth.getHeader()
         })
@@ -112,9 +157,32 @@
             this.tagihan = res.data
             if (res.data) {
               this.getData()
-            } else {
-              this.$q.loading.hide()
             }
+            this.getSaldo()
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
+      },
+      getSaldo() {
+        this.$http.get('api/getsaldouser', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.saldo = res.data
+            this.getTransaksi()
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
+      },
+      getTransaksi() {
+        this.$http.get('/api/gettransaksiterkini', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.transaksiTerkini = res.data
+            this.$q.loading.hide()
           })
           .catch(() => {
             this.$q.loading.hide()
@@ -140,7 +208,6 @@
           .then((res) => {
             this.jumlahPembayaranBerikutnya = res.data.totalAngsuran
             this.tanggalPembayaranBerikutnya = res.data.tanggalJatuhTempo
-            this.$q.loading.hide()
           })
           .catch(() => {
             this.$q.loading.hide()

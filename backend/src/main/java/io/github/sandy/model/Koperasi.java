@@ -57,6 +57,12 @@ public class Koperasi implements Serializable {
     @Fetch(FetchMode.JOIN)
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "koperasi")
+    private Set<AktivasiSimpanan> aktivasiSimpanan = new HashSet<>();
+
+    @JsonManagedReference
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
     private Set<Pinjaman> pinjaman = new HashSet<>();
 
     @JsonManagedReference
@@ -64,6 +70,12 @@ public class Koperasi implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "koperasi")
     private Set<KoperasiPengaturanPinjaman> koperasiPengaturanPinjaman = new HashSet<>();
+
+    @JsonManagedReference
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
+    private Set<PengaturanSimpanan> pengaturanSimpanan = new HashSet<>();
 
     @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
@@ -74,7 +86,23 @@ public class Koperasi implements Serializable {
     @OneToOne(mappedBy = "koperasi", fetch = FetchType.LAZY)
     private FieldDaftarAnggota fieldDaftarAnggota;
 
+    public Set<AktivasiSimpanan> getAktivasiSimpanan() {
+        return aktivasiSimpanan;
+    }
+
+    public void setAktivasiSimpanan(Set<AktivasiSimpanan> aktivasiSimpanan) {
+        this.aktivasiSimpanan = aktivasiSimpanan;
+    }
+
     public Koperasi() {
+    }
+
+    public Set<PengaturanSimpanan> getPengaturanSimpanan() {
+        return pengaturanSimpanan;
+    }
+
+    public void setPengaturanSimpanan(Set<PengaturanSimpanan> pengaturanSimpanan) {
+        this.pengaturanSimpanan = pengaturanSimpanan;
     }
 
     public Set<AnggotaKoperasi> getAnggotaKoperasis() {
