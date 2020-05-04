@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AngsuranRepository extends JpaRepository<Angsuran, Integer> {
 
-    List<Angsuran> getAllByPinjamanOrOrderByUrutanKeAsc(Pinjaman pinjaman);
+    List<Angsuran> getAllByPinjamanOrderByUrutanKeAsc(Pinjaman pinjaman);
 
     List<Angsuran> getAllByPinjamanAndStatusBayar(Pinjaman pinjaman, Boolean status);
 

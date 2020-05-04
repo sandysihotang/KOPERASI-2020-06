@@ -108,7 +108,7 @@ public class PeminjamanController {
     @RequestMapping(value = "/api/getdataajuan/{id}", method = RequestMethod.GET)
     public List<Angsuran> getData(@PathVariable("id") int id) {
         Pinjaman pinjaman = pinjamanRepository.getFirstById(id);
-        return angsuranRepository.getAllByPinjamanOrOrderByUrutanKeAsc(pinjaman);
+        return angsuranRepository.getAllByPinjamanOrderByUrutanKeAsc(pinjaman);
     }
 
     @RequestMapping(value = "/api/getdatapembayaran/{id}", method = RequestMethod.GET)
