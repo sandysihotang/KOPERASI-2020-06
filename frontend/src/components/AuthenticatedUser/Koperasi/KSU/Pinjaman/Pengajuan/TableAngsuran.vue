@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <q-card class="full-width">
-      <q-card-section>Idenitas Pengaju</q-card-section>
+      <q-card-section>Identitas Pengaju</q-card-section>
       <q-card-section>
         <q-table
           :dense="$q.screen.lt.md"
