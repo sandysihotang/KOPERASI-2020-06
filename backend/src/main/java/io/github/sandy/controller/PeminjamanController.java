@@ -1,12 +1,8 @@
 package io.github.sandy.controller;
 
 import io.github.sandy.ErrorCode.Err;
-import io.github.sandy.model.Angsuran;
-import io.github.sandy.model.Pinjaman;
-import io.github.sandy.model.User;
-import io.github.sandy.repository.AngsuranRepository;
-import io.github.sandy.repository.PinjamanRepository;
-import io.github.sandy.repository.UserRepository;
+import io.github.sandy.model.*;
+import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
 import io.github.sandy.service.PeminjamanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +30,32 @@ public class PeminjamanController {
     @Autowired
     AngsuranRepository angsuranRepository;
 
+    @Autowired
+    KoperasiRepository koperasiRepository;
+
+    @Autowired
+    KoperasiPengaturanPinjamanRepository koperasiPengaturanPinjamanRepository;
+
+    @Autowired
+    PengaturanPinjamanRepository pengaturanPinjamanRepository;
+
+
     @RequestMapping(value = "/api/requestpeminjaman", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Err> requestPinjaman(@RequestBody Requestbody requestbody, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         User user = userRepository.findByUsername(principal.getName()).get();
+        peminjamanService.requestPinjaman(user, requestbody);
+        return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/requestpeminjamanfrompengurus/{idUser}", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Err> requestPinjamanFromPengurus(@RequestBody Requestbody requestbody, @PathVariable("idUser") Integer idUser) {
+        User user = userRepository.getOne(idUser);
+        if (pinjamanRepository.existsByUserAndStatusIn(user, new Integer[]{2, 4, 5})) {
+            return new ResponseEntity<>(new Err(400, "User masih memiliki peminjaman yang sedang berjalan"), HttpStatus.OK);
+        }
         peminjamanService.requestPinjaman(user, requestbody);
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }
@@ -109,6 +126,26 @@ public class PeminjamanController {
     public List<Angsuran> getData(@PathVariable("id") int id) {
         Pinjaman pinjaman = pinjamanRepository.getFirstById(id);
         return angsuranRepository.getAllByPinjamanOrderByUrutanKeAsc(pinjaman);
+    }
+
+    @RequestMapping(value = "/api/getdatapengajureqpinjaman", method = RequestMethod.GET)
+    public List<User> getDataPengajuSimpanan(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Koperasi koperasi = user.getKoperasi();
+        return userRepository.findByKoperasiForRequest(koperasi.getId(), new Integer[]{2, 4, 5});
+    }
+
+    @RequestMapping(value = "/api/getpengaturanpinjamanreqpinjamaninpengurus", method = RequestMethod.GET)
+    public PengaturanPinjaman getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        User user = userRepository.findByUsername(principal.getName()).get();
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(user.getKoperasi(), true)) {
+            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(user.getKoperasi(), true).get();
+            return pengaturanPinjamanRepository.findFirstById(koperasiPengaturanPinjaman.getPengaturanPinjaman().getId()).get();
+        }
+        return null;
     }
 
     @RequestMapping(value = "/api/getdatapembayaran/{id}", method = RequestMethod.GET)

@@ -31,4 +31,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "WHERE a.id_koperasi = ?1 AND a.jenis_simpanan= ?2", nativeQuery = true)
     List<User> findAllByJenisSimpanan(Integer idKoperasi, Integer jenisSimpanan);
 
+    @Query(value = "SELECT * FROM users u " +
+            "INNER JOIN anggota_koperasi a ON u.id = a.id_user " +
+            "WHERE a.id_koperasi = ?1", nativeQuery = true)
+    List<User> findByKoperasiForRequest(Integer koperasi, Integer[] i);
+
 }

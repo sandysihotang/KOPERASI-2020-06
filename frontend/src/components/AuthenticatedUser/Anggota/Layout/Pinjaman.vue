@@ -218,7 +218,7 @@
           })
       },
       ajukanPinjaman() {
-        if (parseInt(this.price) === 0 && parseInt(this.tenor) && this.jaminan.length === 0) {
+        if (parseInt(this.price) === 0 || parseInt(this.tenor) === 0 || this.jaminan.length === 0) {
           this.$swal({
             position: 'center',
             type: 'error',

@@ -17,7 +17,7 @@
           </div>
           <div class="col">
             <q-btn size="xs" color="green" label="Pengajuan Baru" icon="edit"
-                   @click="pengajuanBaru"/>
+                   @click="pengajuanBaru = true"/>
           </div>
           <div class="col">
             <q-btn size="xs" color="green" label="Tabel Angsuran" icon="table"
@@ -55,6 +55,14 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="pengajuanBaru" persistent transition-show="scale" transition-hide="scale">
+      <q-card style="width: 700px; max-width: 80vw;">
+        <pengajuan-baru @get="getDataPinjaman"/>
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="Close" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -62,15 +70,18 @@
   import moment from 'moment';
   import persetujuanForm from './Pengajuan/Persetujuan.vue';
   import tableAngsuran from './Pengajuan/TableAngsuran.vue';
+  import PengajuanBaru from './Pengajuan/PengajuanBaru.vue';
 
   export default {
     components: {
       persetujuanForm,
-      tableAngsuran
+      tableAngsuran,
+      PengajuanBaru
     },
     data() {
       return {
         tableAngsuran: false,
+        pengajuanBaru: false,
         status: ['Cancel', 'Approved', 'Rejected', 'On Reviewed', 'Awaiting Approval', 'Close'],
         selected: [],
         data: [],
@@ -146,17 +157,6 @@
         this.$refs.saveFunction.call()
         this.getDataPinjaman()
       },
-      pengajuanBaru() {
-        if (!this.ck()) {
-          this.$swal({
-            position: 'center',
-            type: 'error',
-            title: 'Pilih item terlebih dahulu',
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        }
-      },
       tabelAngsuran() {
         if (!this.ck()) {
           this.$swal({
@@ -187,7 +187,6 @@
         return this.selected.length > 0
       },
       getDataPinjaman() {
-        this.$q.loading.show()
         this.$http.get('/api/getdatapengajuanpinjaman', {
           headers: this.$auth.getHeader()
         })
@@ -227,6 +226,7 @@
       }
     },
     created() {
+      this.$q.loading.show()
       this.getDataPinjaman()
     }
   }
