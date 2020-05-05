@@ -35,6 +35,9 @@ export default function (Vue) {
     setAuthenticatedUser(obj) {
       data = obj;
     },
+    setJenisKoperasi(data) {
+      localStorage.setItem('jenisKoperasi', data);
+    },
     getAuthenticatedUser() {
       return data;
     },

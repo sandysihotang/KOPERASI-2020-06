@@ -61,14 +61,14 @@ public class SimpananService {
         transaksiSimpanan.setCreatedAt(new Date());
         transaksiSimpanan.setJumlahTransaksi(requestbody.getJumlahSimpanan().intValue());
         transaksiSimpanan.setJenisTransaksi(1);
-        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan());
+        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan(koperasi.getId()));
 
         transaksiSimpananRepository.save(transaksiSimpanan);
 
     }
 
-    private String getKodeTransaksiSimpanan() {
-        String kode = transaksiSimpananRepository.getMaxKodetransaksiSimpanan();
+    private String getKodeTransaksiSimpanan(Integer idKoperasi) {
+        String kode = transaksiSimpananRepository.getMaxKodetransaksiSimpanan(idKoperasi);
         if (kode != null) {
             int noUrut = Integer.parseInt(kode.substring(1, 11));
             noUrut++;
@@ -80,7 +80,7 @@ public class SimpananService {
     public void saveTransaksiSimpanan(Integer id, Requestbody requestbody) {
         AktivasiSimpanan aktivasiSimpanan = aktivasiSimpananRepository.getOne(id);
         TransaksiSimpanan transaksiSimpanan = new TransaksiSimpanan();
-        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan());
+        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan(aktivasiSimpanan.getKoperasi().getId()));
         transaksiSimpanan.setJumlahTransaksi(requestbody.getJumlahTransaksi());
         transaksiSimpanan.setJenisTransaksi(1);
         transaksiSimpanan.setCreatedAt(new Date(requestbody.getDate()));
@@ -94,7 +94,7 @@ public class SimpananService {
     public void saveTransaksiPenarikanSimpanan(Integer id, Requestbody requestbody) {
         AktivasiSimpanan aktivasiSimpanan = aktivasiSimpananRepository.getOne(id);
         TransaksiSimpanan transaksiSimpanan = new TransaksiSimpanan();
-        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan());
+        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan(aktivasiSimpanan.getKoperasi().getId()));
         transaksiSimpanan.setJumlahTransaksi(requestbody.getJumlahTransaksi());
         transaksiSimpanan.setJenisTransaksi(2);
         transaksiSimpanan.setCreatedAt(new Date(requestbody.getDate()));

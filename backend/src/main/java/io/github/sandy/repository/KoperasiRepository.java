@@ -18,5 +18,13 @@ public interface KoperasiRepository extends JpaRepository<Koperasi, Integer> {
     )
     List<Koperasi> findByIsHaveKoperasi();
 
+    @Query(
+            value = "SELECT jenis_koperasi from koperasi " +
+                    "INNER JOIN users on koperasi.id_user = users.id " +
+                    "where users.id = ?1 LIMIT 1",
+            nativeQuery = true
+    )
+    Integer getJenisFromKoperasi(Integer idUser);
+
     Koperasi findFirstByUser(User user);
 }

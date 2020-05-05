@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="q-pa-md" >
     <q-table
       :dense="$q.screen.lt.md"
       title="Daftar Pengajuan Pinjaman"
@@ -103,6 +103,12 @@
             label: 'Jumlah Pinjaman',
             align: 'center',
             field: row => this.toIDR(row.jumlahPinjaman),
+            sortable: true,
+          }, {
+            name: 'jaminan',
+            label: 'Jaminan',
+            align: 'center',
+            field: row => row.jaminan,
             sortable: true,
           }, {
             name: 'namaDebitur',

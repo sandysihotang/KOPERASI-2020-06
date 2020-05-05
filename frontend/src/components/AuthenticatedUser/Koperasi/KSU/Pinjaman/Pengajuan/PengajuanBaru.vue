@@ -8,7 +8,7 @@
             square clearable
             filled
             v-model="nama"
-            label="Nama Pengaju"
+            label="Nama Pemohon"
           />
           <q-input
             filled

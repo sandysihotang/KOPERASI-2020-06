@@ -5,33 +5,69 @@
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="left = !left"/>
         <q-toolbar-title>
-          Koperasi
+          {{ title }}
         </q-toolbar-title>
-          <q-btn flat round dense icon="fa fa-sign-out-alt" @click="logOut"/>
+        <q-btn flat round dense icon="fa fa-sign-out-alt" @click="logOut"/>
       </q-toolbar>
     </q-header>
 
     <q-drawer show-if-above v-model="left" side="left" bordered>
       <q-scroll-area class="fit">
         <q-list padding>
-          <q-item clickable v-ripple :to="'/dashboardkoperasi'">
+          <q-item clickable v-ripple :to="'/dashboardkoperasiksu'">
             <q-item-section avatar>
               <q-icon color="primary" name="fa fa-chart-bar"/>
             </q-item-section>
             <q-item-section>Dashboard</q-item-section>
           </q-item>
-          <q-item clickable v-ripple :to="'/anggotakoperasi'">
+          <q-item clickable v-ripple :to="'/anggotakoperasiksu'">
             <q-item-section avatar>
               <q-icon color="primary" name="person"/>
             </q-item-section>
             <q-item-section>Anggota Koperasi</q-item-section>
           </q-item>
-          <q-item clickable v-ripple :to="'/pengaturanpendaftarananggota'">
-            <q-item-section avatar>
-              <q-icon color="primary" name="settings"/>
-            </q-item-section>
-            <q-item-section>Pengaturan Field Pendaftaran</q-item-section>
-          </q-item>
+          <q-expansion-item
+            expand-separator
+            icon="fas fa-piggy-bank"
+            label="Pinjaman">
+            <q-list padding>
+              <q-item clickable v-ripple :to="'/pengajuanpinjamanksu'">
+                <q-item-section>Pengajuan Pinjaman</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="'/transaksipinjamanksu'">
+                <q-item-section>Transaksi Pinjaman</q-item-section>
+              </q-item>
+            </q-list>
+          </q-expansion-item>
+          <q-expansion-item
+            expand-separator
+            icon="money"
+            label="Simpanan">
+            <q-list padding>
+              <q-item clickable v-ripple :to="'/transaksisimpananksu'">
+                <q-item-section>Transaksi Simpanan</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="'/aktivasisimpananksu'">
+                <q-item-section>Aktivasi Simpanan</q-item-section>
+              </q-item>
+            </q-list>
+          </q-expansion-item>
+          <q-expansion-item
+            expand-separator
+            icon="settings"
+            label="Pengaturan">
+            <q-list padding>
+              <q-item clickable v-ripple :to="'/pengaturanpendaftarananggotaksu'">
+                <q-item-section>Form Pendaftaran Anggota</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="'/pengaturanpinjamanksu'">
+                <q-item-section>Pinjaman</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="'/pengaturansimpananksu'">
+                <q-item-section>Simpanan</q-item-section>
+              </q-item>
+            </q-list>
+          </q-expansion-item>
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -42,17 +78,30 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      left: false,
-    };
-  },
-  methods: {
-    logOut() {
-      window.localStorage.clear();
-      window.location.href = '/';
+  export default {
+    data() {
+      return {
+        left: false,
+        title: 'Selamat datang Koperasi '
+      };
     },
-  },
-};
+    methods: {
+      logOut() {
+        window.localStorage.clear();
+        window.location.href = '/';
+      },
+      getStateKoperasi() {
+        this.$http.get('/api/getstatekoperasi',
+          {
+            headers: this.$auth.getHeader(),
+          })
+          .then((res) => {
+            this.title = `${this.title} ${res.data}`
+          })
+      }
+    },
+    created() {
+      this.getStateKoperasi()
+    }
+  };
 </script>

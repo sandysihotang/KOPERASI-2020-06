@@ -15,7 +15,7 @@
         square clearable
         filled
         v-model="nama"
-        label="Nama Pengaju"
+        label="Nama Pemohon"
       />
       <br>
       <q-input filled v-model="date" mask="date" label="Tanggal Transaksi" :rules="['date']">

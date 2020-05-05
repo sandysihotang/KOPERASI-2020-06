@@ -105,6 +105,81 @@ const routes = [
     ],
   },
   {
+    name: 'dashboardkoperasiKSU',
+    path: '/dashboardkoperasiksu',
+    component: () => import('../components/AuthenticatedUser/Koperasi/KSP/App.vue'),
+    meta: {
+      forKoperasiKSU: true
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/Dashboard.vue'),
+      },
+      {
+        path: '/anggotakoperasiksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/AnggotaKoperasi.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/pengaturanpendaftarananggotaksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/PengaturanFieldDaftarKoperasi.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/daftaranggotaksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/DaftarAnggotaKoperasi.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/pengaturanpinjamanksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/PengaturanPinjaman.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/pengaturansimpananksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/PengaturanSimpanan.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      }, {
+        path: '/transaksisimpananksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/TransaksiSimpanan.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      }, {
+        path: '/aktivasisimpananksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/AktivasiSimpanan.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/pengajuanpinjamanksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/PengajuanPinjaman.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/transaksipinjamanksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/TransaksiPinjaman.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      }
+    ],
+  },
+  {
     path: '/daftarkoperasi',
     name: 'daftarkoperasi',
     component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/DaftarKoperasi/DaftarKoperasi.vue'),
@@ -190,9 +265,15 @@ router.beforeEach(
               path: '/pendingactivation',
             });
           } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
-            next({
-              path: '/dashboardkoperasi',
-            });
+            if (parseInt(localStorage.getItem('jenisKoperasi')) === 2) {
+              next({
+                path: '/dashboardkoperasi',
+              });
+            } else {
+              next({
+                path: '/dashboardkoperasiksu',
+              });
+            }
           } else {
             next();
           }
@@ -233,9 +314,53 @@ router.beforeEach(
             path: '/pendingactivation',
           });
         } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
-          if (to.path !== '/dashboardkoperasi' && from.path !== '/dashboardkoperasi' && !to.matched.some(record => record.meta.roolTo)) {
+          if (parseInt(localStorage.getItem('jenisKoperasi')) === 1) {
+            next({
+              path: '/dashboardkoperasiksu',
+            });
+          } else if (to.path !== '/dashboardkoperasi' && from.path !== '/dashboardkoperasi' && !to.matched.some(record => record.meta.roolTo)) {
             next({
               path: '/dashboardkoperasi',
+            });
+          } else {
+            next();
+          }
+        } else {
+          next();
+        }
+      } else {
+        next();
+      }
+    } else if (to.matched.some(record => record.meta.forKoperasiKSU)) {
+      if (!Vue.auth.isAuthenticated()) {
+        next({
+          path: '/login',
+        });
+      } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_admin') {
+        next({
+          path: '/dashboardadmin',
+        });
+      } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_anggota') {
+        next({
+          path: '/dashboardanggotakoperasi',
+        });
+      } else if (Vue.auth.getUserRole() === 'ROLE_koperasi') {
+        if (parseInt(Vue.auth.isHaveKoperasi()) === 0 && to.path !== '/daftarkoperasi') {
+          next({
+            path: '/daftarkoperasi',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2 && to.path !== '/pendingactivation') {
+          next({
+            path: '/pendingactivation',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
+          if (parseInt(localStorage.getItem('jenisKoperasi')) === 2) {
+            next({
+              path: '/dashboardkoperasi',
+            });
+          } else if (to.path !== '/dashboardkoperasiksu' && from.path !== '/dashboardkoperasiksu' && !to.matched.some(record => record.meta.roolToKSU)) {
+            next({
+              path: '/dashboardkoperasiksu',
             });
           } else {
             next();
@@ -265,9 +390,15 @@ router.beforeEach(
             path: '/pendingactivation',
           });
         } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
-          next({
-            path: '/dashboardkoperasi',
-          });
+          if (parseInt(localStorage.getItem('jenisKoperasi')) === 2) {
+            next({
+              path: '/dashboardkoperasi',
+            });
+          } else {
+            next({
+              path: '/dashboardkoperasiksu',
+            });
+          }
         } else {
           next();
         }
@@ -289,9 +420,15 @@ router.beforeEach(
             path: '/pendingactivation',
           });
         } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
-          next({
-            path: '/dashboardkoperasi',
-          });
+          if (parseInt(localStorage.getItem('jenisKoperasi')) === 2) {
+            next({
+              path: '/dashboardkoperasi',
+            });
+          } else {
+            next({
+              path: '/dashboardkoperasiksu',
+            });
+          }
         } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_admin') {
           next({
             path: '/dashboardadmin',

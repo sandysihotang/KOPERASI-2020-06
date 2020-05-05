@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="q-pa-md">
     <q-table
       :dense="$q.screen.lt.md"
       title="Daftar Transaksi Pinjaman"

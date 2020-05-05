@@ -90,7 +90,26 @@
                   this.$auth.setAuthenticatedUser(res.data.userAuthentication.principal.userDetail);
                   this.$auth.setUserRole(res.data.userAuthentication.principal.roles[0].name);
                   this.$auth.setHaveKoperasi(res.data.userAuthentication.principal.haveKoperasi);
-                  window.location.href = '/';
+                  if (parseInt(localStorage.getItem('havekoperasi')) === 3) {
+                    this.$http.get('/api/jeniskoperasi', {
+                      headers: this.$auth.getHeader()
+                    })
+                      .then((res) => {
+                        this.$auth.setJenisKoperasi(res.data);
+                        window.location.href = '/';
+                      })
+                      .catch((err) => {
+                        this.$swal({
+                          position: 'center',
+                          type: 'error',
+                          title: 'Ada gangguan jaringan silahkan refresh (F5)',
+                          showConfirmButton: false,
+                          timer: 1500,
+                        });
+                      });
+                  } else {
+                    window.location.href = '/';
+                  }
                 })
                 .catch((err) => {
                   this.$swal({

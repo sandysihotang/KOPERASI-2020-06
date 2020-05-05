@@ -17,9 +17,9 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
     List<Pinjaman> getByUserAndStatus(User user, Integer status);
 
 
-    @Query(value = "SELECT max(kode_pinjaman) from peminjaman",
+    @Query(value = "SELECT max(kode_pinjaman) from peminjaman WHERE id_koperasi = ?1",
             nativeQuery = true)
-    String getMaxKodePinjaman();
+    String getMaxKodePinjaman(Integer idKoperasi);
 
     List<Pinjaman> getAllByKoperasi(Koperasi koperasi);
 

@@ -26,9 +26,11 @@ public interface TransaksiSimpananRepository extends JpaRepository<TransaksiSimp
             nativeQuery = true)
     List<TransaksiSimpanan> findAllByUser(Integer user);
 
-    @Query(value = "SELECT max(kode_transaksi) from transaksi_simpanan",
+    @Query(value = "SELECT max(kode_transaksi) from transaksi_simpanan t " +
+            "INNER JOIN aktivasi_simpanan s on t.id_aktivasi = a.id " +
+            "WHERE s.id_koperasi = ?1",
             nativeQuery = true)
-    String getMaxKodetransaksiSimpanan();
+    String getMaxKodetransaksiSimpanan(Integer idKopersi);
 
 
     @Query(value = "SELECT * FROM transaksi_simpanan t " +
