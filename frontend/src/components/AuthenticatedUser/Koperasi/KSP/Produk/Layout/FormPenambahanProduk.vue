@@ -151,7 +151,7 @@
                 <br>
                 <br>
                 <center>
-                  <q-btn label="Close" color="red" v-close-popup/>
+                  <q-btn label="Close" color="red" @click="barcode = true" v-close-popup/>
                   &nbsp;
                   <q-btn label="Simpan" color="primary" type="submit" v-close-popup/>
                 </center>
@@ -209,7 +209,7 @@
                 />
                 <br>
                 <center>
-                  <q-btn label="Close" color="red" v-close-popup/>
+                  <q-btn label="Close" color="red" v-close-popup @click="barcode = true"/>
                   &nbsp;
                   <q-btn label="Simpan" color="primary" type="submit" v-close-popup/>
                 </center>
