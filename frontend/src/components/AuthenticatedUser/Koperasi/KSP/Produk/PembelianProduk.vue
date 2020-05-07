@@ -116,7 +116,6 @@
     },
     created() {
       this.$q.loading.show()
-      console.log(this.vendor)
       this.getData()
     }
   }
