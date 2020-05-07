@@ -143,13 +143,10 @@
       },
       ajukan() {
         if (this.select === null || this.date === null || this.jumlahSimpanan === null || this.selected.length === 0) {
-          this.$swal({
-            position: 'center',
-            type: 'error',
-            title: 'Isi Semua field',
-            showConfirmButton: false,
-            timer: 1500,
-          });
+          this.$q.notify({
+            type: 'negative',
+            message: `Isi Semua field`
+          })
           return
         }
         this.$q.loading.show()

@@ -41,6 +41,25 @@
           </q-expansion-item>
           <q-expansion-item
             expand-separator
+            icon="inventory"
+            label="Produk">
+            <q-list padding>
+              <q-item clickable v-ripple :to="'/daftarproduk'">
+                <q-item-section>Daftar Produk</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="'/daftarprodukmasuk'">
+                <q-item-section>Produk Masuk</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="'/pengkasiran'">
+                <q-item-section>Pengkasiran</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="'/produkterjual'">
+                <q-item-section>Produk Terjual</q-item-section>
+              </q-item>
+            </q-list>
+          </q-expansion-item>
+          <q-expansion-item
+            expand-separator
             icon="money"
             label="Simpanan">
             <q-list padding>

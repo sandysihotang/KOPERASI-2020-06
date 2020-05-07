@@ -1,5 +1,6 @@
 package io.github.sandy.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Fetch;
@@ -55,6 +56,32 @@ public class Koperasi implements Serializable {
     private Set<AnggotaKoperasi> anggotaKoperasis = new HashSet<>();
 
     @JsonManagedReference
+    @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
+    private Set<KategoriProduk> kategoriProduk = new HashSet<>();
+
+    @JsonBackReference
+    @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
+    private Set<Produk> produk = new HashSet<>();
+
+    @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
+    private Set<Vendor> vendor = new HashSet<>();
+
+    @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
+    private Set<TransaksiProduk> transaksiProduk = new HashSet<>();
+
+    @JsonManagedReference
     @Fetch(FetchMode.JOIN)
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "koperasi")
@@ -78,6 +105,12 @@ public class Koperasi implements Serializable {
     @OneToMany(mappedBy = "koperasi")
     private Set<PengaturanSimpanan> pengaturanSimpanan = new HashSet<>();
 
+    @JsonManagedReference
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
+    private Set<PenjualanProduk> penjualanProduk = new HashSet<>();
+
     @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", referencedColumnName = "id")
@@ -95,7 +128,47 @@ public class Koperasi implements Serializable {
         this.aktivasiSimpanan = aktivasiSimpanan;
     }
 
+    public Set<PenjualanProduk> getPenjualanProduk() {
+        return penjualanProduk;
+    }
+
+    public void setPenjualanProduk(Set<PenjualanProduk> penjualanProduk) {
+        this.penjualanProduk = penjualanProduk;
+    }
+
+    public Set<Vendor> getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Set<Vendor> vendor) {
+        this.vendor = vendor;
+    }
+
     public Koperasi() {
+    }
+
+    public Set<KategoriProduk> getKategoriProduk() {
+        return kategoriProduk;
+    }
+
+    public void setKategoriProduk(Set<KategoriProduk> kategoriProduk) {
+        this.kategoriProduk = kategoriProduk;
+    }
+
+    public Set<TransaksiProduk> getTransaksiProduk() {
+        return transaksiProduk;
+    }
+
+    public void setTransaksiProduk(Set<TransaksiProduk> transaksiProduk) {
+        this.transaksiProduk = transaksiProduk;
+    }
+
+    public Set<Produk> getProduk() {
+        return produk;
+    }
+
+    public void setProduk(Set<Produk> produk) {
+        this.produk = produk;
     }
 
     public Set<PengaturanSimpanan> getPengaturanSimpanan() {

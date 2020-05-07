@@ -176,7 +176,35 @@ const routes = [
         meta: {
           roolToKSU: true,
         },
-      }
+      },
+      {
+        path: '/daftarproduk',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Produk/DaftarProduk.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/daftarprodukmasuk',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Produk/PembelianProduk.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/pengkasiran',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Produk/Pengkasiran.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/produkterjual',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Produk/ProdukTerjual.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
     ],
   },
   {
