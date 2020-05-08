@@ -33,7 +33,9 @@
       :filter="filter"
     >
       <template v-slot:top-left>
-        <q-btn icon="person" color="primary" :to="'/daftaranggota'" label="Tambah Anggota">
+        <q-btn icon="person" color="primary"
+               :to="(getStateKoperasi() === 2 ? '/daftaranggota' : '/daftaranggotaksu')"
+               label="Tambah Anggota">
         </q-btn>
       </template>
       <template v-slot:top-right>
@@ -94,6 +96,9 @@
           .catch((err) => {
             this.$q.loading.hide();
           });
+      },
+      getStateKoperasi() {
+        return localStorage.getItem('jenisKoperasi')
       },
       loadData() {
         this.$http.get('/api/getdatamember', {
