@@ -53,7 +53,7 @@ public class KoperasiService {
 
         koperasi.setAlamatKoperasi(requestbody.getAlamat());
         koperasi.setNamaKoperasi(requestbody.getName());
-        koperasi.setJenisKoperasi(requestbody.getJenis().trim().equals("Koperasi Serba Usaha (KSU)") ? 2 : 1);
+        koperasi.setJenisKoperasi(requestbody.getJenis().trim().equals("Koperasi Serba Usaha (KSU)") ? 1 : 2);
         koperasi.setNamaPendiri(requestbody.getPendiri());
         koperasi.setNoIzinKoperasi(requestbody.getIzin());
         koperasi.setTahunBerdiriKoperasi(new Date(requestbody.getDate()));

@@ -21,6 +21,12 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
             nativeQuery = true)
     String getMaxKodePinjaman(Integer idKoperasi);
 
+    @Query(value = "SELECT sum(jumlah_pinjaman) from peminjaman WHERE id_koperasi = ?1 AND status = ?2",
+            nativeQuery = true)
+    Integer getPinjaman(Integer idKoperasi, Integer status);
+
+    Boolean existsByKoperasiAndStatus(Koperasi koperasi, Integer status);
+
     List<Pinjaman> getAllByKoperasi(Koperasi koperasi);
 
     List<Pinjaman> getAllByKoperasiAndStatus(Koperasi koperasi, Integer status);
