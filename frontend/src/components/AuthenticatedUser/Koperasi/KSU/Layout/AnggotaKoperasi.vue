@@ -98,7 +98,7 @@
           });
       },
       getStateKoperasi() {
-        return localStorage.getItem('jenisKoperasi')
+        return parseInt(localStorage.getItem('jenisKoperasi'))
       },
       loadData() {
         this.$http.get('/api/getdatamember', {
