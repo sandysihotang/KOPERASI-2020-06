@@ -111,7 +111,7 @@
                 <q-btn size="xs" color="red" label="Hapus"
                        :disable="selected.length === 0"
                        icon="fa fa-window-close" @click="hapus"/>&nbsp;
-                <q-btn size="xs" color="green" label="Ubah produk"
+                <q-btn size="xs" color="green" label="Ubah stok"
                        :disable="selected.length === 0"
                        icon="update" @click="update = true"/>
               </template>

@@ -127,6 +127,7 @@
               label="Tenor (Bulan)"
               mask="## Bln"
               fill-mask="0"
+              :hint="`Min Tenor:${aturan.minTenor} Bulan, Max Tenor:${aturan.maxTenor} Bulan` "
               reverse-fill-mask
               unmasked-value
               input-class="text-right"
@@ -193,7 +194,8 @@
         persentase: null,
         jaminan: null,
         adaPinjaman: false,
-        dataPinjamanSelesai: []
+        dataPinjamanSelesai: [],
+        aturan: []
       }
     },
     methods: {
@@ -218,6 +220,20 @@
           })
       },
       ajukanPinjaman() {
+        if (this.tenor < this.aturan.minTenor) {
+          this.$q.notify({
+            type: 'negative',
+            message: `Tenor yang anda pilih tidak boleh kurang dari ${this.aturan.minTenor}`
+          })
+          return;
+        }
+        if (this.tenor > this.aturan.maxTenor) {
+          this.$q.notify({
+            type: 'negative',
+            message: `Tenor yang anda pilih tidak boleh lebih dari ${this.aturan.maxTenor}`
+          })
+          return;
+        }
         if (parseInt(this.price) === 0 || parseInt(this.tenor) === 0 || this.jaminan.length === 0) {
           this.$swal({
             position: 'center',
@@ -290,6 +306,7 @@
           headers: this.$auth.getHeader(),
         })
           .then((res) => {
+            this.aturan = res.data
             this.persentase = res.data.bungaPinjaman
             this.id = res.data.id
             this.$q.loading.hide()

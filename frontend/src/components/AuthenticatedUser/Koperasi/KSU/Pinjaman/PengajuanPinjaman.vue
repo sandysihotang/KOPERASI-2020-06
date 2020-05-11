@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md" >
+  <div class="q-pa-md">
     <q-table
       :dense="$q.screen.lt.md"
       title="Daftar Pengajuan Pinjaman"
@@ -157,7 +157,52 @@
             showConfirmButton: false,
             timer: 1500,
           });
+          return
         }
+        this.$q.loading.show()
+        this.$http.get(`/api/getdatapengajupdf/${this.selected[0].id}`, {
+          headers: this.$auth.getHeader(),
+          responseType: 'arraybuffer'
+        })
+          .then((res) => {
+            this.downloadFile(res, 'pengajuan')
+            this.$q.loading.hide()
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
+      },
+      downloadFile(response, filename) {
+        // It is necessary to create a new blob object with mime-type explicitly set
+        // otherwise only Chrome works like it should
+        const newBlob = new Blob([response.data], { type: 'application/pdf' })
+
+        // IE doesn't allow using a blob object directly as link href
+        // instead it is necessary to use msSaveOrOpenBlob
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+          window.navigator.msSaveOrOpenBlob(newBlob)
+          return
+        }
+
+        // For other browsers:
+        // Create a link pointing to the ObjectURL containing the blob.
+        const data = window.URL.createObjectURL(newBlob)
+        const link = document.createElement('a')
+        link.href = data
+        link.download = `${filename}.pdf`
+        link.click()
+        setTimeout(() => {
+          // For Firefox it is necessary to delay revoking the ObjectURL
+          window.URL.revokeObjectURL(data)
+        }, 100)
+        this.$swal({
+          position: 'center',
+          type: 'success',
+          width: 300,
+          title: 'Berhasil Mengexport Data',
+          showConfirmButton: false,
+          timer: 1500
+        })
       },
       save() {
         this.$refs.saveFunction.call()
