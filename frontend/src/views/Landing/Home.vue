@@ -4,7 +4,7 @@
       <b>Bangun Masa Depan <br>bersama Koperasi</b>
     </h2>
     <div class="row">
-      <q-btn style="margin-left: 9%" outline color="white">
+      <q-btn style="margin-left: 9%" outline color="white" to="/register">
         <div class="row items-center no-wrap">
           <q-icon left name="person" />
           <div class="text-center">

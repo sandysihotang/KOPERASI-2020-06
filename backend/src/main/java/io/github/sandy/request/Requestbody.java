@@ -2,10 +2,9 @@ package io.github.sandy.request;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
-
 public class Requestbody {
     private int id;
+    private String kategori;
     private String username;
     private String password;
     private String firstName;
@@ -31,9 +30,152 @@ public class Requestbody {
     private String jaminan;
     private Integer price;
     private Integer tenor;
+    private Integer pokok;
+    private Integer wajib;
+    private Integer sukarela;
+    private Long jumlahSimpanan;
+    private Integer jumlahTransaksi;
+    private String barCode;
+    private String namaProduk;
+    private Integer hargaBeli;
+    private Integer hargaJualAnggota;
+    private Integer hargaJualNonAnggota;
+    private Integer kategoriProduk;
+    private Integer jumlahBarang;
+    private Boolean anggota;
+    private Integer jumlahBeli;
+    private Integer uangBeli;
+
+    public Integer getUangBeli() {
+        return uangBeli;
+    }
+
+    public void setUangBeli(Integer uangBeli) {
+        this.uangBeli = uangBeli;
+    }
+
+    public Integer getJumlahBeli() {
+        return jumlahBeli;
+    }
+
+    public void setJumlahBeli(Integer jumlahBeli) {
+        this.jumlahBeli = jumlahBeli;
+    }
+
+    public Boolean getAnggota() {
+        return anggota;
+    }
+
+    public void setAnggota(Boolean anggota) {
+        this.anggota = anggota;
+    }
+
+    public String getBarCode() {
+        return barCode;
+    }
+
+    public Integer getJumlahBarang() {
+        return jumlahBarang;
+    }
+
+    public void setJumlahBarang(Integer jumlahBarang) {
+        this.jumlahBarang = jumlahBarang;
+    }
+
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
+    }
+
+    public String getNamaProduk() {
+        return namaProduk;
+    }
+
+    public void setNamaProduk(String namaProduk) {
+        this.namaProduk = namaProduk;
+    }
+
+    public Integer getHargaBeli() {
+        return hargaBeli;
+    }
+
+    public void setHargaBeli(Integer hargaBeli) {
+        this.hargaBeli = hargaBeli;
+    }
+
+    public Integer getHargaJualAnggota() {
+        return hargaJualAnggota;
+    }
+
+    public void setHargaJualAnggota(Integer hargaJualAnggota) {
+        this.hargaJualAnggota = hargaJualAnggota;
+    }
+
+    public Integer getHargaJualNonAnggota() {
+        return hargaJualNonAnggota;
+    }
+
+    public void setHargaJualNonAnggota(Integer hargaJualNonAnggota) {
+        this.hargaJualNonAnggota = hargaJualNonAnggota;
+    }
+
+    public Integer getKategoriProduk() {
+        return kategoriProduk;
+    }
+
+    public void setKategoriProduk(Integer kategoriProduk) {
+        this.kategoriProduk = kategoriProduk;
+    }
+
+    public Integer getJumlahTransaksi() {
+        return jumlahTransaksi;
+    }
+
+    public void setJumlahTransaksi(Integer jumlahTransaksi) {
+        this.jumlahTransaksi = jumlahTransaksi;
+    }
+
+    public Long getJumlahSimpanan() {
+        return jumlahSimpanan;
+    }
+
+    public void setJumlahSimpanan(Long jumlahSimpanan) {
+        this.jumlahSimpanan = jumlahSimpanan;
+    }
+
+    public String getKategori() {
+        return kategori;
+    }
+
+    public void setKategori(String kategori) {
+        this.kategori = kategori;
+    }
 
     public String getJaminan() {
         return jaminan;
+    }
+
+    public Integer getPokok() {
+        return pokok;
+    }
+
+    public void setPokok(Integer pokok) {
+        this.pokok = pokok;
+    }
+
+    public Integer getWajib() {
+        return wajib;
+    }
+
+    public void setWajib(Integer wajib) {
+        this.wajib = wajib;
+    }
+
+    public Integer getSukarela() {
+        return sukarela;
+    }
+
+    public void setSukarela(Integer sukarela) {
+        this.sukarela = sukarela;
     }
 
     public void setJaminan(String jaminan) {

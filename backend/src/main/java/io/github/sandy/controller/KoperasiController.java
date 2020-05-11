@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -53,6 +54,15 @@ public class KoperasiController {
     @Autowired
     PinjamanRepository pinjamanRepository;
 
+    @Autowired
+    TransaksiSimpananRepository transaksiSimpananRepository;
+
+    @Autowired
+    ProdukRepository produkRepository;
+
+    @Autowired
+    PenjualanProdukRepository penjualanProdukRepository;
+
     @RequestMapping(value = "/api/createkoperasi", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Err> createKoperasi(@ModelAttribute Requestbody requestbody, HttpServletRequest request) {
@@ -83,6 +93,60 @@ public class KoperasiController {
         Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(user).get().getKoperasi().getId());
 
         return koperasi.isHaveFieldRegisterMember();
+    }
+
+    @RequestMapping(value = "/api/getanggotaaknonak", method = RequestMethod.GET)
+    public HashMap<String, Integer> getAngotaAktifNonAktif(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String user = principal.getName();
+        HashMap<String, Integer> data = new HashMap<>();
+        Koperasi koperasi = userRepository.findByUsername(user).get().getKoperasi();
+        Integer aktif = angotaKoperasiRepository.getCountJumlahAnggota(koperasi.getId(), true);
+        Integer nonAktif = angotaKoperasiRepository.getCountJumlahAnggota(koperasi.getId(), false);
+        data.put("aktif", aktif);
+        data.put("nonAktif", nonAktif);
+
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getsimpanananggota", method = RequestMethod.GET)
+    public HashMap<String, Integer> getSimpanan(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String user = principal.getName();
+        HashMap<String, Integer> data = new HashMap<>();
+        Koperasi koperasi = userRepository.findByUsername(user).get().getKoperasi();
+        data.put("pokok", transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 1) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 1));
+        data.put("wajib", transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 2) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 2));
+        data.put("sukarela", transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 3) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 3));
+        return data;
+    }
+
+    @RequestMapping(value = "/api/produkkoperasi", method = RequestMethod.GET)
+    public HashMap<String, Integer> getKoperasiDashboard(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String user = principal.getName();
+        HashMap<String, Integer> data = new HashMap<>();
+        Koperasi koperasi = userRepository.findByUsername(user).get().getKoperasi();
+        data.put("totalproduk", (produkRepository.existsByKoperasi(koperasi) ? produkRepository.getTotalProduk(koperasi.getId()) : 0));
+        data.put("totalprodukterjual", (penjualanProdukRepository.existsByKoperasiAndStatus(koperasi, true) ?
+                penjualanProdukRepository.getJumlahTerjual(koperasi.getId(), true) : 0));
+        data.put("totaluangprodukterjual", (penjualanProdukRepository.existsByKoperasiAndStatus(koperasi, true) ?
+                penjualanProdukRepository.getJumlahUangTerjualAnggota(koperasi.getId()) +
+                        penjualanProdukRepository.getJumlahUangTerjualNonAnggota(koperasi.getId())
+                : 0));
+
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getpinjamanfordashboard", method = RequestMethod.GET)
+    public HashMap<String, Integer> getPinjamanForDashboard(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String user = principal.getName();
+        HashMap<String, Integer> data = new HashMap<>();
+        Koperasi koperasi = userRepository.findByUsername(user).get().getKoperasi();
+        data.put("pinjamantersalur", (pinjamanRepository.existsByKoperasiAndStatus(koperasi, 2) ? pinjamanRepository.getPinjaman(koperasi.getId(), 2) : 0));
+        data.put("pinjamanterbayar", (pinjamanRepository.existsByKoperasiAndStatus(koperasi, 6) ? pinjamanRepository.getPinjaman(koperasi.getId(), 6) : 0));
+        return data;
     }
 
 

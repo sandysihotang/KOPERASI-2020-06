@@ -29,12 +29,13 @@ public class PeminjamanService {
         Pinjaman pinjaman = new Pinjaman();
         PengaturanPinjaman pengaturanPinjaman = pengaturanPinjamanRepository.findFirstById(requestbody.getId()).get();
 
-        String kodePinjaman = getKodePinjaman();
+        String kodePinjaman = getKodePinjaman(user.getKoperasi().getId());
         Koperasi koperasi = angotaKoperasiRepository.findFirstByUser(user).get().getKoperasi();
         pinjaman.setPengaturanPinjaman(pengaturanPinjaman);
         pinjaman.setUser(user);
         pinjaman.setJaminan(requestbody.getJaminan());
         pinjaman.setStatus(5);
+        pinjaman.setCreatedAt(new Date());
         pinjaman.setKoperasi(koperasi);
         pinjaman.setKodePinjaman(kodePinjaman);
         pinjaman.setTenor(requestbody.getTenor());
@@ -42,8 +43,8 @@ public class PeminjamanService {
         pinjamanRepository.save(pinjaman);
     }
 
-    private String getKodePinjaman() {
-        String kode = pinjamanRepository.getMaxKodePinjaman();
+    private String getKodePinjaman(Integer idKoperasi) {
+        String kode = pinjamanRepository.getMaxKodePinjaman(idKoperasi);
         if (kode != null) {
             int noUrut = Integer.parseInt(kode.substring(1, 11));
             noUrut++;
@@ -58,6 +59,7 @@ public class PeminjamanService {
             return;
         }
         pinjaman.setTenor(requestbody.getTenor());
+        pinjaman.setJaminan(requestbody.getJaminan());
         pinjaman.setJumlahPinjaman(Double.parseDouble(Integer.toString(requestbody.getPrice())) / 100);
         pinjaman.setStatus(requestbody.getStatus());
         pinjaman.setDatePengajuanDiterima(new Date());

@@ -8,16 +8,23 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface KoperasiRepository extends JpaRepository<Koperasi,Integer> {
+public interface KoperasiRepository extends JpaRepository<Koperasi, Integer> {
     @Query(
             value = "SELECT * FROM koperasi " +
-                    "INNER JOIN user " +
-                    "ON user.id = koperasi.id_user " +
-                    "WHERE user.haveKoperasi != 0 " ,
+                    "INNER JOIN users " +
+                    "ON users.id = koperasi.id_user " +
+                    "WHERE users.have_koperasi != 0",
             nativeQuery = true
     )
     List<Koperasi> findByIsHaveKoperasi();
 
+    @Query(
+            value = "SELECT jenis_koperasi from koperasi " +
+                    "INNER JOIN users on koperasi.id_user = users.id " +
+                    "where users.id = ?1 LIMIT 1",
+            nativeQuery = true
+    )
+    Integer getJenisFromKoperasi(Integer idUser);
 
     Koperasi findFirstByUser(User user);
 }

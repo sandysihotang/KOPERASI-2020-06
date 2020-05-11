@@ -41,6 +41,19 @@
           </q-expansion-item>
           <q-expansion-item
             expand-separator
+            icon="money"
+            label="Simpanan">
+            <q-list padding>
+              <q-item clickable v-ripple :to="'/transaksisimpanan'">
+                <q-item-section>Transaksi Simpanan</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="'/aktivasisimpanan'">
+                <q-item-section>Aktivasi Simpanan</q-item-section>
+              </q-item>
+            </q-list>
+          </q-expansion-item>
+          <q-expansion-item
+            expand-separator
             icon="settings"
             label="Pengaturan">
             <q-list padding>
@@ -49,6 +62,9 @@
               </q-item>
               <q-item clickable v-ripple :to="'/pengaturanpinjaman'">
                 <q-item-section>Pinjaman</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="'/pengaturansimpanan'">
+                <q-item-section>Simpanan</q-item-section>
               </q-item>
             </q-list>
           </q-expansion-item>

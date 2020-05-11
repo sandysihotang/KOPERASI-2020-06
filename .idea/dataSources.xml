@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="KOPERASI_SERBA_USAHA" uuid="efa63350-6741-4912-82b3-16ca25bed96c">
-      <driver-ref>mysql.8</driver-ref>
+    <data-source source="LOCAL" name="DEV" uuid="aa98566b-e9a8-46f1-b70d-db9f3d1d14c6">
+      <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/koperasi_serba_usaha</jdbc-url>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/koperasi_serba_usaha</jdbc-url>
     </data-source>
-    <data-source source="LOCAL" name="KOPERASI_SERBA_USAHA_PROD" uuid="71d57cc0-efec-41f1-910a-f2ec56a36a32">
+    <data-source source="LOCAL" name="Mysql" uuid="f83e6180-72fa-4b03-9f8e-aa7952b747c7">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://db4free.net:3306/koperasi_serba_u</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3306/koperasi_serba_usaha?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="d7mkkup5jragm1@ec2-54-159-112-44.compute-1.amazonaws.com" uuid="561eb230-4e44-4ac7-8ce7-3e66bae3860e">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ec2-54-159-112-44.compute-1.amazonaws.com:5432/d7mkkup5jragm1</jdbc-url>
     </data-source>
   </component>
 </project>

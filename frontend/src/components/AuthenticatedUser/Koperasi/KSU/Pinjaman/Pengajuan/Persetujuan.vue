@@ -33,6 +33,12 @@
           unmasked-value
           input-class="text-right"
         />
+        <q-input
+          filled
+          v-model="jaminan"
+          label="Jaminan"
+          input-class="text-right"
+        />
         <q-select
           filled
           v-model="model"
@@ -85,6 +91,7 @@
     props: ['user'],
     data() {
       return {
+        jaminan: null,
         columns: [],
         data: [],
         price: null,
@@ -119,6 +126,7 @@
       reload() {
         this.price = this.user.jumlahPinjaman * 100
         this.tenor = this.user.tenor
+        this.jaminan = this.user.jaminan
         this.persentase = this.user.pengaturanPinjaman.bungaPinjaman
       },
       loadColumn() {
@@ -156,11 +164,16 @@
         this.$http.put(`/api/savepinjamanfrompengurus/${this.user.id}`, {
           price: this.price,
           tenor: this.tenor,
+          jaminan: this.jaminan,
           status: status.get(this.model)
         }, {
           headers: this.$auth.getHeader()
         })
           .then((res) => {
+            this.$q.notify({
+              type: 'positive',
+              message: 'Berhasil menyimpan data pemohon'
+            })
           })
           .catch(() => {
             this.$q.loading.hide()

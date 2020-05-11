@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="q-pa-md">
     <q-table
       :dense="$q.screen.lt.md"
       title="Daftar Pengajuan Pinjaman"
@@ -17,7 +17,7 @@
           </div>
           <div class="col">
             <q-btn size="xs" color="green" label="Pengajuan Baru" icon="edit"
-                   @click="pengajuanBaru"/>
+                   @click="pengajuanBaru = true"/>
           </div>
           <div class="col">
             <q-btn size="xs" color="green" label="Tabel Angsuran" icon="table"
@@ -55,6 +55,14 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="pengajuanBaru" persistent transition-show="scale" transition-hide="scale">
+      <q-card style="width: 700px; max-width: 80vw;">
+        <pengajuan-baru @get="getDataPinjaman"/>
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="Close" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -62,15 +70,18 @@
   import moment from 'moment';
   import persetujuanForm from './Pengajuan/Persetujuan.vue';
   import tableAngsuran from './Pengajuan/TableAngsuran.vue';
+  import PengajuanBaru from './Pengajuan/PengajuanBaru.vue';
 
   export default {
     components: {
       persetujuanForm,
-      tableAngsuran
+      tableAngsuran,
+      PengajuanBaru
     },
     data() {
       return {
         tableAngsuran: false,
+        pengajuanBaru: false,
         status: ['Cancel', 'Approved', 'Rejected', 'On Reviewed', 'Awaiting Approval', 'Close'],
         selected: [],
         data: [],
@@ -92,6 +103,12 @@
             label: 'Jumlah Pinjaman',
             align: 'center',
             field: row => this.toIDR(row.jumlahPinjaman),
+            sortable: true,
+          }, {
+            name: 'jaminan',
+            label: 'Jaminan',
+            align: 'center',
+            field: row => row.jaminan,
             sortable: true,
           }, {
             name: 'namaDebitur',
@@ -140,26 +157,56 @@
             showConfirmButton: false,
             timer: 1500,
           });
-          return;
+          return
         }
-        console.log('s')
+        this.$q.loading.show()
+        this.$http.get(`/api/getdatapengajupdf/${this.selected[0].id}`, {
+          headers: this.$auth.getHeader(),
+          responseType: 'arraybuffer'
+        })
+          .then((res) => {
+            this.downloadFile(res, 'pengajuan')
+            this.$q.loading.hide()
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
+      },
+      downloadFile(response, filename) {
+        // It is necessary to create a new blob object with mime-type explicitly set
+        // otherwise only Chrome works like it should
+        const newBlob = new Blob([response.data], { type: 'application/pdf' })
+
+        // IE doesn't allow using a blob object directly as link href
+        // instead it is necessary to use msSaveOrOpenBlob
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+          window.navigator.msSaveOrOpenBlob(newBlob)
+          return
+        }
+
+        // For other browsers:
+        // Create a link pointing to the ObjectURL containing the blob.
+        const data = window.URL.createObjectURL(newBlob)
+        const link = document.createElement('a')
+        link.href = data
+        link.download = `${filename}.pdf`
+        link.click()
+        setTimeout(() => {
+          // For Firefox it is necessary to delay revoking the ObjectURL
+          window.URL.revokeObjectURL(data)
+        }, 100)
+        this.$swal({
+          position: 'center',
+          type: 'success',
+          width: 300,
+          title: 'Berhasil Mengexport Data',
+          showConfirmButton: false,
+          timer: 1500
+        })
       },
       save() {
         this.$refs.saveFunction.call()
         this.getDataPinjaman()
-      },
-      pengajuanBaru() {
-        if (!this.ck()) {
-          this.$swal({
-            position: 'center',
-            type: 'error',
-            title: 'Pilih item terlebih dahulu',
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          return;
-        }
-        console.log('s')
       },
       tabelAngsuran() {
         if (!this.ck()) {
@@ -191,7 +238,6 @@
         return this.selected.length > 0
       },
       getDataPinjaman() {
-        this.$q.loading.show()
         this.$http.get('/api/getdatapengajuanpinjaman', {
           headers: this.$auth.getHeader()
         })
@@ -231,6 +277,7 @@
       }
     },
     created() {
+      this.$q.loading.show()
       this.getDataPinjaman()
     }
   }
