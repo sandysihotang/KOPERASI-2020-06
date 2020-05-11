@@ -42,7 +42,7 @@
                         <q-item-label caption>Kode Pinjaman: {{ dataPinjaman.kodePinjaman }}
                         </q-item-label>
                         <q-item-label class="text-caption">Total pengajuan:{{
-                          toIDR(dataPinjaman.jumlahPinjaman) }}
+                          toIDR(parseInt(dataPinjaman.jumlahPinjaman)) }}
                         </q-item-label>
                         <q-item-label caption lines="1">
                           <q-chip class="glossy" color="primary" text-color="white">{{
@@ -84,7 +84,7 @@
                         <q-item-label caption>Kode Pinjaman: {{ dataSelesai.kodePinjaman }}
                         </q-item-label>
                         <q-item-label class="text-caption">Total pengajuan:{{
-                          toIDR(dataSelesai.jumlahPinjaman) }}
+                          toIDR(parseInt(dataSelesai.jumlahPinjaman)) }}
                         </q-item-label>
                         <q-item-label caption lines="1">
                           <q-chip class="glossy" color="primary" text-color="white">{{
@@ -142,7 +142,7 @@
           <q-item>
             <q-item-section>Angsuran Pokok</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price / 100) / tenor)}}</q-item-section>
+            <q-item-section>{{ toIDR(parseInt((price / 100) / tenor))}}</q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Bunga(%)</q-item-section>
@@ -152,23 +152,26 @@
           <q-item>
             <q-item-section>Bunga Angsuran</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price/100) * persentase / 100) }}</q-item-section>
+            <q-item-section>{{ toIDR(parseInt((price/100) * persentase / 100)) }}</q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Angsuran</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR(((price/100) / tenor) + ((price/100) * persentase / 100)) }}
+            <q-item-section>{{ toIDR(parseInt(((price/100) / tenor) + ((price/100) * persentase /
+              100))) }}
             </q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Bunga/Jasa</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price / 100) * persentase / 100 * tenor) }}</q-item-section>
+            <q-item-section>{{ toIDR(parseInt((price / 100) * persentase / 100 * tenor)) }}
+            </q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Pinjaman</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price/100) + ((price/100) * persentase / 100 * tenor)) }}
+            <q-item-section>{{ toIDR(parseInt((price/100) + ((price/100) * persentase / 100 *
+              tenor))) }}
             </q-item-section>
           </q-item>
           <q-btn color="primary" class="full-width" @click="ajukanPinjaman">Ajukan Pinjaman</q-btn>

@@ -48,7 +48,7 @@
           <q-item>
             <q-item-section>Angsuran Pokok</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price / 100) / tenor)}}</q-item-section>
+            <q-item-section>{{ toIDR(parseInt((price / 100) / tenor))}}</q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Bunga(%)</q-item-section>
@@ -58,23 +58,24 @@
           <q-item>
             <q-item-section>Bunga Angsuran</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price/100) * persentase / 100) }}</q-item-section>
+            <q-item-section>{{ toIDR(parseInt((price/100) * persentase / 100)) }}</q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Angsuran</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR(((price/100) / tenor) + ((price/100) * persentase / 100)) }}
+            <q-item-section>{{ toIDR(parseInt(((price/100) / tenor) + ((price/100) * persentase /
+              100))) }}
             </q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Bunga/Jasa</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price / 100) * persentase / 100 * tenor) }}</q-item-section>
+            <q-item-section>{{ toIDR(parseInt((price / 100) * persentase / 100 * tenor)) }}</q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Pinjaman</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price/100) + ((price/100) * persentase / 100 * tenor)) }}
+            <q-item-section>{{ toIDR(parseInt((price/100) + ((price/100) * persentase / 100 * tenor))) }}
             </q-item-section>
           </q-item>
         </q-list>

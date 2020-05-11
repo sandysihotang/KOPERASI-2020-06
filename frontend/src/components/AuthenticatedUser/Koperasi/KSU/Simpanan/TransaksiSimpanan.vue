@@ -143,7 +143,7 @@
             name: 'nominal',
             label: 'Nominal Transaksi',
             align: 'center',
-            field: row => this.toIDR(row.jumlahTransaksi),
+            field: row => this.toIDR(parseInt(row.jumlahTransaksi)),
             sortable: true,
           }
         ],

@@ -51,7 +51,7 @@
               </q-item-section>
 
               <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(tersalur) }}</q-item-label>
+                <q-item-label>{{ toIDR(parseInt(tersalur)) }}</q-item-label>
                 <q-item-label caption>
                   Total Pinjaman Tersalur
                 </q-item-label>
@@ -71,7 +71,7 @@
               </q-item-section>
 
               <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(terbayar) }}</q-item-label>
+                <q-item-label>{{ toIDR(parseInt(terbayar)) }}</q-item-label>
                 <q-item-label caption>
                   Total Pinjaman Terbayar
                 </q-item-label>
@@ -91,7 +91,7 @@
               </q-item-section>
 
               <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(terbayar) }}</q-item-label>
+                <q-item-label>{{ toIDR(parseInt(terbayar)) }}</q-item-label>
                 <q-item-label caption>
                   Total Pinjaman Jatuh Tempo
                 </q-item-label>
@@ -153,7 +153,7 @@
               </q-item-section>
 
               <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(totalHargaProdukterjual) }}</q-item-label>
+                <q-item-label>{{ toIDR(parseInt(totalHargaProdukterjual)) }}</q-item-label>
                 <q-item-label caption>
                   Total Penjualan
                 </q-item-label>

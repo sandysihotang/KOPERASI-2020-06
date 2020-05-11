@@ -13,7 +13,7 @@
             <q-item-label class="text-caption">Simpanan Pokok
             </q-item-label>
             <q-item-label caption lines="1">
-              <q-chip class="glossy" color="primary" text-color="white">Saldo: {{ toIDR(pokok)}}
+              <q-chip class="glossy" color="primary" text-color="white">Saldo: {{ toIDR(parseInt(pokok))}}
               </q-chip>
             </q-item-label>
           </q-item-section>
@@ -29,7 +29,7 @@
             <q-item-label class="text-caption">Simpanan Wajib
             </q-item-label>
             <q-item-label caption lines="1">
-              <q-chip class="glossy" color="primary" text-color="white">Saldo: {{ toIDR(wajib)}}
+              <q-chip class="glossy" color="primary" text-color="white">Saldo: {{ toIDR(parseInt(wajib))}}
               </q-chip>
             </q-item-label>
           </q-item-section>
@@ -46,7 +46,7 @@
             </q-item-label>
             <q-item-label caption lines="1">
               <q-chip class="glossy" color="primary" text-color="white">Saldo: {{
-                toIDR(sukarela)}}
+                toIDR(parseInt(sukarela))}}
               </q-chip>
             </q-item-label>
           </q-item-section>

@@ -71,7 +71,7 @@
             name: 'jumlahsetoran',
             label: 'Jumlah Setoran',
             align: 'center',
-            field: row => this.toIDR(row.totalSimpanan),
+            field: row => this.toIDR(parseInt(row.totalSimpanan)),
             sortable: true,
           }, {
             name: 'tanggalmulai',

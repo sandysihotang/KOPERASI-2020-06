@@ -70,7 +70,7 @@
               let hargaBeli = ''
               for (let i = 0; i < harga.length; i++) {
                 if (harga[i].status === true) {
-                  hargaBeli = this.toIDR(harga[i].hargaBeli)
+                  hargaBeli = this.toIDR(parseInt(harga[i].hargaBeli))
                   break
                 }
               }
@@ -86,7 +86,7 @@
               let jual = ''
               for (let i = 0; i < harga.length; i++) {
                 if (harga[i].status === true) {
-                  jual = this.toIDR(harga[i].hargaJualAnggota)
+                  jual = this.toIDR(parseInt(harga[i].hargaJualAnggota))
                   break
                 }
               }
@@ -102,7 +102,7 @@
               let jual = ''
               for (let i = 0; i < harga.length; i++) {
                 if (harga[i].status === true) {
-                  jual = this.toIDR(harga[i].hargaJualNonAnggota)
+                  jual = this.toIDR(parseInt(harga[i].hargaJualNonAnggota))
                   break
                 }
               }

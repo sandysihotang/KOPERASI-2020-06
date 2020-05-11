@@ -206,7 +206,7 @@
             name: 'harga',
             label: 'Harga Barang',
             align: 'center',
-            field: row => (this.anggota ? this.toIDR(row.harga.hargaJualAnggota) : this.toIDR(row.harga.hargaJualNonAnggota)),
+            field: row => (this.anggota ? this.toIDR(parseInt(row.harga.hargaJualAnggota)) : this.toIDR(parseInt(row.harga.hargaJualNonAnggota))),
             sortable: true,
           },
           {
@@ -220,7 +220,7 @@
             name: 'subTotal',
             label: 'SubTotal',
             align: 'center',
-            field: row => this.toIDR(row.jumlahBeli * (this.anggota ? row.harga.hargaJualAnggota : row.harga.hargaJualNonAnggota)),
+            field: row => this.toIDR(parseInt(row.jumlahBeli * (this.anggota ? row.harga.hargaJualAnggota : row.harga.hargaJualNonAnggota))),
             sortable: true,
           }
         ],
@@ -291,7 +291,7 @@
             for (let i = 0; i < this.data.length; i++) {
               this.tot += this.data[i].jumlahBeli * (this.anggota ? this.data[i].harga.hargaJualAnggota : this.data[i].harga.hargaJualNonAnggota)
             }
-            this.totalBeli = this.toIDR(this.tot)
+            this.totalBeli = this.toIDR(parseInt(this.tot))
             this.$q.loading.hide()
           })
           .catch(() => {
@@ -359,7 +359,7 @@
             } else {
               this.id = data.id
               this.jumlahBarang = data.jumlah
-              this.hargaBarang = this.toIDR(data.harga)
+              this.hargaBarang = this.toIDR(parseInt(data.harga))
             }
             this.$q.loading.hide()
           })

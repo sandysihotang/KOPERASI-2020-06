@@ -81,7 +81,7 @@
             name: 'jumlahPinjaman',
             label: 'Jumlah Pinjaman',
             align: 'center',
-            field: row => this.toIDR(row.jumlahPinjaman),
+            field: row => this.toIDR(parseInt(row.jumlahPinjaman)),
             sortable: true,
           }, {
             name: 'namaDebitur',

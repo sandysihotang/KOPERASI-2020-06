@@ -38,7 +38,7 @@
         fill-mask="0"
         reverse-fill-mask
         unmasked-value
-        :hint="`Total Saldo Simpanan Wajib: ${toIDR(maxSimpanan)}`"
+        :hint="`Total Saldo Simpanan Wajib: ${toIDR(parseInt(maxSimpanan))}`"
         input-class="text-right">
         <template v-slot:prepend>
           <q-icon name="money"/>
@@ -148,7 +148,7 @@
         if (this.jumlahSimpanan > this.maxSimpanan) {
           this.$q.notify({
             type: 'negative',
-            message: `Maksimal Penarikan: ${this.toIDR(this.maxSimpanan)}`
+            message: `Maksimal Penarikan: ${this.toIDR(parseInt(this.maxSimpanan))}`
           })
           return
         }

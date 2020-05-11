@@ -5,7 +5,7 @@
         {{nama}}
         <br>
         <h5>
-          <q-badge color="primary" outline :label="`Total simpanan: ${toIDR(saldo)}`"/>
+          <q-badge color="primary" outline :label="`Total simpanan: ${toIDR(parseInt(saldo))}`"/>
         </h5>
       </center>
     </q-card>
@@ -40,7 +40,7 @@
             <q-item-section class="text-black">
               <q-item-label caption>Kode Pinjaman: #{{ kodePinjaman }}</q-item-label>
               <q-item-label class="text-caption">Pembayaran berikutnya:{{
-                toIDR(jumlahPembayaranBerikutnya) }}
+                toIDR(parseInt(jumlahPembayaranBerikutnya)) }}
               </q-item-label>
               <q-item-label caption lines="1">
                 <q-chip class="glossy" color="primary" text-color="white">{{
@@ -75,7 +75,7 @@
 
             <q-item-section class="text-black">
               <q-item-label caption>Kode Pinjaman: #{{ a.kodeTransaksi }}</q-item-label>
-              <q-item-label class="text-caption">Total: {{ toIDR(a.jumlahTransaksi) }}
+              <q-item-label class="text-caption">Total: {{ toIDR(parseInt(a.jumlahTransaksi)) }}
               </q-item-label>
               <q-item-label class="text-caption">Jenis: {{ (a.aktivasiSimpanan.jenisSimpanan === 1?
                 'Simpanan Pokok': (a.aktivasiSimpanan.jenisSimpanan === 2 ? 'Simpanan Wajib' :

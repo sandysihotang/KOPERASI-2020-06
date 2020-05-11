@@ -147,7 +147,7 @@
         if (this.jumlahSimpanan < this.maxSimpanan) {
           this.$q.notify({
             type: 'negative',
-            message: `Minimal Penyimpanan ${this.toIDR(this.maxSimpanan)}`
+            message: `Minimal Penyimpanan ${this.toIDR(parseInt(this.maxSimpanan))}`
           })
           return
         }

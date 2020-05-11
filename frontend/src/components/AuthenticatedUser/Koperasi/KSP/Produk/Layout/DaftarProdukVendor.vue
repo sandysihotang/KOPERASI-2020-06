@@ -34,19 +34,19 @@
             name: 'hargabeli',
             label: 'Harga Beli',
             align: 'center',
-            field: row => this.toIDR(row.hargaBeli),
+            field: row => this.toIDR(parseInt(row.hargaBeli)),
             sortable: true,
           }, {
             name: 'hargajualanggota',
             label: 'Harga Jual Anggota',
             align: 'center',
-            field: row => this.toIDR(row.hargaJualAnggota),
+            field: row => this.toIDR(parseInt(row.hargaJualAnggota)),
             sortable: true,
           }, {
             name: 'hargajualnonanggota',
             label: 'Harga Jual Non Anggota',
             align: 'center',
-            field: row => this.toIDR(row.hargaJualNonAnggota),
+            field: row => this.toIDR(parseInt(row.hargaJualNonAnggota)),
             sortable: true,
           }, {
             name: 'jumlahproduk',
