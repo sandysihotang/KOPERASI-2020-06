@@ -41,10 +41,14 @@ public interface TransaksiSimpananRepository extends JpaRepository<TransaksiSimp
             nativeQuery = true)
     Set<TransaksiSimpanan> getTransaksiTerkini(Integer idUser);
 
-    @Query(value = "SELECT count(t.jumlah_transaksi) FROM transaksi_simpanan t " +
-            "INNER JOIN aktivasi_simpanan a " +
-            "ON t.id_aktivasi = a.id " +
-            "WHERE a.id_koperasi = ?1 AND t.jenis_transaksi=?2 AND a.jenis_simpanan=?3",
+    @Query(value = "SELECT " +
+            "case " +
+            "when ((SELECT count(t.jumlah_transaksi) FROM transaksi_simpanan t " +
+            "INNER JOIN aktivasi_simpanan a ON t.id_aktivasi = a.id " +
+            "WHERE a.id_koperasi = ?1 AND t.jenis_transaksi=?2 " +
+            "AND a.jenis_simpanan=?3) > 0) " +
+            "then (SELECT SUM(t.jumlah_transaksi) FROM transaksi_simpanan t INNER JOIN aktivasi_simpanan a ON t.id_aktivasi = a.id WHERE a.id_koperasi = ?1 AND t.jenis_transaksi=?2 AND a.jenis_simpanan=?3)" +
+            "else 0 END",
             nativeQuery = true)
     Integer getJumlahYangMeminjam(Integer idKoperasi, Integer jenisTransaksi, Integer jenisSimpanan);
 }

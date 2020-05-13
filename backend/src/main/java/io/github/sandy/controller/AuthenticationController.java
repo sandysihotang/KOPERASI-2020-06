@@ -38,7 +38,7 @@ public class AuthenticationController {
     @RequestMapping(value = "/send", method = RequestMethod.GET)
     public void send() {
         MailSender mailSender = new MailSender();
-        mailSender.run(javaMailSender);
+//        mailSender.run(javaMailSender);
     }
 
     @RequestMapping(value = "/api/getnonauthenticateduser", method = RequestMethod.GET)

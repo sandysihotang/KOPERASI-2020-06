@@ -29,21 +29,32 @@
       title="Daftar Anggota Koperasi"
       :data="data"
       :columns="columns"
-      row-key="name"
       :filter="filter"
+      row-key="id"
+      selection="single"
+      :selected.sync="selected"
     >
       <template v-slot:top-left>
-        <q-btn icon="person" color="primary"
+        <q-btn icon="person" color="primary" size="xs"
                :to="(getStateKoperasi() === 2 ? '/daftaranggota' : '/daftaranggotaksu')"
                label="Tambah Anggota">
         </q-btn>
       </template>
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-          <template v-slot:append>
-            <q-icon name="search"/>
-          </template>
-        </q-input>
+        <div class="row">
+          <div class="col">
+            <q-btn color="primary" icon="fa fa-ban" :disable="selected.length === 0" @click="ss"
+                   size="xs"
+                   label="NonActive"/>
+          </div>
+          <div class="col">
+            <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+              <template v-slot:append>
+                <q-icon name="search"/>
+              </template>
+            </q-input>
+          </div>
+        </div>
       </template>
     </q-table>
   </div>
@@ -57,9 +68,49 @@
         isHaveMember: false,
         data: [],
         columns: [],
+        selected: [],
       }
     },
     methods: {
+      ss() {
+        this.$swal.fire({
+          title: 'Anda yakin?',
+          text: `Ingin nonaktifkan Anggota ini?`,
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: `Ya, nonaktifkan!`,
+        })
+          .then((result) => {
+            if (result.value) {
+              this.change()
+            } else {
+              this.$q.loading.show();
+              this.loadColumn();
+            }
+          });
+      },
+      change() {
+        this.$q.loading.show()
+        this.$http.put(`/api/nonactivememberkoperasi/${this.selected[0].id}`, {}, {
+          headers: this.$auth.getHeader()
+        })
+          .then(() => {
+            this.$q.notify({
+              type: 'positive',
+              message: `Berhasil menonaktifkan anggota`
+            })
+            this.loadColumn()
+          })
+          .catch(() => {
+            this.$q.notify({
+              type: 'negative',
+              message: `Terjadi error silahkan refresh (F5)`
+            })
+            this.$q.loading.hide()
+          })
+      },
       isHave() {
         this.$q.loading.show();
         this.$http.get('/api/isHaveField', {
@@ -80,6 +131,7 @@
         })
           .then((res) => {
             const columns = res.data;
+            this.columns = []
             for (let i = 0; i < columns.length; i++) {
               this.columns.push(
                 {
@@ -106,6 +158,7 @@
         })
           .then((res) => {
             const { data } = res;
+            this.data = []
             for (let i = 0; i < data.length; i++) {
               let str = `{"id" : ${data[i].id},`
               const obj = JSON.parse(data[i].data)

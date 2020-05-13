@@ -70,7 +70,7 @@
               <div class="col-md-4 offset-md-4">
                 <q-card>
                   <q-card-section class="bg-primary text-white text-h6">
-                    Total: {{ toIDR(total) }}
+                    Total: {{ toIDR(parseInt(total)) }}
                   </q-card-section>
                 </q-card>
               </div>
@@ -327,7 +327,7 @@
             name: 'hargabeli',
             label: 'Harga Beli',
             align: 'center',
-            field: row => this.toIDR(row.hargaBeli),
+            field: row => this.toIDR(parseInt(row.hargaBeli)),
             sortable: true,
           }, {
             name: 'jumlahbarang',
@@ -339,7 +339,7 @@
             name: 'subtotal',
             label: 'Sub total',
             align: 'center',
-            field: row => this.toIDR(row.jumlahProduk * row.hargaBeli),
+            field: row => this.toIDR(parseInt(row.jumlahProduk * row.hargaBeli)),
             sortable: true,
           },
         ],

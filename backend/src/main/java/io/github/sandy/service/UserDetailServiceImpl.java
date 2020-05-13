@@ -126,7 +126,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         User user = userRepository.getOne(id);
 
         MailSender mailSender = new MailSender();
-        mailSender.sendEmailEnableAccount(javaMailSender,user.getEmail());
+//        mailSender.sendEmailEnableAccount(javaMailSender,user.getEmail());
 
         user.setEnabled(true);
         userRepository.save(user);

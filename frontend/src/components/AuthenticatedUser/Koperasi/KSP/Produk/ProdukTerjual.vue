@@ -76,7 +76,7 @@
             name: 'totalbeli',
             label: 'Total Beli',
             align: 'center',
-            field: row => this.toIDR(row.uangMasuk),
+            field: row => this.toIDR(parseInt(row.uangMasuk)),
             sortable: true,
           }
         ],
@@ -104,13 +104,13 @@
             name: 'harga',
             label: 'Harga',
             align: 'center',
-            field: row => this.toIDR((row.keanggotaan ? row.harga.hargaJualAnggota : row.harga.hargaJualNonAnggota)),
+            field: row => this.toIDR(parseInt((row.keanggotaan ? row.harga.hargaJualAnggota : row.harga.hargaJualNonAnggota))),
             sortable: true,
           }, {
             name: 'total',
             label: 'Total',
             align: 'center',
-            field: row => this.toIDR(row.jumlahBeli * (row.keanggotaan ? row.harga.hargaJualAnggota : row.harga.hargaJualNonAnggota)),
+            field: row => this.toIDR(parseInt(row.jumlahBeli * (row.keanggotaan ? row.harga.hargaJualAnggota : row.harga.hargaJualNonAnggota))),
             sortable: true,
           },
         ]

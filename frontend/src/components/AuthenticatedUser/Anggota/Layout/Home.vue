@@ -4,11 +4,15 @@
       <center>
         {{nama}}
         <br>
-        <h5>
-          <q-badge color="primary" outline :label="`Total simpanan: ${toIDR(saldo)}`"/>
-        </h5>
+        <q-avatar v-if="image!==null">
+          <img :src="getUrl" alt="">
+        </q-avatar>
+        <q-avatar v-else icon="person"/>
+        <br>
+        <q-badge color="primary" outline :label="`Total simpanan: ${toIDR(parseInt(saldo))}`"/>
       </center>
     </q-card>
+    <br>
     <q-separator/>
     <q-card>
       <q-card-section>
@@ -40,7 +44,7 @@
             <q-item-section class="text-black">
               <q-item-label caption>Kode Pinjaman: #{{ kodePinjaman }}</q-item-label>
               <q-item-label class="text-caption">Pembayaran berikutnya:{{
-                toIDR(jumlahPembayaranBerikutnya) }}
+                toIDR(parseInt(jumlahPembayaranBerikutnya)) }}
               </q-item-label>
               <q-item-label caption lines="1">
                 <q-chip class="glossy" color="primary" text-color="white">{{
@@ -75,7 +79,7 @@
 
             <q-item-section class="text-black">
               <q-item-label caption>Kode Pinjaman: #{{ a.kodeTransaksi }}</q-item-label>
-              <q-item-label class="text-caption">Total: {{ toIDR(a.jumlahTransaksi) }}
+              <q-item-label class="text-caption">Total: {{ toIDR(parseInt(a.jumlahTransaksi)) }}
               </q-item-label>
               <q-item-label class="text-caption">Jenis: {{ (a.aktivasiSimpanan.jenisSimpanan === 1?
                 'Simpanan Pokok': (a.aktivasiSimpanan.jenisSimpanan === 2 ? 'Simpanan Wajib' :
@@ -87,7 +91,9 @@
                 </q-chip>
               </q-item-label>
 
-              <q-item-label caption>Mode: {{ (a.jenisTransaksi === 1 ? 'Setor Dana' : 'Penarikan Dana') }}</q-item-label>
+              <q-item-label caption>Mode: {{ (a.jenisTransaksi === 1 ? 'Setor Dana' :
+                'Penarikan Dana') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
         </q-intersection>
@@ -108,10 +114,14 @@
         tanggalPembayaranBerikutnya: null,
         idPinjaman: null,
         saldo: null,
-        transaksiTerkini: []
+        transaksiTerkini: [],
+        image: null
       }
     },
     methods: {
+      getUrl() {
+        return `data:image/jpeg;base64,${this.image}`
+      },
       mom(date) {
         moment.lang('id')
         return moment(date)
@@ -142,7 +152,8 @@
           headers: this.$auth.getHeader()
         })
           .then((res) => {
-            this.nama = res.data
+            this.nama = res.data.name
+            this.image = res.data.logoKoperasi
             this.existTagihan()
           })
           .catch(() => {

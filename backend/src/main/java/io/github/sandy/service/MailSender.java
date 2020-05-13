@@ -28,4 +28,12 @@ public class MailSender {
         msg.setText(message);
         javaMailSender.send(msg);
     }
+
+    public void sendEmailNonActiveAccountMember(JavaMailSender javaMailSender, String email, String message) {
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setTo(email);
+        msg.setSubject("Account Koperasi");
+        msg.setText(message);
+        javaMailSender.send(msg);
+    }
 }

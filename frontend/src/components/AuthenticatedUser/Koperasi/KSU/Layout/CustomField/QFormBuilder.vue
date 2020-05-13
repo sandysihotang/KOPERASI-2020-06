@@ -168,11 +168,6 @@
             label: 'Phone'
           },
           {
-            type: 'file',
-            icon: 'cloud_upload',
-            label: 'File Upload'
-          },
-          {
             type: 'payment',
             icon: 'payment',
             label: 'Payment'
@@ -185,16 +180,6 @@
           { type: '' },
           { type: '' },
           { type: '' },
-          {
-            type: 'section_break',
-            icon: 'view_agenda',
-            label: 'Section Break'
-          },
-          {
-            type: 'page_break',
-            icon: 'call_to_action',
-            label: 'Page Break'
-          },
         ],
       },
     },

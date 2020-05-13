@@ -4,11 +4,11 @@
       <div class="col-md-4">
         <q-card flat bordered class="full-width full-height">
           <q-card-section>
-            <div class="text-caption">Laba Rugi</div>
+            <div class="text-caption">Laba, Pemasukan dan Pengeluaran {{ getDate() }}</div>
           </q-card-section>
           <q-separator/>
           <q-card-section>
-
+            <pemasukan-simpanan/>
           </q-card-section>
         </q-card>
       </div>
@@ -51,7 +51,7 @@
               </q-item-section>
 
               <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(tersalur) }}</q-item-label>
+                <q-item-label>{{ toIDR(parseInt(tersalur)) }}</q-item-label>
                 <q-item-label caption>
                   Total Pinjaman Tersalur
                 </q-item-label>
@@ -71,7 +71,7 @@
               </q-item-section>
 
               <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(terbayar) }}</q-item-label>
+                <q-item-label>{{ toIDR(parseInt(terbayar)) }}</q-item-label>
                 <q-item-label caption>
                   Total Pinjaman Terbayar
                 </q-item-label>
@@ -91,7 +91,7 @@
               </q-item-section>
 
               <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(terbayar) }}</q-item-label>
+                <q-item-label>{{ toIDR(parseInt(terbayar)) }}</q-item-label>
                 <q-item-label caption>
                   Total Pinjaman Jatuh Tempo
                 </q-item-label>
@@ -153,7 +153,7 @@
               </q-item-section>
 
               <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(totalHargaProdukterjual) }}</q-item-label>
+                <q-item-label>{{ toIDR(parseInt(totalHargaProdukterjual)) }}</q-item-label>
                 <q-item-label caption>
                   Total Penjualan
                 </q-item-label>
@@ -170,11 +170,13 @@
   import moment from 'moment'
   import Anggota from './Js/Anggota'
   import Simpanan from './Js/Simpanan';
+  import PemasukanSimpanan from './Js/PemasukanPengeluaranLaba'
 
   export default {
     components: {
       Anggota,
-      Simpanan
+      Simpanan,
+      PemasukanSimpanan
     },
     data() {
       return {
@@ -187,6 +189,10 @@
       }
     },
     methods: {
+      getDate() {
+        moment.lang('id')
+        return moment(new Date()).format('MMMM YYYY')
+      },
       isProduk() {
         if (parseInt(localStorage.getItem('jenisKoperasi')) === 1) {
           this.produk = true

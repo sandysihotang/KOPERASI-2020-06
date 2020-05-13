@@ -4,6 +4,10 @@
     <q-header elevated class="bg-primary text-white">
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="left = !left"/>
+        <q-avatar v-if="image">
+          <img :src="dataUrl(image)" alt="">
+        </q-avatar>
+        <q-avatar v-else icon="person"/>
         <q-toolbar-title>
           {{ title }}
         </q-toolbar-title>
@@ -82,10 +86,14 @@
     data() {
       return {
         left: false,
-        title: 'Selamat datang Koperasi '
+        title: 'Selamat datang Koperasi ',
+        image: null
       };
     },
     methods: {
+      dataUrl(i) {
+        return `data:image/jpeg;base64,${i}`
+      },
       logOut() {
         window.localStorage.clear();
         window.location.href = '/';
@@ -96,7 +104,8 @@
             headers: this.$auth.getHeader(),
           })
           .then((res) => {
-            this.title = `${this.title} ${res.data}`
+            this.title = `${this.title} ${res.data.nama}`
+            this.image = res.data.logoKoperasi
           })
       }
     },

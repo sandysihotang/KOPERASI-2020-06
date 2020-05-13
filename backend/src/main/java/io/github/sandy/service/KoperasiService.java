@@ -8,8 +8,20 @@ import io.github.sandy.request.Requestbody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class KoperasiService {
@@ -24,6 +36,9 @@ public class KoperasiService {
 
     @Autowired
     DetailUserRepository detailUserRepository;
+
+    @Autowired
+    AngsuranRepository angsuranRepository;
 
     @Autowired
     AuthorizationServerConfiguration auth;
@@ -46,7 +61,10 @@ public class KoperasiService {
     @Autowired
     PengaturanPinjamanRepository pengaturanPinjamanRepository;
 
-    public Err createKoperasi(Requestbody requestbody, String uname) {
+    @Autowired
+    PinjamanRepository pinjamanRepository;
+
+    public Err createKoperasi(Requestbody requestbody, String uname) throws Exception {
         User user = userRepository.findByUsername(uname).get();
 
         Koperasi koperasi = new Koperasi();
@@ -59,7 +77,8 @@ public class KoperasiService {
         koperasi.setTahunBerdiriKoperasi(new Date(requestbody.getDate()));
         koperasi.setEmail(requestbody.getEmail());
         koperasi.setUser(user);
-
+        String path = saveImage(requestbody.getImage());
+        koperasi.setLogoKoperasi(path);
         koperasiRepository.save(koperasi);
 
         User user1 = userRepository.getOne(user.getId());
@@ -69,10 +88,31 @@ public class KoperasiService {
         return new Err(200, "Koperasi berhasil");
     }
 
+    private String saveImage(MultipartFile image) {
+        LocalDateTime myDateObj = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("ddMMyyyyHHmmss");
+        String name = myDateObj.format(myFormatObj);
+
+        File curFile = new File("");
+        String helper = curFile.getAbsolutePath();
+        String curDir = helper + "/backend/src/main/resources/static/images/";
+        String pict = name + ".png";
+        Path path = Paths.get(curDir + pict);
+        byte[] images = new byte[0];
+        try {
+            images = image.getBytes();
+            Files.write(path, images);
+            return "/backend/src/main/resources/static/images/" + pict;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public void changeStateKoperasi(int id, boolean state) {
         Koperasi koperasi = koperasiRepository.findById(id).get();
         MailSender mailSender = new MailSender();
-        mailSender.sendEmailSetStateKoperasi(javaMailSender, koperasi.getEmail(), (state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
+//        mailSender.sendEmailSetStateKoperasi(javaMailSender, koperasi.getEmail(), (state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
 
         User user = userRepository.getOne(koperasi.getUser().getId());
         user.setHaveKoperasi((!state ? 3 : 2));
@@ -147,5 +187,20 @@ public class KoperasiService {
         koperasiPengaturanPinjaman.setKoperasi(koperasi);
         koperasiPengaturanPinjaman.setPengaturanPinjaman(pengaturanPinjaman);
         koperasiPengaturanPinjamanRepository.save(koperasiPengaturanPinjaman);
+    }
+
+    public void checkDenda() {
+        List<Angsuran> angsurans = angsuranRepository.getExistDenda();
+        for (Angsuran angsuran : angsurans) {
+            LocalDate l = LocalDate.of(angsuran.getTanggalJatuhTempo().getYear(), angsuran.getTanggalJatuhTempo().getMonth(), angsuran.getTanggalJatuhTempo().getDay());
+            LocalDate now = LocalDate.of(new Date().getYear(), new Date().getMonth(), new Date().getDay());
+            Long days = ChronoUnit.DAYS.between(l, now);
+            Pinjaman pinjaman = pinjamanRepository.getFirstById(angsuran.getPinjaman().getId());
+            PengaturanPinjaman pengaturanPinjaman = pengaturanPinjamanRepository.getFirstById(pinjaman.getPengaturanPinjaman().getId());
+            long day = days + pengaturanPinjaman.getAmbangBatasDenda();
+            Double total = (pinjaman.getJumlahPinjaman() * pengaturanPinjaman.getPersentaseDenda() / 100) * day;
+            angsuran.setDenda(total);
+            angsuranRepository.save(angsuran);
+        }
     }
 }

@@ -1,26 +1,33 @@
 package io.github.sandy.controller;
 
+import com.itextpdf.text.log.Logger;
+import com.itextpdf.text.log.LoggerFactory;
 import io.github.sandy.ErrorCode.Err;
 import io.github.sandy.model.*;
 import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
 import io.github.sandy.service.KoperasiService;
+import io.github.sandy.service.MailSender;
 import io.github.sandy.service.UserDetailServiceImpl;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 public class KoperasiController {
@@ -58,14 +65,20 @@ public class KoperasiController {
     TransaksiSimpananRepository transaksiSimpananRepository;
 
     @Autowired
+    AngsuranRepository angsuranRepository;
+
+    @Autowired
     ProdukRepository produkRepository;
 
     @Autowired
     PenjualanProdukRepository penjualanProdukRepository;
 
+    @Autowired
+    JavaMailSender javaMailSender;
+
     @RequestMapping(value = "/api/createkoperasi", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Err> createKoperasi(@ModelAttribute Requestbody requestbody, HttpServletRequest request) {
+    public ResponseEntity<Err> createKoperasi(@ModelAttribute Requestbody requestbody, HttpServletRequest request) throws Exception {
         Principal principal = request.getUserPrincipal();
         String user = principal.getName();
         koperasiService.createKoperasi(requestbody, user);
@@ -74,8 +87,47 @@ public class KoperasiController {
     }
 
     @RequestMapping(value = "/api/getallkoperasi", method = RequestMethod.GET)
-    public List<Koperasi> get() {
-        return koperasiRepository.findByIsHaveKoperasi();
+    public List<Map<String, Object>> get() throws IOException {
+        List<Map<String, Object>> data = new ArrayList<>();
+        List<Koperasi> koperasis = koperasiRepository.findByIsHaveKoperasi();
+        for (Koperasi koperasi : koperasis) {
+            Map<String, Object> res = new HashMap<>();
+            res.put("namaKoperasi", koperasi.getNamaKoperasi());
+            res.put("id", koperasi.getId());
+            res.put("jenisKoperasi", koperasi.getJenisKoperasi());
+            res.put("namaPendiri", koperasi.getNamaPendiri());
+            res.put("alamatKoperasi", koperasi.getAlamatKoperasi());
+            res.put("tahunBerdiriKoperasi", koperasi.getTahunBerdiriKoperasi());
+            res.put("email", koperasi.getEmail());
+            res.put("noIzinKoperasi", koperasi.getNoIzinKoperasi());
+            res.put("haveKoperasi", koperasi.getUser().getHaveKoperasi());
+            if (koperasi.getLogoKoperasi() != null) {
+                File files = new File("");
+                FileInputStream file = new FileInputStream(files.getAbsoluteFile() + koperasi.getLogoKoperasi());
+                res.put("logoKoperasi", IOUtils.toByteArray(file));
+            } else {
+                res.put("logoKoperasi", null);
+            }
+            data.add(res);
+        }
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getlabapengeluaranpemasukanmonth", method = RequestMethod.GET)
+    public Map<String, Object> getLabaPengeluranPemasukan(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Koperasi koperasi = koperasiRepository.findFirstByUser(user);
+        System.out.println(angsuranRepository.getRealisasiJasa(koperasi.getId()));
+        Map<String, Object> data = new HashMap<>();
+        data.put("pemasukan", angsuranRepository.getRealisasiJasa(koperasi.getId()) +
+                (transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 1) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 1)) +
+                (transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 2) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 2)) +
+                transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 3) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 3));
+        data.put("pengeluaran", angsuranRepository.getPengeluaran(koperasi.getId()));
+        data.put("laba", angsuranRepository.getRealisasiJasa(koperasi.getId()));
+        return data;
     }
 
     @RequestMapping(value = "/api/changestatekoperasi", method = RequestMethod.POST)
@@ -171,7 +223,7 @@ public class KoperasiController {
         Principal principal = request.getUserPrincipal();
         String user = principal.getName();
         Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(user).get().getKoperasi().getId());
-        return koperasi.getAnggotaKoperasis();
+        return angotaKoperasiRepository.getALlAnggotaKoperasiEnable(koperasi.getId(), true);
     }
 
     @RequestMapping(value = "/api/getdatamember/{id}", method = RequestMethod.GET)
@@ -198,11 +250,20 @@ public class KoperasiController {
     }
 
     @RequestMapping(value = "/api/getstatekoperasi", method = RequestMethod.GET)
-    public String getStateKoperasi(HttpServletRequest request) {
+    public Map<String, Object> getStateKoperasi(HttpServletRequest request) throws IOException {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         User user = userRepository.findByUsername(uname).get();
-        return koperasiRepository.findFirstByUser(user).getNamaKoperasi();
+        Map<String, Object> data = new HashMap<>();
+        data.put("nama", user.getKoperasi().getNamaKoperasi());
+        if (user.getKoperasi().getLogoKoperasi() != null) {
+            File files = new File("");
+            FileInputStream file = new FileInputStream(files.getAbsoluteFile() + user.getKoperasi().getLogoKoperasi());
+            data.put("logoKoperasi", IOUtils.toByteArray(file));
+        } else {
+            data.put("logoKoperasi", null);
+        }
+        return data;
     }
 
     @RequestMapping(value = "/api/getnamekoperasi", method = RequestMethod.GET)
@@ -215,10 +276,20 @@ public class KoperasiController {
     }
 
     @RequestMapping(value = "/api/getnameanggota", method = RequestMethod.GET)
-    public String getNameMember(HttpServletRequest request) {
+    public Map<String, Object> getNameMember(HttpServletRequest request) throws Exception {
         Principal principal = request.getUserPrincipal();
         User user = userRepository.findByUsername(principal.getName()).get();
-        return user.getUserDetail().getFirstName() + " " + user.getUserDetail().getLastName();
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", user.getUserDetail().getFirstName() + " " + user.getUserDetail().getLastName());
+        AnggotaKoperasi anggotaKoperasi = angotaKoperasiRepository.getFirstByUser(user);
+        if (anggotaKoperasi.getKoperasi().getLogoKoperasi() != null) {
+            File files = new File("");
+            FileInputStream file = new FileInputStream(files.getAbsoluteFile() + anggotaKoperasi.getKoperasi().getLogoKoperasi());
+            data.put("logoKoperasi", IOUtils.toByteArray(file));
+        } else {
+            data.put("logoKoperasi", null);
+        }
+        return data;
     }
 
     @RequestMapping(value = "/api/getpengaturanpinjaman", method = RequestMethod.GET)
@@ -253,20 +324,35 @@ public class KoperasiController {
         koperasiService.savePengaturanPeminjaman(koperasi, requestbody);
     }
 
+    @RequestMapping(value = "/api/nonactivememberkoperasi/{id}", method = RequestMethod.PUT)
+    public void nonAktifkanAnggota(@PathVariable("id") Integer id) {
+        AnggotaKoperasi anggotaKoperasi = angotaKoperasiRepository.getOne(id);
+        User user = userRepository.getOne(anggotaKoperasi.getUser().getId());
+        user.setEnabled(false);
+        userRepository.save(user);
+        MailSender mailSender = new MailSender();
+//        mailSender.sendEmailNonActiveAccountMember(javaMailSender, user.getEmail(), "Account anda telah di nonaktifkan");
+
+    }
+
     @Bean
     public MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
 }
 
-//@Configuration
-//@EnableScheduling
-//@ConditionalOnProperty(name = "scheduling.enabled", matchIfMissing = true)
-//class Schedule {
-//    private static final Logger log = LoggerFactory.getLogger(Schedule.class);
-//    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-//    @Scheduled(fixedRate = 5000L)
-//    public void reportCurruntTime(){
-//        log.info("the time is now {}" + dateFormat.format(new Date()));
-//    }
-//}
+@Configuration
+@EnableScheduling
+@ConditionalOnProperty(name = "scheduling.enabled", matchIfMissing = true)
+class Schedule {
+    private static final Logger log = LoggerFactory.getLogger(Schedule.class);
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    @Autowired
+    KoperasiService koperasiService;
+
+    @Scheduled(fixedRate = 43200000L)
+    public void checkDenda() {
+        System.out.println("Check Denda");
+        koperasiService.checkDenda();
+    }
+}
