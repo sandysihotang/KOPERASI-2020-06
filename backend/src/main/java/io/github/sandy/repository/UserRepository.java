@@ -33,7 +33,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "SELECT * FROM users u " +
             "INNER JOIN anggota_koperasi a ON u.id = a.id_user " +
-            "WHERE a.id_koperasi = ?1", nativeQuery = true)
+            "WHERE a.id_koperasi = ?1 AND u.enabled = true", nativeQuery = true)
     List<User> findByKoperasiForRequest(Integer koperasi, Integer[] i);
 
 }

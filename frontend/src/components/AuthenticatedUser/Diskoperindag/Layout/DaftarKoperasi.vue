@@ -33,11 +33,15 @@
             {{ props.row.noIzinKoperasi }}
           </q-td>
           <q-td key="logoKoperasi" :props="props">
-            <div v-if="props.row.logoKoperasi"></div>
+            <div v-if="props.row.logoKoperasi">
+              <q-avatar>
+                <img :src="dataUrl(props.row.logoKoperasi)" alt="">
+              </q-avatar>
+            </div>
             <div v-else>Logo Koperasi Tidak Ada</div>
           </q-td>
           <q-td key="aksi" :props="props">
-            <div class="col">{{ toggle(props.row.id, props.row.user.haveKoperasi) }}
+            <div class="col">{{ toggle(props.row.id, props.row.haveKoperasi) }}
               <q-toggle
                 v-model="selected[props.row.id]"
                 @input="changeState(props.row.id)"
@@ -131,6 +135,9 @@
       };
     },
     methods: {
+      dataUrl(r) {
+        return `data:image/jpeg;base64,${r}`
+      },
       getDate(e) {
         return moment(e)
           .format('dddd, Do MMMM YYYY');
