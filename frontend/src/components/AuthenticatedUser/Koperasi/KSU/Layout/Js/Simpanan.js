@@ -8,7 +8,6 @@ export default {
         headers: this.$auth.getHeader()
       })
         .then((res) => {
-          console.log(res.data);
           this.renderChart({
             labels: ['Simpanan Pokok', 'Simpanan Wajib', 'Simpanan Sukarela'],
             datasets: [
