@@ -136,7 +136,8 @@
               input-class="text-right"
             />
             <br>
-            <q-btn :disable="tot>uangBeli" color="primary" label="Simpan" @click="saveTransaksi"/>
+            <q-btn :disable="tot>uangBeli || data.length === 0" color="primary" label="Simpan"
+                   @click="saveTransaksi"/>
           </div>
         </div>
       </q-card-section>
