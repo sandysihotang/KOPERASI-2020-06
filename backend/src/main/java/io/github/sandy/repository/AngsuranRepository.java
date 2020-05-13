@@ -22,4 +22,28 @@ public interface AngsuranRepository extends JpaRepository<Angsuran, Integer> {
             "INNER JOIN pengaturan_pinjaman on peminjaman.id_pengaturan_pinjaman = pengaturan_pinjaman.id " +
             "WHERE angsuran.status_bayar = false AND angsuran.tanggal_jatuh_tempo < CURRENT_DATE", nativeQuery = true)
     List<Angsuran> getExistDenda();
+
+    @Query(value = "SELECT " +
+            "case " +
+            "when ((SELECT count(*) FROM angsuran INNER JOIN peminjaman p on angsuran.id_pinjaman = p.id" +
+            " where " +
+            "EXTRACT(MONTH FROM tanggal_bayar) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+            "AND status_bayar = true AND p.id_koperasi = ?1) > 0) " +
+            "then (SELECT SUM(bunga + denda) FROM angsuran INNER JOIN peminjaman p on angsuran.id_pinjaman = p.id " +
+            "where EXTRACT(MONTH FROM tanggal_bayar) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+            "AND status_bayar = true AND p.id_koperasi = ?1)" +
+            "else 0 END", nativeQuery = true)
+    Long getRealisasiJasa(Integer idKoperasi);
+
+    @Query(value = "SELECT " +
+            "case " +
+            "when ((SELECT count(*) FROM angsuran INNER JOIN peminjaman p on angsuran.id_pinjaman = p.id" +
+            " where " +
+            "EXTRACT(MONTH FROM tanggal_bayar) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+            "AND status_bayar = false AND p.id_koperasi = ?1) > 0) " +
+            "then (SELECT SUM(bunga + denda) FROM angsuran INNER JOIN peminjaman p on angsuran.id_pinjaman = p.id " +
+            "where EXTRACT(MONTH FROM tanggal_bayar) = EXTRACT(MONTH FROM CURRENT_DATE) " +
+            "AND status_bayar = false AND p.id_koperasi = ?1)" +
+            "else 0 END", nativeQuery = true)
+    Long getPengeluaran(Integer idKoperasi);
 }

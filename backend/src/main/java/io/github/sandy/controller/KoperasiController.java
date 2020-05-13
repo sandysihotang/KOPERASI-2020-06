@@ -65,6 +65,9 @@ public class KoperasiController {
     TransaksiSimpananRepository transaksiSimpananRepository;
 
     @Autowired
+    AngsuranRepository angsuranRepository;
+
+    @Autowired
     ProdukRepository produkRepository;
 
     @Autowired
@@ -107,6 +110,23 @@ public class KoperasiController {
             }
             data.add(res);
         }
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getlabapengeluaranpemasukanmonth", method = RequestMethod.GET)
+    public Map<String, Object> getLabaPengeluranPemasukan(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Koperasi koperasi = koperasiRepository.findFirstByUser(user);
+        System.out.println(angsuranRepository.getRealisasiJasa(koperasi.getId()));
+        Map<String, Object> data = new HashMap<>();
+        data.put("pemasukan", angsuranRepository.getRealisasiJasa(koperasi.getId()) +
+                (transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 1) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 1)) +
+                (transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 2) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 2)) +
+                transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 3) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 3));
+        data.put("pengeluaran", angsuranRepository.getPengeluaran(koperasi.getId()));
+        data.put("laba", angsuranRepository.getRealisasiJasa(koperasi.getId()));
         return data;
     }
 

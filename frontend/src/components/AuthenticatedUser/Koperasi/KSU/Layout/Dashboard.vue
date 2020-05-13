@@ -4,11 +4,11 @@
       <div class="col-md-4">
         <q-card flat bordered class="full-width full-height">
           <q-card-section>
-            <div class="text-caption">Laba Rugi</div>
+            <div class="text-caption">Laba, Pemasukan dan Pengeluaran {{ getDate() }}</div>
           </q-card-section>
           <q-separator/>
           <q-card-section>
-
+            <pemasukan-simpanan/>
           </q-card-section>
         </q-card>
       </div>
@@ -170,11 +170,13 @@
   import moment from 'moment'
   import Anggota from './Js/Anggota'
   import Simpanan from './Js/Simpanan';
+  import PemasukanSimpanan from './Js/PemasukanPengeluaranLaba'
 
   export default {
     components: {
       Anggota,
-      Simpanan
+      Simpanan,
+      PemasukanSimpanan
     },
     data() {
       return {
@@ -187,6 +189,10 @@
       }
     },
     methods: {
+      getDate() {
+        moment.lang('id')
+        return moment(new Date()).format('MMMM YYYY')
+      },
       isProduk() {
         if (parseInt(localStorage.getItem('jenisKoperasi')) === 1) {
           this.produk = true
