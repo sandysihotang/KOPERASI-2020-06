@@ -36,4 +36,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "WHERE a.id_koperasi = ?1 AND u.enabled = true", nativeQuery = true)
     List<User> findByKoperasiForRequest(Integer koperasi, Integer[] i);
 
+    User findFirstById(Integer id);
 }

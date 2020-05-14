@@ -101,6 +101,13 @@ const routes = [
         meta: {
           roolTo: true,
         },
+      },
+      {
+        path: '/laporan',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Laporan.vue'),
+        meta: {
+          roolTo: true,
+        },
       }
     ],
   },
@@ -201,6 +208,12 @@ const routes = [
       {
         path: '/produkterjual',
         component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Produk/ProdukTerjual.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      }, {
+        path: '/laporanksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Laporan.vue'),
         meta: {
           roolToKSU: true,
         },

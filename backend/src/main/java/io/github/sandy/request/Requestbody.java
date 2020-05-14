@@ -2,6 +2,8 @@ package io.github.sandy.request;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
+
 public class Requestbody {
     private int id;
     private String kategori;
@@ -45,6 +47,24 @@ public class Requestbody {
     private Boolean anggota;
     private Integer jumlahBeli;
     private Integer uangBeli;
+    private String dateFrom;
+    private String dateTo;
+
+    public String getDateFrom() {
+        return dateFrom;
+    }
+
+    public void setDateFrom(String dateFrom) {
+        this.dateFrom = dateFrom;
+    }
+
+    public String getDateTo() {
+        return dateTo;
+    }
+
+    public void setDateTo(String dateTo) {
+        this.dateTo = dateTo;
+    }
 
     public Integer getUangBeli() {
         return uangBeli;

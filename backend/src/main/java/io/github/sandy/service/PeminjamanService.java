@@ -25,12 +25,15 @@ public class PeminjamanService {
     @Autowired
     AngsuranRepository angsuranRepository;
 
+    @Autowired
+    KoperasiRepository koperasiRepository;
+
     public void requestPinjaman(User user, Requestbody requestbody) {
         Pinjaman pinjaman = new Pinjaman();
         PengaturanPinjaman pengaturanPinjaman = pengaturanPinjamanRepository.findFirstById(requestbody.getId()).get();
 
-        String kodePinjaman = getKodePinjaman(user.getKoperasi().getId());
         Koperasi koperasi = angotaKoperasiRepository.findFirstByUser(user).get().getKoperasi();
+        String kodePinjaman = getKodePinjaman(koperasi.getId());
         pinjaman.setPengaturanPinjaman(pengaturanPinjaman);
         pinjaman.setUser(user);
         pinjaman.setJaminan(requestbody.getJaminan());

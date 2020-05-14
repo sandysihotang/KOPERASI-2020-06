@@ -21,7 +21,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class KoperasiService {
@@ -63,6 +65,9 @@ public class KoperasiService {
 
     @Autowired
     PinjamanRepository pinjamanRepository;
+
+    @Autowired
+    TransaksiSimpananRepository transaksiSimpananRepository;
 
     public Err createKoperasi(Requestbody requestbody, String uname) throws Exception {
         User user = userRepository.findByUsername(uname).get();
@@ -202,5 +207,21 @@ public class KoperasiService {
             angsuran.setDenda(total);
             angsuranRepository.save(angsuran);
         }
+    }
+
+    public Map<String, Object> getLaporanPemasukanDanLaba(Koperasi koperasi, Date dateFrom, Date dateTo) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.getNamaKoperasi());
+        Long realisasiJasa = angsuranRepository.getRealisasiJasaDateFromTo(koperasi.getId(), dateFrom, dateTo);
+        data.put("realisasiJasa", realisasiJasa);
+        Long denda = angsuranRepository.getDenda(koperasi.getId(), dateFrom, dateTo);
+        data.put("tunggakan", denda);
+        Long simpananPokok = transaksiSimpananRepository.getTransaksi(koperasi.getId(), 1, 1, dateFrom, dateTo);
+        data.put("simpananPokok", simpananPokok);
+        Long simpananWajib = transaksiSimpananRepository.getTransaksi(koperasi.getId(), 1, 2, dateFrom, dateTo);
+        data.put("simpananWajib", simpananWajib);
+        Long simpananSukarela = transaksiSimpananRepository.getTransaksi(koperasi.getId(), 1, 3, dateFrom, dateTo);
+        data.put("simpananSukarela", simpananSukarela);
+        return data;
     }
 }

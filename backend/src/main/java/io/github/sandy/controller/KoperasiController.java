@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
@@ -136,6 +137,23 @@ public class KoperasiController {
         String user = principal.getName();
         koperasiService.changeStateKoperasi(requestbody.getId(), requestbody.isState());
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/getlaporanpemasukandanlaba", method = RequestMethod.POST)
+    public Map<String, Object> getLaporanPemasukanDanLaba(@RequestBody Requestbody requestbody, HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+
+        return koperasiService.getLaporanPemasukanDanLaba(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+    }
+
+    @RequestMapping(value = "/api/getlaporanpemasukandanlaba/download", method = RequestMethod.POST)
+    public void getLaporanPemasukanDanLabaDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+
     }
 
     @RequestMapping(value = "/api/isHaveField", method = RequestMethod.GET)

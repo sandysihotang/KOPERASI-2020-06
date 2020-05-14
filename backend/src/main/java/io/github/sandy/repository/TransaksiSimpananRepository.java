@@ -5,6 +5,7 @@ import io.github.sandy.model.TransaksiSimpanan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -51,4 +52,15 @@ public interface TransaksiSimpananRepository extends JpaRepository<TransaksiSimp
             "else 0 END",
             nativeQuery = true)
     Integer getJumlahYangMeminjam(Integer idKoperasi, Integer jenisTransaksi, Integer jenisSimpanan);
+
+    @Query(value = "SELECT " +
+            "case " +
+            "when ((SELECT count(t.jumlah_transaksi) FROM transaksi_simpanan t " +
+            "INNER JOIN aktivasi_simpanan a ON t.id_aktivasi = a.id " +
+            "WHERE a.id_koperasi = ?1 AND t.jenis_transaksi=?2 " +
+            "AND a.jenis_simpanan=?3 AND t.created_at >= ?4 AND t.created_at <= ?5 ) > 0) " +
+            "then (SELECT SUM(t.jumlah_transaksi) FROM transaksi_simpanan t INNER JOIN aktivasi_simpanan a ON t.id_aktivasi = a.id WHERE a.id_koperasi = ?1 AND t.jenis_transaksi=?2 AND a.jenis_simpanan=?3 AND t.created_at >= ?4 AND t.created_at <= ?5)" +
+            "else 0 END",
+            nativeQuery = true)
+    Long getTransaksi(Integer idKoperasi, Integer jenisTransaksi, Integer jenisSimpanan, Date from, Date to);
 }

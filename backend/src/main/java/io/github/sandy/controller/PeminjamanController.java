@@ -52,7 +52,7 @@ public class PeminjamanController {
     @RequestMapping(value = "/api/requestpeminjamanfrompengurus/{idUser}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Err> requestPinjamanFromPengurus(@RequestBody Requestbody requestbody, @PathVariable("idUser") Integer idUser) {
-        User user = userRepository.getOne(idUser);
+        User user = userRepository.findFirstById(idUser);
         if (pinjamanRepository.existsByUserAndStatusIn(user, new Integer[]{2, 4, 5})) {
             return new ResponseEntity<>(new Err(400, "User masih memiliki peminjaman yang sedang berjalan"), HttpStatus.OK);
         }
