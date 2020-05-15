@@ -10,7 +10,6 @@ import io.github.sandy.request.Requestbody;
 import io.github.sandy.service.KoperasiService;
 import io.github.sandy.service.MailSender;
 import io.github.sandy.service.UserDetailServiceImpl;
-import javafx.beans.binding.ObjectExpression;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
