@@ -24,17 +24,17 @@
       <div class="col-md-4">
         <q-card flat bordered class="full-width">
           <q-card-section>
-            <q-item v-ripple>
+            <q-item v-ripple clickable @click="simpanan = true">
               <q-item-section avatar>
                 <q-avatar color="primary" text-color="white">
-                  <q-icon name="check"/>
+                  <q-icon name="fa fa-coins"/>
                 </q-avatar>
               </q-item-section>
 
               <q-item-section class="text-black">
                 <q-item-label></q-item-label>
                 <q-item-label caption>
-                  Total Pinjaman Terbayar
+                  Rekapitulasi Simpanan
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -44,17 +44,17 @@
       <div class="col-md-4">
         <q-card flat bordered class="full-width">
           <q-card-section>
-            <q-item v-ripple>
+            <q-item v-ripple clickable @click="transaksiSimpanan = true">
               <q-item-section avatar>
                 <q-avatar color="primary" text-color="white">
-                  <q-icon name="fa fa-ban"/>
+                  <q-icon name="fas fa-exchange-alt"/>
                 </q-avatar>
               </q-item-section>
 
               <q-item-section class="text-black">
                 <q-item-label></q-item-label>
                 <q-item-label caption>
-                  Total Pinjaman Jatuh Tempo
+                  Transaksi Simpanan
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -66,17 +66,17 @@
       <div class="col-md-4">
         <q-card flat bordered class="full-width">
           <q-card-section>
-            <q-item v-ripple>
+            <q-item v-ripple clickable @click="pinjaman = true">
               <q-item-section avatar>
                 <q-avatar color="primary" text-color="white">
-                  <q-icon name="inventory"/>
+                  <q-icon name="fas fa-money-bill-alt"/>
                 </q-avatar>
               </q-item-section>
 
               <q-item-section class="text-black">
                 <q-item-label></q-item-label>
                 <q-item-label caption>
-                  Total Produk
+                  Pinjaman
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -86,17 +86,17 @@
       <div class="col-md-4">
         <q-card flat bordered class="full-width">
           <q-card-section>
-            <q-item v-ripple>
+            <q-item v-ripple clickable @click="anggota = true">
               <q-item-section avatar>
                 <q-avatar color="primary" text-color="white">
-                  <q-icon name="fa fa-shopping-bag"/>
+                  <q-icon name="groups"/>
                 </q-avatar>
               </q-item-section>
 
               <q-item-section class="text-black">
                 <q-item-label></q-item-label>
                 <q-item-label caption>
-                  Produk Terjual
+                  Anggota Koperasi
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -104,29 +104,27 @@
         </q-card>
       </div>
       <div class="col-md-4">
-        <q-card flat bordered class="full-width">
-          <q-card-section>
-            <q-item v-ripple>
-              <q-item-section avatar>
-                <q-avatar color="primary" text-color="white">
-                  <q-icon name="fa fa-coins"/>
-                </q-avatar>
-              </q-item-section>
-
-              <q-item-section class="text-black">
-                <q-item-label></q-item-label>
-                <q-item-label caption>
-                  Total Penjualan
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-card-section>
-        </q-card>
       </div>
     </div>
-    <q-dialog v-model="labadanpemasukan" persistent full-width full-height transition-show="scale"
-              transition-hide="scale">
+    <q-dialog v-model="labadanpemasukan" full-width full-height transition-show="rotate"
+              transition-hide="rotate">
       <laba-pemasukan/>
+    </q-dialog>
+    <q-dialog v-model="simpanan" full-width full-height transition-show="rotate"
+              transition-hide="rotate">
+      <Simpanan/>
+    </q-dialog>
+    <q-dialog v-model="transaksiSimpanan" full-width full-height transition-show="rotate"
+              transition-hide="rotate">
+      <transaksi-simpanan/>
+    </q-dialog>
+    <q-dialog v-model="pinjaman" full-width full-height transition-show="rotate"
+              transition-hide="rotate">
+      <pinjaman/>
+    </q-dialog>
+    <q-dialog v-model="anggota" full-width full-height transition-show="rotate"
+              transition-hide="rotate">
+      <anggota/>
     </q-dialog>
 
   </div>
@@ -134,14 +132,26 @@
 
 <script>
   import LabaPemasukan from './Laporan/LabaDanPemasukan.vue'
+  import Simpanan from './Laporan/Simpanan.vue'
+  import TransaksiSimpanan from './Laporan/TransaksiSimpanan.vue'
+  import Pinjaman from './Laporan/Pinjaman.vue'
+  import Anggota from './Laporan/Anggota.vue'
 
   export default {
     components: {
-      LabaPemasukan
+      LabaPemasukan,
+      Simpanan,
+      TransaksiSimpanan,
+      Pinjaman,
+      Anggota
     },
     data() {
       return {
-        labadanpemasukan: false
+        anggota: false,
+        pinjaman: false,
+        labadanpemasukan: false,
+        simpanan: false,
+        transaksiSimpanan: false
       }
     }
   }

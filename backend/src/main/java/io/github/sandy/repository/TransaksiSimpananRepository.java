@@ -63,4 +63,11 @@ public interface TransaksiSimpananRepository extends JpaRepository<TransaksiSimp
             "else 0 END",
             nativeQuery = true)
     Long getTransaksi(Integer idKoperasi, Integer jenisTransaksi, Integer jenisSimpanan, Date from, Date to);
+
+    @Query(value = "SELECT * FROM transaksi_simpanan t " +
+            "INNER JOIN aktivasi_simpanan a ON t.id_aktivasi = a.id " +
+            "WHERE a.id_koperasi = ?1 " +
+            "AND t.created_at >= ?2 AND t.created_at <= ?3",
+            nativeQuery = true)
+    List<TransaksiSimpanan> getTransaksiSimpananLaporan(Integer idKoperasi, Date from, Date to);
 }

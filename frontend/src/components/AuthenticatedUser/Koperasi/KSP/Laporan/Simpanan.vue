@@ -1,102 +1,47 @@
 <template>
   <div>
-    <q-card class="full-height">
-      <q-card-section class="full-width">
-        <div class="row">
-          <div class="col">
-            <div class="row">
-              <div class="col">
-                <q-input filled v-model="dateFrom" mask="date" label="Tanggal Dari"
-                         :rules="['date']" style="max-width: 90%;">
-                  <template v-slot:append>
-                    <q-icon name="event" class="cursor-pointer">
-                      <q-popup-proxy ref="qDateProxy" transition-show="scale"
-                                     transition-hide="scale">
-                        <q-date v-model="dateFrom" @input="() => $refs.qDateProxy.hide()"/>
-                      </q-popup-proxy>
-                    </q-icon>
-                  </template>
-                </q-input>
-              </div>
-              <div class="col">
-                <q-input filled v-model="dateTo" mask="date" label="Tanggal Sampai"
-                         :rules="['date']" style="max-width: 90%;">
-                  <template v-slot:append>
-                    <q-icon name="event" class="cursor-pointer">
-                      <q-popup-proxy ref="qDateProxy" transition-show="scale"
-                                     transition-hide="scale">
-                        <q-date v-model="dateTo" @input="() => $refs.qDateProxy.hide()"/>
-                      </q-popup-proxy>
-                    </q-icon>
-                  </template>
-                </q-input>
-              </div>
-              <div class="col">
-                <q-btn color="primary" label="Tampilkan" icon="fa fa-file" size="xm"
-                       @click="showLaporan"/>
-              </div>
-            </div>
-          </div>
-          <div class="col"></div>
-        </div>
-      </q-card-section>
-      <q-separator/>
-      <q-card-section v-if="show">
+    <q-card>
+      <q-card-section>
         <center>
-          <p class="text-h6">Laba Dan Pemasukan</p>
+          <p class="text-h6">Rekapitulasi Simpanan</p>
           <p>Koperasi {{ res.namaKoperasi }}</p>
-          <p>{{ getDate(dateFrom) }} s/d {{ getDate(dateTo) }}</p>
         </center>
       </q-card-section>
       <q-separator/>
-      <q-card-section v-if="show">
+      <q-card-section>
         <table class="q-table">
           <tr>
             <td></td>
             <td></td>
             <td></td>
-            <td><b>Realisasi Jasa</b></td>
-            <td>{{ toIDR(res.realisasiJasa) }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><b>Tunggakan</b></td>
-            <td>{{ toIDR(res.tunggakan) }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
             <td></td>
             <td><b>Simpanan Pokok</b></td>
-            <td>{{ toIDR(res.simpananPokok) }}</td>
+            <td>{{ toIDR(res.pokok) }}</td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
           </tr>
           <tr>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
             <td><b>Simpanan Wajib</b></td>
-            <td>{{ toIDR(res.simpananWajib) }}</td>
+            <td>{{ toIDR(res.wajib) }}</td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
           </tr>
           <tr>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
             <td><b>Simpanan Sukarela</b></td>
-            <td>{{ toIDR(res.simpananSukarela) }}</td>
+            <td>{{ toIDR(res.sukarela) }}</td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
@@ -105,18 +50,25 @@
             <td></td>
             <td></td>
             <td></td>
-            <td><b>Total Pemasukan</b></td>
+            <td></td>
+            <td><b>Total Simpanan</b></td>
             <td><b>{{
-              toIDR(res.simpananSukarela+res.simpananWajib+res.simpananPokok+res.tunggakan+res.realisasiJasa)
+              toIDR(res.sukarela+res.wajib+res.pokok)
               }}</b></td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
           </tr>
         </table>
       </q-card-section>
-      <q-card-actions align="right" class="bg-white absolute-bottom-right text-teal">
-        <q-btn color="primary" icon="print" label="Export Excel" v-if="show" @click="download"/>
+      <q-card-section>
+        <q-table
+          :columns="columns"
+          :data="res.dataTable"/>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn color="primary" icon="print" label="Export Excel" @click="download"/>
         <q-btn label="Close" color="green" v-close-popup/>
       </q-card-actions>
     </q-card>
@@ -132,7 +84,40 @@
         show: false,
         dateFrom: null,
         dateTo: null,
-        res: null
+        res: null,
+        columns: [
+          {
+            name: 'nama',
+            label: 'Nama Nasabah',
+            align: 'center',
+            field: row => row.name,
+            sortable: true,
+          }, {
+            name: 'pokok',
+            label: 'Simpanan Pokok',
+            align: 'center',
+            field: row => this.toIDR(row.pokok),
+            sortable: true,
+          }, {
+            name: 'wajib',
+            label: 'Simpanan Wajib',
+            align: 'center',
+            field: row => this.toIDR(row.wajib),
+            sortable: true,
+          }, {
+            name: 'sukarela',
+            label: 'Simpanan Sukarela',
+            align: 'center',
+            field: row => this.toIDR(row.sukarela),
+            sortable: true,
+          }, {
+            name: 'total',
+            label: 'Total Simpanan',
+            align: 'center',
+            field: row => this.toIDR(row.sukarela + row.wajib + row.pokok),
+            sortable: true,
+          },
+        ]
       }
     },
     methods: {
@@ -193,23 +178,13 @@
         })
       },
       download() {
-        if (this.dateFrom === null || this.dateTo === null) {
-          this.$q.notify({
-            type: 'negative',
-            message: `Silahkan masukkan tanggal`
-          })
-          return
-        }
         this.$q.loading.show()
-        this.$http.post('/api/getlaporanpemasukandanlaba/download', {
-          dateFrom: this.dateFrom,
-          dateTo: this.dateTo
-        }, {
+        this.$http.get('/api/getlaporansimpanan/download', {
           headers: this.$auth.getHeader(),
           responseType: 'arraybuffer'
         })
           .then((res) => {
-            this.downloadFile(res, 'LabaDanPemasukan')
+            this.downloadFile(res, 'RekapitulasiSimpanan')
             this.$q.loading.hide()
           })
           .catch(() => {
@@ -221,18 +196,7 @@
           })
       },
       showLaporan() {
-        if (this.dateFrom === null || this.dateTo === null) {
-          this.$q.notify({
-            type: 'negative',
-            message: `Silahkan masukkan tanggal`
-          })
-          return
-        }
-        this.$q.loading.show()
-        this.$http.post('/api/getlaporanpemasukandanlaba', {
-          dateFrom: this.dateFrom,
-          dateTo: this.dateTo
-        }, {
+        this.$http.get('/api/getlaporanusersimpanan', {
           headers: this.$auth.getHeader()
         })
           .then((res) => {
@@ -248,6 +212,10 @@
             this.$q.loading.hide()
           })
       }
+    },
+    created() {
+      this.$q.loading.show()
+      this.showLaporan()
     }
   }
 </script>

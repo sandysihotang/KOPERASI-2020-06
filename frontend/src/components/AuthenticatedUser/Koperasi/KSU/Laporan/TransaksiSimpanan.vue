@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card class="full-height">
+    <q-card>
       <q-card-section class="full-width">
         <div class="row">
           <div class="col">
@@ -43,79 +43,18 @@
       <q-separator/>
       <q-card-section v-if="show">
         <center>
-          <p class="text-h6">Laba Dan Pemasukan</p>
+          <p class="text-h6">Transaksi Simpanan</p>
           <p>Koperasi {{ res.namaKoperasi }}</p>
           <p>{{ getDate(dateFrom) }} s/d {{ getDate(dateTo) }}</p>
         </center>
       </q-card-section>
       <q-separator/>
       <q-card-section v-if="show">
-        <table class="q-table">
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><b>Realisasi Jasa</b></td>
-            <td>{{ toIDR(res.realisasiJasa) }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><b>Tunggakan</b></td>
-            <td>{{ toIDR(res.tunggakan) }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><b>Simpanan Pokok</b></td>
-            <td>{{ toIDR(res.simpananPokok) }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><b>Simpanan Wajib</b></td>
-            <td>{{ toIDR(res.simpananWajib) }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><b>Simpanan Sukarela</b></td>
-            <td>{{ toIDR(res.simpananSukarela) }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><b>Total Pemasukan</b></td>
-            <td><b>{{
-              toIDR(res.simpananSukarela+res.simpananWajib+res.simpananPokok+res.tunggakan+res.realisasiJasa)
-              }}</b></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </table>
+        <q-table
+          :data="res.dataTable"
+          :columns="columns"/>
       </q-card-section>
-      <q-card-actions align="right" class="bg-white absolute-bottom-right text-teal">
+      <q-card-actions align="right">
         <q-btn color="primary" icon="print" label="Export Excel" v-if="show" @click="download"/>
         <q-btn label="Close" color="green" v-close-popup/>
       </q-card-actions>
@@ -132,7 +71,46 @@
         show: false,
         dateFrom: null,
         dateTo: null,
-        res: null
+        res: null,
+        columns: [
+          {
+            name: 'noTrasn',
+            label: 'No Transaksi',
+            align: 'center',
+            field: row => row.noTransaksi,
+            sortable: true,
+          }, {
+            name: 'nama',
+            label: 'Nama Nasabah',
+            align: 'center',
+            field: row => row.nama,
+            sortable: true,
+          }, {
+            name: 'tipe',
+            label: 'Tipe Transaksi',
+            align: 'center',
+            field: row => row.tipeTransaksi,
+            sortable: true,
+          }, {
+            name: 'produk',
+            label: 'Produk',
+            align: 'center',
+            field: row => row.produk,
+            sortable: true,
+          }, {
+            name: 'tglTransaksi',
+            label: 'Tanggal Transaksi',
+            align: 'center',
+            field: row => this.getDate(row.tglTransaksi),
+            sortable: true,
+          }, {
+            name: 'nom',
+            label: 'Nominal Transaksi',
+            align: 'center',
+            field: row => this.toIDR(row.nominal),
+            sortable: true,
+          }
+        ]
       }
     },
     methods: {
@@ -154,12 +132,14 @@
           res = `${res}${ans[i]}`
         }
         return res;
-      },
+      }
+      ,
       getDate(date) {
         moment.lang('id')
         return moment(date)
           .format('dddd, Do MMMM YYYY')
-      },
+      }
+      ,
       downloadFile(response, filename) {
         // It is necessary to create a new blob object with mime-type explicitly set
         // otherwise only Chrome works like it should
@@ -191,7 +171,8 @@
           showConfirmButton: false,
           timer: 1500
         })
-      },
+      }
+      ,
       download() {
         if (this.dateFrom === null || this.dateTo === null) {
           this.$q.notify({
@@ -201,7 +182,7 @@
           return
         }
         this.$q.loading.show()
-        this.$http.post('/api/getlaporanpemasukandanlaba/download', {
+        this.$http.post('/api/getlaporantransaksisimpanan/download', {
           dateFrom: this.dateFrom,
           dateTo: this.dateTo
         }, {
@@ -209,7 +190,7 @@
           responseType: 'arraybuffer'
         })
           .then((res) => {
-            this.downloadFile(res, 'LabaDanPemasukan')
+            this.downloadFile(res, 'TransaksiSimpanan')
             this.$q.loading.hide()
           })
           .catch(() => {
@@ -219,7 +200,8 @@
             })
             this.$q.loading.hide()
           })
-      },
+      }
+      ,
       showLaporan() {
         if (this.dateFrom === null || this.dateTo === null) {
           this.$q.notify({
@@ -229,7 +211,7 @@
           return
         }
         this.$q.loading.show()
-        this.$http.post('/api/getlaporanpemasukandanlaba', {
+        this.$http.post('/api/getlaporantransaksisimpanan', {
           dateFrom: this.dateFrom,
           dateTo: this.dateTo
         }, {

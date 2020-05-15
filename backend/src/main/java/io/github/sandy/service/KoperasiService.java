@@ -20,10 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class KoperasiService {
@@ -222,6 +219,56 @@ public class KoperasiService {
         data.put("simpananWajib", simpananWajib);
         Long simpananSukarela = transaksiSimpananRepository.getTransaksi(koperasi.getId(), 1, 3, dateFrom, dateTo);
         data.put("simpananSukarela", simpananSukarela);
+        return data;
+    }
+
+    public Map<String, Object> getLaporanTransaksiSimpanan(Koperasi koperasi, Date dateFrom, Date dateTo) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.getNamaKoperasi());
+        List<TransaksiSimpanan> transaksiSimpanans = transaksiSimpananRepository.getTransaksiSimpananLaporan(koperasi.getId(), dateFrom, dateTo);
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (TransaksiSimpanan transaksiSimpanan : transaksiSimpanans) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("noTransaksi", transaksiSimpanan.getKodeTransaksi());
+            temp.put("nama", transaksiSimpanan.getAktivasiSimpanan().getUser().getUserDetail().getFirstName() + " " + transaksiSimpanan.getAktivasiSimpanan().getUser().getUserDetail().getLastName());
+            temp.put("tipeTransaksi", (transaksiSimpanan.getJenisTransaksi() == 1 ? "Setor Dana" : "Tarik Dana"));
+            temp.put("produk", (transaksiSimpanan.getAktivasiSimpanan().getJenisSimpanan() == 1 ? "Simpanan Pokok" : (transaksiSimpanan.getAktivasiSimpanan().getJenisSimpanan() == 2 ? "Simpanan Wajib" : "Simpanan Sukarela")));
+            temp.put("tglTransaksi", transaksiSimpanan.getCreatedAt());
+            temp.put("nominal", transaksiSimpanan.getJumlahTransaksi());
+            res.add(temp);
+        }
+        data.put("dataTable", res);
+        return data;
+    }
+
+    public Map<String, Object> getLaporanTransaksiPinjaman(Koperasi koperasi, Date dateFrom, Date dateTo) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.getNamaKoperasi());
+        List<Pinjaman> transaksiPinjaman = pinjamanRepository.getLaporanPinjaman(koperasi.getId(), dateFrom, dateTo);
+        List<Map<String, Object>> res = new ArrayList<>();
+        double totPinjaman = 0.0, totLaba = 0.0;
+        for (Pinjaman pinjaman : transaksiPinjaman) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("noTransaksi", pinjaman.getKodePinjaman());
+            temp.put("nama", pinjaman.getUser().getUserDetail().getFirstName() + " " + pinjaman.getUser().getUserDetail().getLastName());
+            temp.put("jaminan", pinjaman.getJaminan());
+            temp.put("jumlahPinjaman", pinjaman.getJumlahPinjaman());
+            temp.put("tenor", pinjaman.getTenor());
+            totPinjaman += pinjaman.getJumlahPinjaman();
+            double total = 0.0;
+            for (Angsuran angsuran : pinjaman.getAngsuran()) {
+                total += angsuran.getBunga() + angsuran.getDenda();
+            }
+            totLaba += total;
+            temp.put("laba", total);
+            temp.put("tglPengajuan", pinjaman.getCreatedAt());
+            temp.put("tglDiterimaPengajuan", pinjaman.getDatePengajuanDiterima());
+            temp.put("tglSelesaiCicilan", (pinjaman.getUpdatedAt() == null ? "-" : pinjaman.getUpdatedAt()));
+            res.add(temp);
+        }
+        data.put("totLaba", totLaba);
+        data.put("totPinjaman", totPinjaman);
+        data.put("dataTable", res);
         return data;
     }
 }

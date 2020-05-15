@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card class="full-width full-height">
+    <q-card class="full-height">
       <q-card-section class="full-width">
         <div class="row">
           <div class="col">
@@ -160,6 +160,38 @@
         return moment(date)
           .format('dddd, Do MMMM YYYY')
       },
+      downloadFile(response, filename) {
+        // It is necessary to create a new blob object with mime-type explicitly set
+        // otherwise only Chrome works like it should
+        const newBlob = new Blob([response.data], { type: 'application/excel' })
+
+        // IE doesn't allow using a blob object directly as link href
+        // instead it is necessary to use msSaveOrOpenBlob
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+          window.navigator.msSaveOrOpenBlob(newBlob)
+          return
+        }
+
+        // For other browsers:
+        // Create a link pointing to the ObjectURL containing the blob.
+        const data = window.URL.createObjectURL(newBlob)
+        const link = document.createElement('a')
+        link.href = data
+        link.download = `${filename}.xlsx`
+        link.click()
+        setTimeout(() => {
+          // For Firefox it is necessary to delay revoking the ObjectURL
+          window.URL.revokeObjectURL(data)
+        }, 100)
+        this.$swal({
+          position: 'center',
+          type: 'success',
+          width: 300,
+          title: 'Berhasil Mengexport Data',
+          showConfirmButton: false,
+          timer: 1500
+        })
+      },
       download() {
         if (this.dateFrom === null || this.dateTo === null) {
           this.$q.notify({
@@ -173,9 +205,11 @@
           dateFrom: this.dateFrom,
           dateTo: this.dateTo
         }, {
-          headers: this.$auth.getHeader()
+          headers: this.$auth.getHeader(),
+          responseType: 'arraybuffer'
         })
           .then((res) => {
+            this.downloadFile(res, 'LabaDanPemasukan')
             this.$q.loading.hide()
           })
           .catch(() => {

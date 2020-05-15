@@ -2,6 +2,7 @@ package io.github.sandy.repository;
 
 import io.github.sandy.model.Koperasi;
 import io.github.sandy.model.Pinjaman;
+import io.github.sandy.model.TransaksiSimpanan;
 import io.github.sandy.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,4 +38,12 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
     Boolean existsByUserAndStatus(User user, int status);
 
     Pinjaman getFirstByUserAndStatus(User user, int status);
+
+    @Query(value = "SELECT * FROM peminjaman p " +
+            "WHERE p.id_koperasi = ?1 " +
+            "AND p.updated_at >= ?2 " +
+            "AND p.updated_at <= ?3 " +
+            "AND status = 6",
+            nativeQuery = true)
+    List<Pinjaman> getLaporanPinjaman(Integer idKoperasi, Date from, Date to);
 }

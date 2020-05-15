@@ -4,6 +4,7 @@ import io.github.sandy.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -20,4 +21,24 @@ public interface AktivasiSimpananRepository extends JpaRepository<AktivasiSimpan
     Long getSaldo(Integer idUser);
 
     List<AktivasiSimpanan> getAllByUser(User user);
+
+    @Query(value = "SELECT " +
+            "case " +
+            "when ((SELECT count(*) FROM aktivasi_simpanan " +
+            "WHERE id_user = ?1 AND jenis_simpanan = ?2) > 0) " +
+            "then (SELECT sum(total_simpanan) from aktivasi_simpanan " +
+            "WHERE id_user = ?1 and jenis_simpanan = ?2)" +
+            "else 0 END",
+            nativeQuery = true)
+    Long getTransaksi(Integer id, Integer jenis);
+
+    @Query(value = "SELECT " +
+            "case " +
+            "when ((SELECT count(*) FROM aktivasi_simpanan " +
+            "WHERE id_koperasi = ?1 AND jenis_simpanan = ?2) > 0) " +
+            "then (SELECT sum(total_simpanan) from aktivasi_simpanan " +
+            "WHERE id_koperasi = ?1 and jenis_simpanan = ?2)" +
+            "else 0 END",
+            nativeQuery = true)
+    Long getTransaksiKoperasi(Integer id, Integer jenisSimpanan);
 }

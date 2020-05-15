@@ -3,12 +3,14 @@ package io.github.sandy.controller;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import io.github.sandy.ErrorCode.Err;
+import io.github.sandy.additional.ExportExcel;
 import io.github.sandy.model.*;
 import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
 import io.github.sandy.service.KoperasiService;
 import io.github.sandy.service.MailSender;
 import io.github.sandy.service.UserDetailServiceImpl;
+import javafx.beans.binding.ObjectExpression;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -49,6 +51,9 @@ public class KoperasiController {
 
     @Autowired
     DaftarAnggotaKoperasiRepository daftarAnggotaKoperasiRepository;
+
+    @Autowired
+    AktivasiSimpananRepository aktivasiSimpananRepository;
 
     @Autowired
     AngotaKoperasiRepository angotaKoperasiRepository;
@@ -148,12 +153,98 @@ public class KoperasiController {
         return koperasiService.getLaporanPemasukanDanLaba(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
     }
 
-    @RequestMapping(value = "/api/getlaporanpemasukandanlaba/download", method = RequestMethod.POST)
-    public void getLaporanPemasukanDanLabaDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/api/getlaporantransaksisimpanan", method = RequestMethod.POST)
+    public Map<String, Object> getLaporanTransaksiSimpanan(@RequestBody Requestbody requestbody, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         User user = userRepository.findByUsername(uname).get();
 
+        return koperasiService.getLaporanTransaksiSimpanan(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+    }
+
+    @RequestMapping(value = "/api/getlaporantransaksipinjaman", method = RequestMethod.POST)
+    public Map<String, Object> getLaporanTransaksiPinjaman(@RequestBody Requestbody requestbody, HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+
+        return koperasiService.getLaporanTransaksiPinjaman(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+    }
+
+    @RequestMapping(value = "/api/getanggotalaporan", method = RequestMethod.GET)
+    public Map<String, Object> getLaporanAnggota(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", user.getKoperasi().getNamaKoperasi());
+        data.put("pengaturanField", daftarAnggotaKoperasiRepository.findByKoperasiId(user.getKoperasi().getId()).get().getPatternField());
+        data.put("anggota", angotaKoperasiRepository.getALlAnggotaKoperasiEnable(user.getKoperasi().getId(), true));
+        data.put("totalAnggota", angotaKoperasiRepository.getCountAnggota(user.getKoperasi().getId(), true));
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getanggotalaporan/download", method = RequestMethod.GET)
+    public void getLaporanAnggotaDownload(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", user.getKoperasi().getNamaKoperasi());
+        data.put("pengaturanField", daftarAnggotaKoperasiRepository.findByKoperasiId(user.getKoperasi().getId()).get().getPatternField());
+        data.put("anggota", angotaKoperasiRepository.getALlAnggotaKoperasiEnable(user.getKoperasi().getId(), true));
+        data.put("totalAnggota", angotaKoperasiRepository.getCountAnggota(user.getKoperasi().getId(), true));
+        ByteArrayInputStream byteArray = exportExcel.downloadAnggotaAktif(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/api/getlaporantransaksisimpanan/download", method = RequestMethod.POST)
+    public void getLaporanTransaksiSimpananDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+
+        Map<String, Object> data = koperasiService.getLaporanTransaksiSimpanan(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+        data.put("periode", requestbody.getDateFrom() + " (s/d) " + requestbody.getDateTo());
+        ByteArrayInputStream byteArray = exportExcel.downloadTransaksiSimpanan(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/api/getlaporantransaksipinjaman/download", method = RequestMethod.POST)
+    public void getLaporanPinjamanDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+
+        Map<String, Object> data = koperasiService.getLaporanTransaksiPinjaman(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+        data.put("periode", requestbody.getDateFrom() + " (s/d) " + requestbody.getDateTo());
+        ByteArrayInputStream byteArray = exportExcel.downloadPinjaman(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/api/getlaporanpemasukandanlaba/download", method = RequestMethod.POST)
+    public void getLaporanPemasukanDanLabaDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> data = koperasiService.getLaporanPemasukanDanLaba(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+        data.put("namaKoperasi", user.getKoperasi().getNamaKoperasi());
+        data.put("periode", requestbody.getDateFrom() + " (s/d) " + requestbody.getDateTo());
+
+        ByteArrayInputStream byteArray = exportExcel.downloadLabaDanMasuk(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
     }
 
     @RequestMapping(value = "/api/isHaveField", method = RequestMethod.GET)
@@ -163,6 +254,59 @@ public class KoperasiController {
         Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(user).get().getKoperasi().getId());
 
         return koperasi.isHaveFieldRegisterMember();
+    }
+
+    @RequestMapping(value = "/api/getlaporanusersimpanan", method = RequestMethod.GET)
+    public Map<String, Object> getDataLaporanSimpananUser(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(uname).get().getKoperasi().getId());
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.getNamaKoperasi());
+        List<User> users = userRepository.findByKoperasiforReport(koperasi.getId());
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (User user : users) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("name", user.getUserDetail().getFirstName() + " " + user.getUserDetail().getLastName());
+            temp.put("pokok", aktivasiSimpananRepository.getTransaksi(user.getId(), 1));
+            temp.put("wajib", aktivasiSimpananRepository.getTransaksi(user.getId(), 2));
+            temp.put("sukarela", aktivasiSimpananRepository.getTransaksi(user.getId(), 3));
+            res.add(temp);
+        }
+        data.put("dataTable", res);
+        data.put("pokok", aktivasiSimpananRepository.getTransaksiKoperasi(koperasi.getId(), 1));
+        data.put("wajib", aktivasiSimpananRepository.getTransaksiKoperasi(koperasi.getId(), 2));
+        data.put("sukarela", aktivasiSimpananRepository.getTransaksiKoperasi(koperasi.getId(), 3));
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getlaporansimpanan/download", method = RequestMethod.GET)
+    public void getLaporanSimpananDownload(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(uname).get().getKoperasi().getId());
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.getNamaKoperasi());
+        List<User> users = userRepository.findByKoperasiforReport(koperasi.getId());
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (User user : users) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("name", user.getUserDetail().getFirstName() + " " + user.getUserDetail().getLastName());
+            temp.put("pokok", aktivasiSimpananRepository.getTransaksi(user.getId(), 1));
+            temp.put("wajib", aktivasiSimpananRepository.getTransaksi(user.getId(), 2));
+            temp.put("sukarela", aktivasiSimpananRepository.getTransaksi(user.getId(), 3));
+            res.add(temp);
+        }
+        data.put("dataTable", res);
+        data.put("pokok", aktivasiSimpananRepository.getTransaksiKoperasi(koperasi.getId(), 1));
+        data.put("wajib", aktivasiSimpananRepository.getTransaksiKoperasi(koperasi.getId(), 2));
+        data.put("sukarela", aktivasiSimpananRepository.getTransaksiKoperasi(koperasi.getId(), 3));
+
+        ByteArrayInputStream byteArray = exportExcel.downloadSimpanan(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
     }
 
     @RequestMapping(value = "/api/getanggotaaknonak", method = RequestMethod.GET)
