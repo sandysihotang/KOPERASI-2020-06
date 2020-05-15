@@ -336,6 +336,7 @@ public class ExportExcel {
         Sheet sheet = workbook.createSheet("Anggota Aktif Koperasi");
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 2, 3));
         sheet.addMergedRegion(new CellRangeAddress(1, 1, 2, 3));
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 2, 3));
 
         Row rowHeader = sheet.createRow(1);
         CellStyle headerCellStyle1 = workbook.createCellStyle();
@@ -356,13 +357,14 @@ public class ExportExcel {
         cell1 = rowHeader.createCell(2);
         cell1.setCellValue("Anggota Koperasi");
         cell1.setCellStyle(headerCellStyle1);
-        rowHeader = sheet.createRow(1);
+
+        rowHeader = sheet.createRow(2);
         headerCellStyle1 = workbook.createCellStyle();
         headerCellStyle1.setAlignment(HorizontalAlignment.CENTER);
         headerCellStyle1.setFillForegroundColor(IndexedColors.AQUA.getIndex());
         headerCellStyle1.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         // Creating header
-        cell1 = rowHeader.createCell(1);
+        cell1 = rowHeader.createCell(2);
         cell1.setCellValue("Anggota : " + data.get("totalAnggota"));
         cell1.setCellStyle(headerCellStyle1);
 
