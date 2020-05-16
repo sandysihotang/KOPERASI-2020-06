@@ -87,9 +87,9 @@
                 headers: this.$auth.getHeader(),
               })
                 .then((res) => {
-                  this.$auth.setAuthenticatedUser(res.data.userAuthentication.principal.userDetail);
-                  this.$auth.setUserRole(res.data.userAuthentication.principal.roles[0].name);
-                  this.$auth.setHaveKoperasi(res.data.userAuthentication.principal.haveKoperasi);
+                  this.$auth.setAuthenticatedUser(res.data.userDetail);
+                  this.$auth.setUserRole(res.data.name);
+                  this.$auth.setHaveKoperasi(res.data.haveKoperasi);
                   if (parseInt(localStorage.getItem('havekoperasi')) === 3) {
                     this.$http.get('/api/jeniskoperasi', {
                       headers: this.$auth.getHeader()
