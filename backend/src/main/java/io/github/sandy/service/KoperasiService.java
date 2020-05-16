@@ -66,6 +66,12 @@ public class KoperasiService {
     @Autowired
     TransaksiSimpananRepository transaksiSimpananRepository;
 
+    @Autowired
+    ProdukBaruRepository produkBaruRepository;
+
+    @Autowired
+    PenjualanProdukRepository penjualanProdukRepository;
+
     public Err createKoperasi(Requestbody requestbody, String uname) throws Exception {
         User user = userRepository.findByUsername(uname).get();
 
@@ -269,6 +275,25 @@ public class KoperasiService {
         data.put("totLaba", totLaba);
         data.put("totPinjaman", totPinjaman);
         data.put("dataTable", res);
+        return data;
+    }
+
+    public Map<String, Object> getLaporanPemasukanProduk(Koperasi koperasi, Date dateFrom, Date dateTo) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.getNamaKoperasi());
+        List<Map<String, Object>> produkMasuk = produkBaruRepository.getTransaksiProdukMasukLaporan(koperasi.getId(), dateFrom, dateTo);
+        data.put("totProdMasuk", produkBaruRepository.getTotalTransaksiProdukMasukLaporan(koperasi.getId(), dateFrom, dateTo));
+        data.put("dataTable", produkMasuk);
+        return data;
+    }
+
+    public Map<String, Object> getLaporanPenjualanProduk(Koperasi koperasi, Date dateFrom, Date dateTo) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.getNamaKoperasi());
+        List<Map<String, Object>> penjualanProduk = penjualanProdukRepository.getLaporanPenjualan(koperasi.getId(), dateFrom, dateTo);
+        data.put("totProdTerjual", penjualanProdukRepository.getTotalLaporanPenjualan(koperasi.getId(), dateFrom, dateTo));
+        data.put("totTerjual", penjualanProdukRepository.getTotalJual(koperasi.getId(), dateFrom, dateTo));
+        data.put("dataTable", penjualanProduk);
         return data;
     }
 }

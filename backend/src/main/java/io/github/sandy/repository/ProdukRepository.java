@@ -5,6 +5,8 @@ import io.github.sandy.model.Produk;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface ProdukRepository extends JpaRepository<Produk, Integer> {
@@ -20,4 +22,12 @@ public interface ProdukRepository extends JpaRepository<Produk, Integer> {
     Integer getTotalProduk(Integer idKoperasi);
 
     Boolean existsByKoperasi(Koperasi koperasi);
+
+    @Query(value = "SELECT p.nama_produk, p.jumlah_produk, p.kode_produk, " +
+            "h.harga_beli, h.harga_jual_anggota, h.harga_jual_non_anggota, kp.nama_kategori FROM produk p " +
+            "INNER JOIN harga h on p.id = h.id_produk " +
+            "INNER JOIN kategori_produk kp on p.id_kategori = kp.id " +
+            "WHERE p.id_koperasi = ?1 AND h.status = true",
+            nativeQuery = true)
+    List<Map<String, String>> getAllData(Integer idKoperasi);
 }

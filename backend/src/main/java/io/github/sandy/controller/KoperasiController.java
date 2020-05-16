@@ -39,6 +39,10 @@ public class KoperasiController {
     @Autowired
     KoperasiService koperasiService;
 
+
+    @Autowired
+    ProdukBaruRepository produkBaruRepository;
+
     @Autowired
     UserRepository userDetailRepository;
 
@@ -170,6 +174,38 @@ public class KoperasiController {
         return koperasiService.getLaporanTransaksiPinjaman(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
     }
 
+    @RequestMapping(value = "/api/getlaporanpemasukanproduk", method = RequestMethod.POST)
+    public Map<String, Object> getLaporanPemasukanProduk(@RequestBody Requestbody requestbody, HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+
+        return koperasiService.getLaporanPemasukanProduk(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+    }
+
+    @RequestMapping(value = "/api/getlaporanpenjualanproduk", method = RequestMethod.POST)
+    public Map<String, Object> getLaporanPenjualanProduk(@RequestBody Requestbody requestbody, HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+
+        return koperasiService.getLaporanPenjualanProduk(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+    }
+
+    @RequestMapping(value = "/api/getlaporanpenjualanproduk/download", method = RequestMethod.POST)
+    public void getLaporanPenjualanDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> data = koperasiService.getLaporanPenjualanProduk(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+        data.put("periode", requestbody.getDateFrom() + " (s/d) " + requestbody.getDateTo());
+        ByteArrayInputStream byteArray = exportExcel.downloadPenjualanProduk(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
+    }
+
     @RequestMapping(value = "/api/getanggotalaporan", method = RequestMethod.GET)
     public Map<String, Object> getLaporanAnggota(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
@@ -181,6 +217,34 @@ public class KoperasiController {
         data.put("anggota", angotaKoperasiRepository.getALlAnggotaKoperasiEnable(user.getKoperasi().getId(), true));
         data.put("totalAnggota", angotaKoperasiRepository.getCountAnggota(user.getKoperasi().getId(), true));
         return data;
+    }
+
+    @RequestMapping(value = "/api/getlaporanproduk", method = RequestMethod.GET)
+    public Map<String, Object> getLaporanProduk(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", user.getKoperasi().getNamaKoperasi());
+        data.put("dataTable", produkRepository.getAllData(user.getKoperasi().getId()));
+        data.put("jumlahProduk", produkRepository.getTotalProduk(user.getKoperasi().getId()));
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getlaporanproduk/download", method = RequestMethod.GET)
+    public void getLaporanProdukDownload(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", user.getKoperasi().getNamaKoperasi());
+        data.put("dataTable", produkRepository.getAllData(user.getKoperasi().getId()));
+        data.put("jumlahProduk", produkRepository.getTotalProduk(user.getKoperasi().getId()));
+        ByteArrayInputStream byteArray = exportExcel.downloadLaporanProduk(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
     }
 
     @RequestMapping(value = "/api/getanggotalaporan/download", method = RequestMethod.GET)
@@ -212,6 +276,24 @@ public class KoperasiController {
         Map<String, Object> data = koperasiService.getLaporanTransaksiSimpanan(user.getKoperasi(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
         data.put("periode", requestbody.getDateFrom() + " (s/d) " + requestbody.getDateTo());
         ByteArrayInputStream byteArray = exportExcel.downloadTransaksiSimpanan(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/api/getlaporanpemasukanproduk/download", method = RequestMethod.POST)
+    public void getLaporanPemasukanProdukDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", user.getKoperasi().getNamaKoperasi());
+        List<Map<String, Object>> produkMasuk = produkBaruRepository.getTransaksiProdukMasukLaporan(user.getKoperasi().getId(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+        data.put("totProdMasuk", produkBaruRepository.getTotalTransaksiProdukMasukLaporan(user.getKoperasi().getId(), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo())));
+        data.put("dataTable", produkMasuk);
+        data.put("periode", requestbody.getDateFrom() + " (s/d) " + requestbody.getDateTo());
+        ByteArrayInputStream byteArray = exportExcel.downloadPemasukanProduk(data);
         IOUtils.copy(byteArray, response.getOutputStream());
     }
 
