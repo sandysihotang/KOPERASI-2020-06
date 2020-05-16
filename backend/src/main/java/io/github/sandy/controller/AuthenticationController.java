@@ -2,6 +2,8 @@ package io.github.sandy.controller;
 
 import io.github.sandy.ErrorCode.Err;
 import io.github.sandy.model.User;
+import io.github.sandy.model.UserDetail;
+import io.github.sandy.repository.DetailUserRepository;
 import io.github.sandy.repository.KoperasiRepository;
 import io.github.sandy.repository.UserRepository;
 import io.github.sandy.request.Requestbody;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -34,6 +38,9 @@ public class AuthenticationController {
 
     @Autowired
     KoperasiRepository koperasiRepository;
+
+    @Autowired
+    DetailUserRepository detailUserRepository;
 
     @RequestMapping(value = "/send", method = RequestMethod.GET)
     public void send() {
@@ -55,9 +62,16 @@ public class AuthenticationController {
     }
 
     @RequestMapping(value = "/api/login/currentuser", method = RequestMethod.GET)
-    public Principal hello(HttpServletRequest request) {
+    public Map<String, Object> hello(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        return principal;
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> userDetail = detailUserRepository.findUserDetail(user.getId());
+        data.put("userDetail", userDetail);
+        data.put("haveKoperasi", user.getHaveKoperasi());
+        data.put("name",user.getRoles().get(0).getName());
+        return data;
     }
 
     @RequestMapping(value = "/api/currentuser", method = RequestMethod.GET)

@@ -27,7 +27,9 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
             nativeQuery = true)
     Integer getPinjaman(Integer idKoperasi, Integer status);
 
-    Boolean existsByKoperasiAndStatus(Koperasi koperasi, Integer status);
+    @Query(value = "select case when (SELECT count(*) from peminjaman WHERE id_koperasi = ?1 AND status = ?2) > 0 then true else false end ",
+            nativeQuery = true)
+    Boolean existsByKoperasiAndStatus(Integer koperasi, Integer status);
 
     List<Pinjaman> getAllByKoperasi(Koperasi koperasi);
 

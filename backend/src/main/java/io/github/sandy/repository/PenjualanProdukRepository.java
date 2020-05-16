@@ -15,7 +15,9 @@ public interface PenjualanProdukRepository extends JpaRepository<PenjualanProduk
 
     List<PenjualanProduk> findAllByTransaksiProduk(TransaksiProduk transaksiproduk);
 
-    Boolean existsByKoperasiAndStatus(Koperasi koperasi, Boolean status);
+    @Query(value = "select case when (SELECT count(*) FROM penjualan_produk where id_koperasi = ?1 and status = ?2) > 0 then true else false end",
+            nativeQuery = true)
+    Boolean existsByKoperasiAndStatus(Integer koperasi, Boolean status);
 
     @Query(value = "SELECT count(jumlah_beli) FROM penjualan_produk where id_koperasi = ?1 and status = ?2",
             nativeQuery = true)

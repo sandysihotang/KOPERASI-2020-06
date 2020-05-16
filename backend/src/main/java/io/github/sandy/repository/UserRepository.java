@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
@@ -19,6 +20,13 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             nativeQuery = true
     )
     List<User> findByRole();
+
+    @Query(
+            value = "SELECT id, email, enabled, account_non_expired, credentials_non_expired, account_non_locked, username, password, have_koperasi FROM users " +
+                    "where username = ?1 LIMIT 1",
+            nativeQuery = true
+    )
+    Map<String, Object> getUserUsername(String user);
 
 
     @Query(value = "SELECT * FROM users u " +

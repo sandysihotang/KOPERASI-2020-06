@@ -21,7 +21,9 @@ public interface ProdukRepository extends JpaRepository<Produk, Integer> {
             nativeQuery = true)
     Integer getTotalProduk(Integer idKoperasi);
 
-    Boolean existsByKoperasi(Koperasi koperasi);
+    @Query(value = "SELECT case when (select count(*) from produk where id_koperasi = ?1) > 0 then true else false end",
+            nativeQuery = true)
+    Boolean existsByKoperasi(Integer koperasi);
 
     @Query(value = "SELECT p.nama_produk, p.jumlah_produk, p.kode_produk, " +
             "h.harga_beli, h.harga_jual_anggota, h.harga_jual_non_anggota, kp.nama_kategori FROM produk p " +
