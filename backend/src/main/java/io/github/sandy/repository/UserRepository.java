@@ -12,6 +12,13 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByUsername(String s);
 
     @Query(
+            value = "SELECT * FROM users "  +
+                    "WHERE username = ?1",
+            nativeQuery = true
+    )
+    Optional<Map<String, Object>> getdataFromUname(String s);
+
+    @Query(
             value = "SELECT * FROM users " +
                     "INNER JOIN role_user " +
                     "ON users.id = role_user.user_id " +

@@ -36,7 +36,7 @@ public interface AngotaKoperasiRepository extends JpaRepository<AnggotaKoperasi,
             nativeQuery = true)
     Integer getCountJumlahAnggota(Integer idKoperasi, Boolean status);
 
-    @Query(value = "SELECT a.data FROM anggota_koperasi a " +
+    @Query(value = "SELECT a.data, a.id FROM anggota_koperasi a " +
             "INNER JOIN koperasi k ON a.id_koperasi = k.id " +
             "INNER JOIN users u ON a.id_user = u.id " +
             "WHERE a.id_koperasi = ?1 AND u.enabled = ?2",
