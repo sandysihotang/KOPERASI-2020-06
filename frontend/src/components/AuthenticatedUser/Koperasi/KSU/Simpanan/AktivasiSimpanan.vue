@@ -49,7 +49,7 @@
             name: 'nama',
             label: 'Nama Nasabah',
             align: 'center',
-            field: row => `${row.user.userDetail.firstName} ${row.user.userDetail.lastName}`,
+            field: row => `${row.first_name} ${row.last_name}`,
             sortable: true,
           }, {
             name: 'status',
@@ -62,8 +62,8 @@
             label: 'Produk Simpanan',
             align: 'center',
             field: (row) => {
-              if (row.jenisSimpanan === 1) return 'Simpanan Pokok'
-              if (row.jenisSimpanan === 2) return 'Simpanan Wajib'
+              if (row.jenis_simpanan === 1) return 'Simpanan Pokok'
+              if (row.jenis_simpanan === 2) return 'Simpanan Wajib'
               return 'Simpanan Sukarela'
             },
             sortable: true,
@@ -71,7 +71,7 @@
             name: 'jumlahsetoran',
             label: 'Jumlah Setoran',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.totalSimpanan)),
+            field: row => this.toIDR(parseInt(row.total_simpanan)),
             sortable: true,
           }, {
             name: 'tanggalmulai',
@@ -79,7 +79,7 @@
             align: 'center',
             field: (row) => {
               moment.lang('id')
-              return moment(row.tanggalMulai)
+              return moment(row.tanggal_mulai)
                 .format('dddd, Do MMMM YYYY')
             },
             sortable: true,
@@ -89,7 +89,7 @@
             align: 'center',
             field: (row) => {
               moment.lang('id')
-              return moment(row.createdAt)
+              return moment(row.created_at)
                 .format('dddd, Do MMMM YYYY')
             },
             sortable: true,
