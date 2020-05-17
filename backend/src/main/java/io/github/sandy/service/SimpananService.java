@@ -2,6 +2,7 @@ package io.github.sandy.service;
 
 import io.github.sandy.model.*;
 import io.github.sandy.repository.AktivasiSimpananRepository;
+import io.github.sandy.repository.KoperasiRepository;
 import io.github.sandy.repository.PengaturanSimpananRepository;
 import io.github.sandy.repository.TransaksiSimpananRepository;
 import io.github.sandy.request.Requestbody;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SimpananService {
@@ -22,6 +24,9 @@ public class SimpananService {
 
     @Autowired
     TransaksiSimpananRepository transaksiSimpananRepository;
+
+    @Autowired
+    KoperasiRepository koperasiRepository;
 
     public void saveAturanSimpanan(Requestbody requestbody, Koperasi koperasi) {
         List<PengaturanSimpanan> pengaturanSimpananList = new ArrayList<>();
@@ -45,10 +50,11 @@ public class SimpananService {
 
     }
 
-    public void saveActivasiSimpanan(Requestbody requestbody, Koperasi koperasi, User user, Integer jenis_simpanan) {
+    public void saveActivasiSimpanan(Requestbody requestbody, Map<String,Object> koperasi, User user, Integer jenis_simpanan) {
+        Koperasi koperasi1 = koperasiRepository.getOne((Integer) koperasi.get("id"));
         AktivasiSimpanan aktivasiSimpanan = new AktivasiSimpanan();
         aktivasiSimpanan.setAktif(true);
-        aktivasiSimpanan.setKoperasi(koperasi);
+        aktivasiSimpanan.setKoperasi(koperasi1);
         aktivasiSimpanan.setUser(user);
         aktivasiSimpanan.setJenisSimpanan(jenis_simpanan);
         aktivasiSimpanan.setTotalSimpanan(requestbody.getJumlahSimpanan());
@@ -61,7 +67,7 @@ public class SimpananService {
         transaksiSimpanan.setCreatedAt(new Date());
         transaksiSimpanan.setJumlahTransaksi(requestbody.getJumlahSimpanan().intValue());
         transaksiSimpanan.setJenisTransaksi(1);
-        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan(koperasi.getId()));
+        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan(koperasi1.getId()));
 
         transaksiSimpananRepository.save(transaksiSimpanan);
 

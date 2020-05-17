@@ -66,9 +66,9 @@ public class SimpananController {
     public void saveAturanSimpanan(@RequestBody Requestbody requestbody, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
-        Koperasi koperasi = koperasiRepository.findFirstByUser(user);
-        simpananService.saveAturanSimpanan(requestbody, koperasi);
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        simpananService.saveAturanSimpanan(requestbody, koperasiRepository.getOne((Integer) koperasi.get("id")));
     }
 
     @RequestMapping(value = "/api/aktivasisimpanan/{id}/{jenis_simpanan}", method = RequestMethod.POST)
@@ -78,9 +78,10 @@ public class SimpananController {
                                                     @PathVariable("jenis_simpanan") Integer jenis_simpanan) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        Koperasi koperasi = koperasiRepository.findFirstByUser(userRepository.findByUsername(uname).get());
+        Map<String, Object> u = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
         User user = userRepository.getOne(id);
-        if (aktivasiSimpananRepository.existsByKoperasiAndUserAndJenisSimpanan(koperasi, user, jenis_simpanan)) {
+        if (aktivasiSimpananRepository.existsByKoperasiAndUserAndJenisSimpanan(koperasiRepository.getOne((Integer) koperasi.get("id")), user, jenis_simpanan)) {
             return new ResponseEntity<>(new Err(400, ""), HttpStatus.OK);
         }
         simpananService.saveActivasiSimpanan(requestbody, koperasi, user, jenis_simpanan);
@@ -91,24 +92,27 @@ public class SimpananController {
     public List<User> getDataPengajuSimpanan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        Koperasi koperasi = koperasiRepository.findFirstByUser(userRepository.findByUsername(uname).get());
-        return userRepository.findAllForPengaju(koperasi.getId());
+        Map<String, Object> u = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
+        return userRepository.findAllForPengaju((Integer) koperasi.get("id"));
     }
 
     @RequestMapping(value = "/api/getdataanggotasimpananwajib", method = RequestMethod.GET)
     public List<User> getDataAnggotaSimpananWajib(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        Koperasi koperasi = koperasiRepository.findFirstByUser(userRepository.findByUsername(uname).get());
-        return userRepository.findAllByJenisSimpanan(koperasi.getId(), 2);
+        Map<String, Object> u = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
+        return userRepository.findAllByJenisSimpanan((Integer) koperasi.get("id"), 2);
     }
 
     @RequestMapping(value = "/api/getdataanggotasimpanansukarela", method = RequestMethod.GET)
     public List<User> getDataAnggotaSimpananSukarela(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        Koperasi koperasi = koperasiRepository.findFirstByUser(userRepository.findByUsername(uname).get());
-        return userRepository.findAllByJenisSimpanan(koperasi.getId(), 3);
+        Map<String, Object> u = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
+        return userRepository.findAllByJenisSimpanan((Integer) koperasi.get("id"), 3);
     }
 
     @RequestMapping(value = "/api/getanggotasimpananaktivasi", method = RequestMethod.GET)
@@ -179,8 +183,8 @@ public class SimpananController {
     public Long getSaldoUser(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
-        return aktivasiSimpananRepository.getSaldo(user.getId());
+        Map<String, Object> u = userRepository.getUserUsername(uname);
+        return aktivasiSimpananRepository.getSaldo((Integer) u.get("id"));
     }
 
     @RequestMapping(value = "/api/gettransaksiterkini", method = RequestMethod.GET)
