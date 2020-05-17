@@ -61,8 +61,8 @@ public class AuthenticationController {
     public Integer getJenisKoperasi(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
-        return koperasiRepository.getJenisFromKoperasi(user.getId());
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        return koperasiRepository.getJenisFromKoperasi((Integer) user.get("id"));
     }
 
     @RequestMapping(value = "/api/login/currentuser", method = RequestMethod.GET)
