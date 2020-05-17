@@ -76,6 +76,6 @@ public interface AngsuranRepository extends JpaRepository<Angsuran, Integer> {
             "else 0 END", nativeQuery = true)
     Long getDenda(Integer idKoperasi, Date from, Date to);
 
-    @Query(value = "SELECT bunga,denda from angsuran", nativeQuery = true)
-    List<Map<String, Object>> getAllByPinjaman(Object id);
+    @Query(value = "SELECT * from angsuran where id_pinjaman = ?1", nativeQuery = true)
+    List<Map<String, Object>> getAllByPinjaman(Integer id);
 }

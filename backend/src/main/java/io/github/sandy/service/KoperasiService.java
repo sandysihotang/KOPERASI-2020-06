@@ -260,7 +260,7 @@ public class KoperasiService {
             temp.put("tenor", pinjaman.get("tenor"));
             totPinjaman += (Double) pinjaman.get("jumlah_pinjaman");
             double total = 0.0;
-            List<Map<String, Object>> angsurans = angsuranRepository.getAllByPinjaman(pinjaman.get("id"));
+            List<Map<String, Object>> angsurans = angsuranRepository.getAllByPinjaman((Integer) pinjaman.get("id"));
             for (Map<String, Object> angsuran : angsurans) {
                 total += (Double) angsuran.get("bunga") + (Double) angsuran.get("denda");
             }
