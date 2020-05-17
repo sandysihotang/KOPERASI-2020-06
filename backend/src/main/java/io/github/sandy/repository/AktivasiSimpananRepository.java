@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface AktivasiSimpananRepository extends JpaRepository<AktivasiSimpanan, Integer> {
@@ -20,7 +21,10 @@ public interface AktivasiSimpananRepository extends JpaRepository<AktivasiSimpan
             nativeQuery = true)
     Long getSaldo(Integer idUser);
 
-    List<AktivasiSimpanan> getAllByUser(User user);
+    @Query(value = "SELECT * from aktivasi_simpanan " +
+            "WHERE id_user = ?1",
+            nativeQuery = true)
+    List<Map<String, Object>> getAllByUser(Integer user);
 
     @Query(value = "SELECT " +
             "case " +

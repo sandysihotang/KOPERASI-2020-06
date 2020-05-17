@@ -162,11 +162,11 @@
           .then((res) => {
             if (res.data !== null) {
               const { data } = res;
-              this.form.bungaPinjaman = data.bungaPinjaman * 100;
-              this.form.minTenor = data.minTenor;
-              this.form.maxTenor = data.maxTenor;
-              this.form.ambangBatasDenda = data.ambangBatasDenda;
-              this.form.persentaseDenda = data.persentaseDenda * 100
+              this.form.bungaPinjaman = data.bunga_pinjaman * 100;
+              this.form.minTenor = data.min_tenor;
+              this.form.maxTenor = data.max_tenor;
+              this.form.ambangBatasDenda = data.ambang_batas_denda;
+              this.form.persentaseDenda = data.persentase_denda * 100
             }
             this.$q.loading.hide()
           })

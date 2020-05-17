@@ -5,6 +5,7 @@ import io.github.sandy.model.User;
 import io.github.sandy.model.UserDetail;
 import io.github.sandy.repository.DetailUserRepository;
 import io.github.sandy.repository.KoperasiRepository;
+import io.github.sandy.repository.RoleRepository;
 import io.github.sandy.repository.UserRepository;
 import io.github.sandy.request.Requestbody;
 import io.github.sandy.service.MailSender;
@@ -42,6 +43,9 @@ public class AuthenticationController {
     @Autowired
     DetailUserRepository detailUserRepository;
 
+    @Autowired
+    RoleRepository roleRepository;
+
     @RequestMapping(value = "/send", method = RequestMethod.GET)
     public void send() {
         MailSender mailSender = new MailSender();
@@ -65,12 +69,13 @@ public class AuthenticationController {
     public Map<String, Object> hello(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> data = new HashMap<>();
-        Map<String, Object> userDetail = detailUserRepository.findUserDetail(user.getId());
+        Map<String, Object> userDetail = detailUserRepository.findUserDetail((Integer) user.get("id"));
         data.put("userDetail", userDetail);
-        data.put("haveKoperasi", user.getHaveKoperasi());
-        data.put("name",user.getRoles().get(0).getName());
+        data.put("haveKoperasi", user.get("have_koperasi"));
+        Map<String, Object> role = roleRepository.find((Integer) user.get("id"));
+        data.put("name", role.get("name"));
         return data;
     }
 

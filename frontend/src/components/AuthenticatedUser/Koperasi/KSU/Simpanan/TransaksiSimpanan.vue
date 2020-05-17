@@ -105,21 +105,21 @@
             name: 'notrx',
             label: 'No Transaksi',
             align: 'center',
-            field: row => row.kodeTransaksi,
+            field: row => row.kode_transaksi,
             sortable: true,
           }, {
             name: 'namanasabah',
             label: 'Nama Nasabah',
             align: 'center',
-            field: row => `${row.aktivasiSimpanan.user.userDetail.firstName} ${row.aktivasiSimpanan.user.userDetail.lastName}`,
+            field: row => `${row.first_name} ${row.last_name}`,
             sortable: true,
           }, {
             name: 'produksimpanan',
             label: 'Produk Simpanan',
             align: 'center',
             field: (row) => {
-              if (row.aktivasiSimpanan.jenisSimpanan === 1) return 'Simpanan Pokok'
-              if (row.aktivasiSimpanan.jenisSimpanan === 2) return 'Simpanan Wajib'
+              if (row.jenis_simpanan === 1) return 'Simpanan Pokok'
+              if (row.jenis_simpanan === 2) return 'Simpanan Wajib'
               return 'Simpanan Sukarela'
             },
             sortable: true,
@@ -127,7 +127,7 @@
             name: 'tipetransaksi',
             label: 'Tipe Transaksi',
             align: 'center',
-            field: row => (row.jenisTransaksi === 1 ? 'Setor Dana' : 'Penarikan Dana'),
+            field: row => (row.jenis_transaksi === 1 ? 'Setor Dana' : 'Penarikan Dana'),
             sortable: true,
           }, {
             name: 'tanggaltransaksi',
@@ -135,7 +135,7 @@
             align: 'center',
             field: (row) => {
               moment.lang('id')
-              return moment(row.createdAt)
+              return moment(row.created_at)
                 .format('dddd, Do MMMM YYYY')
             },
             sortable: true,
@@ -143,7 +143,7 @@
             name: 'nominal',
             label: 'Nominal Transaksi',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.jumlahTransaksi)),
+            field: row => this.toIDR(parseInt(row.jumlah_transaksi)),
             sortable: true,
           }
         ],

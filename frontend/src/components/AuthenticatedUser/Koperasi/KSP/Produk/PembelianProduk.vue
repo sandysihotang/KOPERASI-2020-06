@@ -53,19 +53,19 @@
             name: 'namavendor',
             label: 'Nama Vendor',
             align: 'center',
-            field: row => row.namaVendor,
+            field: row => row.nama_vendor,
             sortable: true,
           }, {
             name: 'alamat',
             label: 'Alamat Vendor',
             align: 'center',
-            field: row => row.alamatVendor,
+            field: row => row.alamat_vendor,
             sortable: true,
           }, {
             name: 'notelepom',
             label: 'No Telepon Vendor',
             align: 'center',
-            field: row => row.noTelepon,
+            field: row => row.no_telepon,
             sortable: true,
           }, {
             name: 'tanggalmasuk',
@@ -73,7 +73,7 @@
             align: 'center',
             field: (row) => {
               moment.lang('id')
-              return moment(row.tanggalMasuk)
+              return moment(row.tanggal_masuk)
                 .format('dddd, Do MMMM YYYY')
             },
             sortable: true,

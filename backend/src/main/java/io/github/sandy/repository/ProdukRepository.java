@@ -15,7 +15,13 @@ public interface ProdukRepository extends JpaRepository<Produk, Integer> {
 
     Produk getFirstByKodeProdukAndKoperasi(String kodeProduk, Koperasi koperasi);
 
-    Set<Produk> getAllByKoperasi(Koperasi koperasi);
+    @Query(value = "SELECT nama_produk, kode_produk, jumlah_produk, " +
+            " nama_kategori," +
+            " harga_beli, harga_jual_non_anggota, harga_jual_anggota from produk " +
+            "INNER JOIN kategori_produk kp on produk.id_kategori = kp.id " +
+            "inner join harga h on produk.id = h.id_produk where produk.id_koperasi = ?1 AND h.status = true",
+            nativeQuery = true)
+    Set<Map<String, Object>> getAllByKoperasi(Integer koperasi);
 
     @Query(value = "SELECT sum(jumlah_produk) from produk where id_koperasi = ?1",
             nativeQuery = true)

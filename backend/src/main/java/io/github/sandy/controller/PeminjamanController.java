@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 public class PeminjamanController {
@@ -63,51 +61,60 @@ public class PeminjamanController {
     @RequestMapping(value = "/api/getadapinjaman", method = RequestMethod.GET)
     public boolean getAdaPinjaman(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return pinjamanRepository.existsByUserAndStatusIn(user, new Integer[]{2, 4, 5});
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        return pinjamanRepository.existsAdaPinjaman((Integer) user.get("id"), new Integer[]{2, 4, 5});
     }
 
 
     @RequestMapping(value = "/api/getpinjamanselesai", method = RequestMethod.GET)
     public boolean getAdaPinjamanSelesai(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return pinjamanRepository.existsByUserAndStatusIn(user, new Integer[]{6});
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        return pinjamanRepository.existsAdaPinjaman((Integer) user.get("id"), new Integer[]{6});
     }
 
     @RequestMapping(value = "/api/getdatapinjaman", method = RequestMethod.GET)
-    public Pinjaman getDataPinjaman(HttpServletRequest request) {
+    public Map<String, Object> getDataPinjaman(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return pinjamanRepository.getFirstByUserAndStatusIn(user, new Integer[]{2, 4, 5});
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        return pinjamanRepository.getFirstByUserAndStatusIn((Integer) user.get("id"), new Integer[]{2, 4, 5});
     }
 
     @RequestMapping(value = "/api/getpinjamanselesaidata", method = RequestMethod.GET)
-    public List<Pinjaman> getDataPinjamanSelesai(HttpServletRequest request) {
+    public List<Map<String, Object>> getDataPinjamanSelesai(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return pinjamanRepository.getByUserAndStatus(user, 6);
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        return pinjamanRepository.getByUserAndStatus((Integer) user.get("id"), 6);
     }
 
     @RequestMapping(value = "/api/getdatapengajuanpinjaman", method = RequestMethod.GET)
-    public List<Pinjaman> getDataRequestPinjaman(HttpServletRequest request) {
+    public List<Map<String,Object>> getDataRequestPinjaman(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return pinjamanRepository.getAllByKoperasi(user.getKoperasi());
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return pinjamanRepository.getAllByKoperasi((Integer) koperasi.get("id"));
     }
 
     @RequestMapping(value = "/api/getdatapengajuanapprove", method = RequestMethod.GET)
-    public List<Pinjaman> getDataApprove(HttpServletRequest request) {
+    public List<Map<String, Object>> getDataApprove(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return pinjamanRepository.getAllByKoperasiAndStatus(user.getKoperasi(), 2);
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return pinjamanRepository.getAllByKoperasiAndStatus((Integer) koperasi.get("id"), 2);
     }
 
     @RequestMapping(value = "/api/existtagihan", method = RequestMethod.GET)
     public boolean existTagihan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return pinjamanRepository.existsByUserAndStatus(user, 2);
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        return pinjamanRepository.existsByUserAndStatus((Integer) user.get("id"), 2);
     }
 
     @RequestMapping(value = "/api/gettagihan", method = RequestMethod.GET)
@@ -123,9 +130,9 @@ public class PeminjamanController {
     }
 
     @RequestMapping(value = "/api/getdataajuan/{id}", method = RequestMethod.GET)
-    public List<Angsuran> getData(@PathVariable("id") int id) {
-        Pinjaman pinjaman = pinjamanRepository.getFirstById(id);
-        return angsuranRepository.getAllByPinjamanOrderByUrutanKeAsc(pinjaman);
+    public List<Map<String, Object>> getData(@PathVariable("id") int id) {
+        Map<String, Object> pinjaman = pinjamanRepository.getFirstById(id);
+        return angsuranRepository.getAllByPinjamanOrderByUrutanKeAsc((Integer) pinjaman.get("id"));
     }
 
     @RequestMapping(value = "/api/getdatapengajureqpinjaman", method = RequestMethod.GET)
@@ -149,15 +156,15 @@ public class PeminjamanController {
     }
 
     @RequestMapping(value = "/api/getdatapembayaran/{id}", method = RequestMethod.GET)
-    public List<Angsuran> getDataPembayaran(@PathVariable("id") int id) {
-        Pinjaman pinjaman = pinjamanRepository.getFirstById(id);
-        return angsuranRepository.getAllByPinjamanAndStatusBayar(pinjaman, false);
+    public List<Map<String, Object>> getDataPembayaran(@PathVariable("id") int id) {
+        Map<String, Object> pinjaman = pinjamanRepository.getFirstById(id);
+        return angsuranRepository.getAllByPinjamanAndStatusBayar((Integer) pinjaman.get("id"), false);
     }
 
     @RequestMapping(value = "/api/getangsuranbasedidpinjaman/{id}", method = RequestMethod.GET)
-    public Angsuran getDataForAnggota(@PathVariable("id") int id) {
-        Pinjaman pinjaman = pinjamanRepository.getFirstById(id);
-        Angsuran angsuran = angsuranRepository.getFirstByPinjamanAndStatusBayarOrderByUrutanKe(pinjaman, false);
+    public Map<String, Object> getDataForAnggota(@PathVariable("id") int id) {
+        Map<String, Object> pinjaman = pinjamanRepository.getFirstById(id);
+        Map<String, Object> angsuran = angsuranRepository.getFirstByPinjamanAndStatusBayarOrderByUrutanKe((Integer) pinjaman.get("id"), false);
         return angsuran;
     }
 
@@ -173,6 +180,7 @@ public class PeminjamanController {
         if (!angsuranRepository.existsByPinjamanAndStatusBayar(angsuran.getPinjaman(), false)) {
             Pinjaman pinjaman = pinjamanRepository.getOne(angsuran.getPinjaman().getId());
             pinjaman.setStatus(6);
+            pinjaman.setUpdatedAt(new Date());
             pinjamanRepository.save(pinjaman);
         }
     }

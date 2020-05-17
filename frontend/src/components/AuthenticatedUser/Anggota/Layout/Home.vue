@@ -5,7 +5,7 @@
         {{nama}}
         <br>
         <q-avatar v-if="image!==null">
-          <img :src="getUrl" alt="">
+          <img :src="getUrl(image)" alt="">
         </q-avatar>
         <q-avatar v-else icon="person"/>
         <br>
@@ -78,20 +78,20 @@
             </q-item-section>
 
             <q-item-section class="text-black">
-              <q-item-label caption>Kode Pinjaman: #{{ a.kodeTransaksi }}</q-item-label>
-              <q-item-label class="text-caption">Total: {{ toIDR(parseInt(a.jumlahTransaksi)) }}
+              <q-item-label caption>Kode Pinjaman: #{{ a.kode_transaksi }}</q-item-label>
+              <q-item-label class="text-caption">Total: {{ toIDR(parseInt(a.jumlah_transaksi)) }}
               </q-item-label>
-              <q-item-label class="text-caption">Jenis: {{ (a.aktivasiSimpanan.jenisSimpanan === 1?
-                'Simpanan Pokok': (a.aktivasiSimpanan.jenisSimpanan === 2 ? 'Simpanan Wajib' :
+              <q-item-label class="text-caption">Jenis: {{ (a.jenis_simpanan === 1?
+                'Simpanan Pokok': (a.jenis_simpanan === 2 ? 'Simpanan Wajib' :
                 'Simpanan Sukarela')) }}
               </q-item-label>
               <q-item-label caption lines="1">
                 <q-chip class="glossy" color="primary" text-color="white">{{
-                  mom(a.createdAt) }}
+                  mom(a.created_at) }}
                 </q-chip>
               </q-item-label>
 
-              <q-item-label caption>Mode: {{ (a.jenisTransaksi === 1 ? 'Setor Dana' :
+              <q-item-label caption>Mode: {{ (a.jenis_transaksi === 1 ? 'Setor Dana' :
                 'Penarikan Dana') }}
               </q-item-label>
             </q-item-section>
@@ -113,14 +113,14 @@
         jumlahPembayaranBerikutnya: null,
         tanggalPembayaranBerikutnya: null,
         idPinjaman: null,
-        saldo: null,
+        saldo: 0,
         transaksiTerkini: [],
         image: null
       }
     },
     methods: {
-      getUrl() {
-        return `data:image/jpeg;base64,${this.image}`
+      getUrl(i) {
+        return `data:image/jpeg;base64,${i}`
       },
       mom(date) {
         moment.lang('id')
@@ -180,7 +180,9 @@
           headers: this.$auth.getHeader()
         })
           .then((res) => {
-            this.saldo = res.data
+            if (res.data !== null) {
+              this.saldo = res.data
+            }
             this.getTransaksi()
           })
           .catch(() => {

@@ -7,14 +7,18 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface AngsuranRepository extends JpaRepository<Angsuran, Integer> {
 
-    List<Angsuran> getAllByPinjamanOrderByUrutanKeAsc(Pinjaman pinjaman);
+    @Query(value = "SELECT id, id_pinjaman, angsuran_pokok, bunga, status_bayar, tanggal_bayar, tanggal_jatuh_tempo, denda, total_bayar, total_angsuran, total_tagihan, urutan_ke FROM angsuran WHERE id_pinjaman=?1 ORDER BY urutan_ke ASC", nativeQuery = true)
+    List<Map<String, Object>> getAllByPinjamanOrderByUrutanKeAsc(Integer pinjaman);
 
-    List<Angsuran> getAllByPinjamanAndStatusBayar(Pinjaman pinjaman, Boolean status);
+    @Query(value = "SELECT id, id_pinjaman, angsuran_pokok, bunga, status_bayar, tanggal_bayar, tanggal_jatuh_tempo, denda, total_bayar, total_angsuran, total_tagihan, urutan_ke FROM angsuran where id_pinjaman = ?1 AND status_bayar=?2 order by urutan_ke asc ", nativeQuery = true)
+    List<Map<String, Object>> getAllByPinjamanAndStatusBayar(Integer pinjaman, Boolean status);
 
-    Angsuran getFirstByPinjamanAndStatusBayarOrderByUrutanKe(Pinjaman pinjaman, Boolean status);
+    @Query(value = "SELECT id, id_pinjaman, angsuran_pokok, bunga, status_bayar, tanggal_bayar, tanggal_jatuh_tempo, denda, total_bayar, total_angsuran, total_tagihan, urutan_ke FROM angsuran where id_pinjaman = ?1 AND status_bayar=?2 order by urutan_ke asc LIMIT 1", nativeQuery = true)
+    Map<String, Object> getFirstByPinjamanAndStatusBayarOrderByUrutanKe(Integer pinjaman, Boolean status);
 
     Boolean existsByPinjamanAndStatusBayar(Pinjaman pinjaman, Boolean statusBayar);
 
@@ -71,4 +75,7 @@ public interface AngsuranRepository extends JpaRepository<Angsuran, Integer> {
             "AND status_bayar = true AND p.id_koperasi = ?1)" +
             "else 0 END", nativeQuery = true)
     Long getDenda(Integer idKoperasi, Date from, Date to);
+
+    @Query(value = "SELECT bunga,denda from angsuran", nativeQuery = true)
+    List<Map<String, Object>> getAllByPinjaman(Object id);
 }

@@ -269,7 +269,7 @@
         this.nama = `${this.selected[0].userDetail.firstName} ${this.selected[0].userDetail.lastName}`
         const res = this.selected[0].aktivasiSimpanan
         for (let i = 0; i < res.length; i++) {
-          if (res[i].jenisSimpanan === 2) {
+          if (res[i].jenisSimpanan === 3) {
             this.idAturan = res[i].id
             break
           }
@@ -281,8 +281,8 @@
           headers: this.$auth.getHeader()
         })
           .then((res) => {
-            this.jumlahSimpanan = res.data.minimalSimpanan
-            this.maxSimpanan = res.data.minimalSimpanan
+            this.jumlahSimpanan = res.data.minimal_simpanan
+            this.maxSimpanan = res.data.minimal_simpanan
           })
       }
     },

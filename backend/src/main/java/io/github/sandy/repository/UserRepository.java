@@ -44,8 +44,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "WHERE a.id_koperasi = ?1 AND u.enabled = true", nativeQuery = true)
     List<User> findByKoperasiForRequest(Integer koperasi, Integer[] i);
 
-    @Query(value = "SELECT * FROM users u INNER JOIN anggota_koperasi ak on u.id = ak.id_user WHERE ak.id_koperasi = ?1 and u.enabled = true", nativeQuery = true)
-    List<User> findByKoperasiforReport(Integer koperasi);
+    @Query(value = "SELECT first_name, last_name, u.id, email, enabled, account_non_expired, credentials_non_expired, account_non_locked, username, password, have_koperasi FROM users u " +
+            "INNER JOIN anggota_koperasi ak on u.id = ak.id_user " +
+            "INNER JOIN user_detail ud on u.id = ud.user_id " +
+            "WHERE ak.id_koperasi = ?1 and u.enabled = true", nativeQuery = true)
+    List<Map<String, Object>> findByKoperasiforReport(Integer koperasi);
 
     User findFirstById(Integer id);
 }

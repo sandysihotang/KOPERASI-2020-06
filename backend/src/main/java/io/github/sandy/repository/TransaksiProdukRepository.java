@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TransaksiProdukRepository extends JpaRepository<TransaksiProduk, Integer> {
 
@@ -13,5 +14,8 @@ public interface TransaksiProdukRepository extends JpaRepository<TransaksiProduk
             nativeQuery = true)
     String getMaxKodePinjaman(Integer idKoperasi);
 
-    List<TransaksiProduk> getAllByKoperasi(Koperasi koperasi);
+    @Query(value = "SELECT * from transaksi_produk " +
+            " WHERE id_koperasi = ?1",
+            nativeQuery = true)
+    List<Map<String, Object>> getAllByKoperasi(Integer koperasi);
 }

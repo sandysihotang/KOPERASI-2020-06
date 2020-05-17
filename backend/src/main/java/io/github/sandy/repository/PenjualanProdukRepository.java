@@ -4,14 +4,27 @@ import io.github.sandy.model.Koperasi;
 import io.github.sandy.model.PenjualanProduk;
 import io.github.sandy.model.TransaksiProduk;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 public interface PenjualanProdukRepository extends JpaRepository<PenjualanProduk, Integer> {
     List<PenjualanProduk> findAllByKoperasiAndStatus(Koperasi koperasi, Boolean status);
+
+    @Query(value = "SELECT p.id, id_transaksi,  id_harga, keanggotaan, jumlah_beli," +
+            " harga_beli, harga_jual_non_anggota, harga_jual_anggota, " +
+            " nama_produk, kode_produk," +
+            " nama_kategori from penjualan_produk p " +
+            "INNER JOIN harga h on p.id_harga = h.id " +
+            "INNER JOIN produk p2 on h.id_produk = p2.id " +
+            "INNER JOIN kategori_produk kp on p2.id_kategori = kp.id " +
+            "WHERE p.id_koperasi = ?1 AND p.status = ?2 AND h.status = true",
+            nativeQuery = true)
+    List<Map<String, Object>> findAllByKoperasiAndStatusPen(Integer koperasi, Boolean status);
 
     List<PenjualanProduk> findAllByTransaksiProduk(TransaksiProduk transaksiproduk);
 
@@ -72,4 +85,9 @@ public interface PenjualanProdukRepository extends JpaRepository<PenjualanProduk
             "INNER JOIN harga h on penjualan_produk.id_harga = h.id " +
             "where tp.id_koperasi=?1 AND tp.tanggal_transaksi >= ?2 AND tp.tanggal_transaksi <= ?3) else 0 end", nativeQuery = true)
     Integer getTotalJual(Integer idKoperasi, Date from, Date to);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from penjualan_produk where id_koperasi = ?1 and status = ?2", nativeQuery = true)
+    void deleteAllByKoperasiAndStatus(Integer idKoperasi, Boolean status);
 }

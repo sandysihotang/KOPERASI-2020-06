@@ -120,12 +120,12 @@
           .then((res) => {
             const { data } = res;
             for (let i = 0; i < 3; i++) {
-              if (data[i].jenisSimpanan === 1) {
-                this.pokok = data[i].minimalSimpanan
-              } else if (data[i].jenisSimpanan === 2) {
-                this.wajib = data[i].minimalSimpanan
-              } else if (data[i].jenisSimpanan === 3) {
-                this.sukarela = data[i].minimalSimpanan
+              if (data[i].jenis_simpanan === 1) {
+                this.pokok = data[i].minimal_simpanan
+              } else if (data[i].jenis_simpanan === 2) {
+                this.wajib = data[i].minimal_simpanan
+              } else if (data[i].jenis_simpanan === 3) {
+                this.sukarela = data[i].minimal_simpanan
               }
             }
             this.$q.loading.hide()

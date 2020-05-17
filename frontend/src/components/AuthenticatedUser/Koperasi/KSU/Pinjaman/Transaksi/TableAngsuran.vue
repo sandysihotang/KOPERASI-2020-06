@@ -18,7 +18,7 @@
         <q-input
           disable
           filled
-          :value="selectedAngsuran[0].totalAngsuran * 100"
+          :value="parseInt(selectedAngsuran[0].total_angsuran) * 100"
           label="Total Bayar"
           mask="Rp ###,###.##"
           fill-mask="0"
@@ -56,21 +56,21 @@
             name: 'termin',
             label: 'Termin Ke #',
             align: 'center',
-            field: row => row.urutanKe,
+            field: row => row.urutan_ke,
             sortable: true,
           },
           {
             name: 'status',
             label: 'Status',
             align: 'center',
-            field: row => (row.statusBayar ? 'Paid' : 'Unpaid'),
+            field: row => (row.status_bayar ? 'Paid' : 'Unpaid'),
             sortable: true,
           },
           {
             name: 'angsuranPokok',
             label: 'Angsuran Pokok',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.angsuranPokok)),
+            field: row => this.toIDR(parseInt(row.angsuran_pokok)),
             sortable: true,
           },
           {
@@ -84,7 +84,7 @@
             name: 'totalAngsuran',
             label: 'Total Angsuran',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.totalAngsuran)),
+            field: row => this.toIDR(parseInt(row.total_angsuran)),
             sortable: true,
           },
           {
@@ -93,7 +93,7 @@
             align: 'center',
             field: (row) => {
               moment.lang('id')
-              return moment(row.tanggalJatuhTempo)
+              return moment(row.tanggal_jatuh_tempo)
                 .format('dddd, Do MMMM YYYY')
             },
             sortable: true,
@@ -109,14 +109,14 @@
             name: 'totalTagihan',
             label: 'Total Tagihan',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.totalTagihan === null ? 0 : row.totalTagihan)),
+            field: row => this.toIDR(parseInt(row.total_tagihan === null ? 0 : row.total_tagihan)),
             sortable: true,
           },
           {
             name: 'totalBayar',
             label: 'Total Bayar',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.totalBayar === null ? 0 : row.totalBayar)),
+            field: row => this.toIDR(parseInt(row.total_bayar === null ? 0 : row.total_bayar)),
             sortable: true,
           }
         ],

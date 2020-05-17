@@ -127,10 +127,10 @@
         return res;
       },
       reload() {
-        this.price = this.user.jumlahPinjaman * 100
+        this.price = this.user.jumlah_pinjaman * 100
         this.tenor = this.user.tenor
         this.jaminan = this.user.jaminan
-        this.persentase = this.user.pengaturanPinjaman.bungaPinjaman
+        this.persentase = this.user.bunga_pinjaman
       },
       loadColumn() {
         this.$q.loading.show()

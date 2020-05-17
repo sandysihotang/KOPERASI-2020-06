@@ -4,12 +4,12 @@
       <q-card-section>
         <center>
           <p class="text-h6">Rekapitulasi Simpanan</p>
-          <p>Koperasi {{ res.namaKoperasi }}</p>
+          <p v-if="show">Koperasi {{ res.namaKoperasi }}</p>
         </center>
       </q-card-section>
       <q-separator/>
       <q-card-section>
-        <table class="q-table">
+        <table class="q-table" v-if="show">
           <tr>
             <td></td>
             <td></td>
@@ -63,7 +63,7 @@
         </table>
       </q-card-section>
       <q-card-section>
-        <q-table
+        <q-table v-if="show"
           :columns="columns"
           :data="res.dataTable"/>
       </q-card-section>

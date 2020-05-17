@@ -108,7 +108,10 @@
               selection="single"
               :selected.sync="selected">
               <template v-slot:top-right>
-                <q-btn size="xs" color="red" label="Hapus"
+
+                <q-btn size="xs" color="red" label="Hapus Semua"
+                       icon="fa fa-window-close" @click="hapusSemua"/>&nbsp;
+                <q-btn size="xs" color="orange" label="Hapus"
                        :disable="selected.length === 0"
                        icon="fa fa-window-close" @click="hapus"/>&nbsp;
                 <q-btn size="xs" color="green" label="Ubah stok"
@@ -193,35 +196,35 @@
             name: 'barcode',
             label: 'Kode Barang',
             align: 'center',
-            field: row => row.harga.produk.kodeProduk,
+            field: row => row.kode_produk,
             sortable: true,
           },
           {
             name: 'nama',
             label: 'Nama Barang',
             align: 'center',
-            field: row => row.harga.produk.namaProduk,
+            field: row => row.nama_produk,
             sortable: true,
           },
           {
             name: 'harga',
             label: 'Harga Barang',
             align: 'center',
-            field: row => (this.anggota ? this.toIDR(parseInt(row.harga.hargaJualAnggota)) : this.toIDR(parseInt(row.harga.hargaJualNonAnggota))),
+            field: row => (this.anggota ? this.toIDR(parseInt(row.harga_jual_anggota)) : this.toIDR(parseInt(row.harga_jual_non_anggota))),
             sortable: true,
           },
           {
             name: 'jumlahBeli',
             label: 'Jumlah Beli',
             align: 'center',
-            field: row => row.jumlahBeli,
+            field: row => row.jumlah_beli,
             sortable: true,
           },
           {
             name: 'subTotal',
             label: 'SubTotal',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.jumlahBeli * (this.anggota ? row.harga.hargaJualAnggota : row.harga.hargaJualNonAnggota))),
+            field: row => this.toIDR(parseInt(row.jumlah_beli * (this.anggota ? row.harga_jual_anggota : row.harga_jual_non_anggota))),
             sortable: true,
           }
         ],
@@ -237,7 +240,6 @@
         this.$http.put(`/api/ubahprod/${this.selected[0].id}`, { jumlahBeli: this.jumlahBeli }, { headers: this.$auth.getHeader() })
           .then((res) => {
             this.getDataProduk()
-            this.getData()
             this.$q.notify({
               type: 'positive',
               message: `Berhasil mengubah dari keranjang`
@@ -251,6 +253,23 @@
       hapus() {
         this.$q.loading.show()
         this.$http.delete(`/api/deleteprod/${this.selected[0].id}`, {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.getDataProduk()
+            this.$q.notify({
+              type: 'positive',
+              message: `Berhasil menghapus dari keranjang`
+            })
+            this.$q.loading.hide()
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
+      },
+      hapusSemua() {
+        this.$q.loading.show()
+        this.$http.delete(`/api/deleteallprod`, {
           headers: this.$auth.getHeader()
         })
           .then((res) => {
@@ -290,7 +309,7 @@
             this.data = res.data
             this.tot = 0
             for (let i = 0; i < this.data.length; i++) {
-              this.tot += this.data[i].jumlahBeli * (this.anggota ? this.data[i].harga.hargaJualAnggota : this.data[i].harga.hargaJualNonAnggota)
+              this.tot += this.data[i].jumlah_beli * (this.anggota ? this.data[i].harga_jual_anggota : this.data[i].harga_jual_non_anggota)
             }
             this.totalBeli = this.toIDR(parseInt(this.tot))
             this.$q.loading.hide()

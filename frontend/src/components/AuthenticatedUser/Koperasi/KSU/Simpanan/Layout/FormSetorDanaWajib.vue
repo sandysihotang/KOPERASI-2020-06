@@ -281,8 +281,8 @@
           headers: this.$auth.getHeader()
         })
           .then((res) => {
-            this.jumlahSimpanan = res.data.minimalSimpanan
-            this.maxSimpanan = res.data.minimalSimpanan
+            this.jumlahSimpanan = res.data.minimal_simpanan
+            this.maxSimpanan = res.data.minimal_simpanan
           })
       }
     },
