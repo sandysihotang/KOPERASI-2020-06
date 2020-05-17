@@ -57,5 +57,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "WHERE ak.id_koperasi = ?1 and u.enabled = true", nativeQuery = true)
     List<Map<String, Object>> findByKoperasiforReport(Integer koperasi);
 
-    User findFirstById(Integer id);
+    @Query(value = "SELECT * from users where id = ?1", nativeQuery = true)
+    Map<String, Object> findFirstById(Integer id);
 }

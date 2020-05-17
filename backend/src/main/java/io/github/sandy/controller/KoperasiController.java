@@ -583,8 +583,9 @@ public class KoperasiController {
     @RequestMapping(value = "/api/savepengaturanpinjaman", method = RequestMethod.POST)
     public void savePengaturanPeminjaman(HttpServletRequest request, @RequestBody Requestbody requestbody) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        Koperasi koperasi = koperasiRepository.findFirstByUser(user);
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         koperasiService.savePengaturanPeminjaman(koperasi, requestbody);
     }
 

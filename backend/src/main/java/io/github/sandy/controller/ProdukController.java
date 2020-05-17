@@ -210,7 +210,6 @@ public class ProdukController {
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        ;
         return penjualanProdukRepository.findAllByKoperasiAndStatusPen((Integer) koperasi.get("id"), false);
     }
 

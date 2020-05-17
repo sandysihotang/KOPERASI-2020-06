@@ -73,8 +73,7 @@ public class KoperasiService {
     PenjualanProdukRepository penjualanProdukRepository;
 
     public Err createKoperasi(Requestbody requestbody, String uname) throws Exception {
-        User user = userRepository.findByUsername(uname).get();
-
+        Map<String, Object> user = userRepository.getUserUsername(uname);
         Koperasi koperasi = new Koperasi();
 
         koperasi.setAlamatKoperasi(requestbody.getAlamat());
@@ -84,12 +83,12 @@ public class KoperasiService {
         koperasi.setNoIzinKoperasi(requestbody.getIzin());
         koperasi.setTahunBerdiriKoperasi(new Date(requestbody.getDate()));
         koperasi.setEmail(requestbody.getEmail());
-        koperasi.setUser(user);
+        koperasi.setUser(userRepository.getOne((Integer) user.get("id")));
         String path = saveImage(requestbody.getImage());
         koperasi.setLogoKoperasi(path);
         koperasiRepository.save(koperasi);
 
-        User user1 = userRepository.getOne(user.getId());
+        User user1 = userRepository.getOne((Integer) user.get("id"));
         user1.setHaveKoperasi(2);
         userRepository.save(user1);
 
@@ -118,29 +117,26 @@ public class KoperasiService {
     }
 
     public void changeStateKoperasi(int id, boolean state) {
-        Koperasi koperasi = koperasiRepository.findById(id).get();
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiID(id);
         MailSender mailSender = new MailSender();
 //        mailSender.sendEmailSetStateKoperasi(javaMailSender, koperasi.getEmail(), (state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
 
-        User user = userRepository.getOne(koperasi.getUser().getId());
+        User user = userRepository.getOne((Integer) koperasi.get("id_user"));
         user.setHaveKoperasi((!state ? 3 : 2));
         userRepository.save(user);
 
     }
 
-    public void saveFormRegisterMember(String uname, String pattern) {
-        User user = userRepository.findByUsername(uname).get();
-        Koperasi koperasi = user.getKoperasi();
-
+    public void saveFormRegisterMember(Map<String, Object> user, String pattern) {
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
 
         FieldDaftarAnggota fieldDaftarAnggota = new FieldDaftarAnggota();
-        fieldDaftarAnggota.setKoperasi(koperasi);
+        fieldDaftarAnggota.setKoperasi(koperasiRepository.getOne((Integer) koperasi.get("id")));
         fieldDaftarAnggota.setPatternField(pattern);
 
         daftarAnggotaKoperasiRepository.save(fieldDaftarAnggota);
 
-        Koperasi changeStateForm = koperasiRepository.getOne(koperasi.getId());
-        koperasi.setHaveFieldRegisterMember(true);
+        Koperasi changeStateForm = koperasiRepository.getOne((Integer) koperasi.get("id"));
         koperasiRepository.save(changeStateForm);
     }
 
@@ -175,7 +171,7 @@ public class KoperasiService {
         angotaKoperasiRepository.save(anggotaKoperasi);
     }
 
-    public void savePengaturanPeminjaman(Koperasi koperasi, Requestbody requestbody) {
+    public void savePengaturanPeminjaman(Map<String, Object> koperasi, Requestbody requestbody) {
         PengaturanPinjaman pengaturanPinjaman = new PengaturanPinjaman();
         pengaturanPinjaman.setBungaPinjaman(requestbody.getBungaPinjaman() / 100);
         pengaturanPinjaman.setAmbangBatasDenda(requestbody.getAmbangBatasDenda());
@@ -183,16 +179,17 @@ public class KoperasiService {
         pengaturanPinjaman.setMinTenor(requestbody.getMinTenor());
         pengaturanPinjaman.setPersentaseDenda(requestbody.getPersentaseDenda() / 100);
 
+        Koperasi kop =koperasiRepository.getOne((Integer) koperasi.get("id"));
         pengaturanPinjamanRepository.save(pengaturanPinjaman);
-        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(koperasi, true)) {
-            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(koperasi, true).get();
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(kop, true)) {
+            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(kop, true).get();
             KoperasiPengaturanPinjaman update = koperasiPengaturanPinjamanRepository.getOne(koperasiPengaturanPinjaman.getId());
             update.setStatus(false);
             koperasiPengaturanPinjamanRepository.save(update);
         }
         KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = new KoperasiPengaturanPinjaman();
         koperasiPengaturanPinjaman.setStatus(true);
-        koperasiPengaturanPinjaman.setKoperasi(koperasi);
+        koperasiPengaturanPinjaman.setKoperasi(kop);
         koperasiPengaturanPinjaman.setPengaturanPinjaman(pengaturanPinjaman);
         koperasiPengaturanPinjamanRepository.save(koperasiPengaturanPinjaman);
     }

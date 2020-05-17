@@ -42,7 +42,8 @@ public class PeminjamanController {
     @ResponseBody
     public ResponseEntity<Err> requestPinjaman(@RequestBody Requestbody requestbody, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
         peminjamanService.requestPinjaman(user, requestbody);
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }
@@ -50,8 +51,8 @@ public class PeminjamanController {
     @RequestMapping(value = "/api/requestpeminjamanfrompengurus/{idUser}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Err> requestPinjamanFromPengurus(@RequestBody Requestbody requestbody, @PathVariable("idUser") Integer idUser) {
-        User user = userRepository.findFirstById(idUser);
-        if (pinjamanRepository.existsByUserAndStatusIn(user, new Integer[]{2, 4, 5})) {
+        Map<String, Object> user = userRepository.findFirstById(idUser);
+        if (pinjamanRepository.existsByUserAndStatusIn(userRepository.getOne((Integer) user.get("id")), new Integer[]{2, 4, 5})) {
             return new ResponseEntity<>(new Err(400, "User masih memiliki peminjaman yang sedang berjalan"), HttpStatus.OK);
         }
         peminjamanService.requestPinjaman(user, requestbody);
@@ -92,7 +93,7 @@ public class PeminjamanController {
     }
 
     @RequestMapping(value = "/api/getdatapengajuanpinjaman", method = RequestMethod.GET)
-    public List<Map<String,Object>> getDataRequestPinjaman(HttpServletRequest request) {
+    public List<Map<String, Object>> getDataRequestPinjaman(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
@@ -120,8 +121,9 @@ public class PeminjamanController {
     @RequestMapping(value = "/api/gettagihan", method = RequestMethod.GET)
     public Pinjaman getTagihan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return pinjamanRepository.getFirstByUserAndStatus(user, 2);
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        return pinjamanRepository.getFirstByUserAndStatus(userRepository.getOne((Integer) user.get("id")), 2);
     }
 
     @RequestMapping(value = "/api/savepinjamanfrompengurus/{id}", method = RequestMethod.PUT)
@@ -139,17 +141,20 @@ public class PeminjamanController {
     public List<User> getDataPengajuSimpanan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
-        Koperasi koperasi = user.getKoperasi();
-        return userRepository.findByKoperasiForRequest(koperasi.getId(), new Integer[]{2, 4, 5});
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return userRepository.findByKoperasiForRequest((Integer) koperasi.get("id"), new Integer[]{2, 4, 5});
     }
 
     @RequestMapping(value = "/api/getpengaturanpinjamanreqpinjamaninpengurus", method = RequestMethod.GET)
     public PengaturanPinjaman getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(user.getKoperasi(), true)) {
-            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(user.getKoperasi(), true).get();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Koperasi kop =koperasiRepository.getOne((Integer) koperasi.get("id"));
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(kop, true)) {
+            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(kop, true).get();
             return pengaturanPinjamanRepository.findFirstById(koperasiPengaturanPinjaman.getPengaturanPinjaman().getId()).get();
         }
         return null;
