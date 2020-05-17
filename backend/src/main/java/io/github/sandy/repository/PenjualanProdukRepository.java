@@ -36,17 +36,25 @@ public interface PenjualanProdukRepository extends JpaRepository<PenjualanProduk
             nativeQuery = true)
     Integer getJumlahTerjual(Integer idKoperasi, Boolean status);
 
-    @Query(value = "SELECT sum(p.jumlah_beli * h.harga_jual_anggota) FROM penjualan_produk p " +
+    @Query(value = "select case when (" +
+            "SELECT count(*) FROM penjualan_produk p " +
+            "WHERE p.id_koperasi = ?1 AND p.keanggotaan = true AND p.status = true" +
+            ")>0 then " +
+            "(SELECT sum(p.jumlah_beli * h.harga_jual_anggota) FROM penjualan_produk p " +
             "inner join harga h " +
             "on p.id_harga = h.id " +
-            "WHERE p.id_koperasi = ?1 AND p.keanggotaan = true AND p.status = true",
+            "WHERE p.id_koperasi = ?1 AND p.keanggotaan = true AND p.status = true) else 0 end",
             nativeQuery = true)
     Integer getJumlahUangTerjualAnggota(Integer idKoperasi);
 
-    @Query(value = "SELECT sum(p.jumlah_beli * h.harga_jual_non_anggota) FROM penjualan_produk p " +
+    @Query(value = "select case when (" +
+            "SELECT count(*) FROM penjualan_produk p " +
+            "WHERE p.id_koperasi = ?1 AND p.keanggotaan = true AND p.status = false" +
+            ") > 0 then " +
+            "(SELECT sum(p.jumlah_beli * h.harga_jual_non_anggota) FROM penjualan_produk p " +
             "inner join harga h " +
             "on p.id_harga = h.id " +
-            "WHERE p.id_koperasi = ?1 AND p.keanggotaan = false AND p.status = true",
+            "WHERE p.id_koperasi = ?1 AND p.keanggotaan = false AND p.status = true) else 0 end",
             nativeQuery = true)
     Integer getJumlahUangTerjualNonAnggota(Integer idKoperasi);
 

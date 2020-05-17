@@ -20,12 +20,19 @@ public interface KoperasiRepository extends JpaRepository<Koperasi, Integer> {
     List<Koperasi> findByIsHaveKoperasi();
 
     @Query(
+            value = "SELECT koperasi.id,nama_koperasi, alamat_koperasi, tahun_berdiri_koperasi, no_izin_koperasi, nama_pendiri, logo_koperasi, jenis_koperasi,email, have_field_register_member FROM koperasi " +
+                    "inner join anggota_koperasi ak on koperasi.id = ak.id_koperasi " +
+                    "WHERE  ak.id_user= ?1 LIMIT 1",
+            nativeQuery = true
+    )
+    Map<String, Object> getKoperasiUserIdInnerAnggota(Integer id);
+
+    @Query(
             value = "SELECT id, nama_koperasi, alamat_koperasi, tahun_berdiri_koperasi, no_izin_koperasi, nama_pendiri, logo_koperasi, jenis_koperasi, id_user, email, have_field_register_member FROM koperasi " +
                     "WHERE id_user = ?1 LIMIT 1",
             nativeQuery = true
     )
     Map<String, Object> getKoperasiUserId(Integer id);
-
     @Query(
             value = "SELECT id, nama_koperasi, alamat_koperasi, tahun_berdiri_koperasi, no_izin_koperasi, nama_pendiri, logo_koperasi, jenis_koperasi, id_user, email, have_field_register_member FROM koperasi " +
                     "WHERE id = ?1 LIMIT 1",

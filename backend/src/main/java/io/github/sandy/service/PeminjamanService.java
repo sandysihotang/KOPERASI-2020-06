@@ -33,7 +33,7 @@ public class PeminjamanService {
         PengaturanPinjaman pengaturanPinjaman = pengaturanPinjamanRepository.findFirstById(requestbody.getId()).get();
 
         User us = userRepository.getOne((Integer) user.get("id"));
-        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserIdInnerAnggota((Integer) user.get("id"));
         String kodePinjaman = getKodePinjaman((Integer) koperasi.get("id"));
         pinjaman.setPengaturanPinjaman(pengaturanPinjaman);
         pinjaman.setUser(us);
