@@ -194,7 +194,8 @@ public class KoperasiService {
     public void checkDenda() {
         List<Angsuran> angsurans = angsuranRepository.getExistDenda();
         for (Angsuran angsuran : angsurans) {
-            LocalDate l = LocalDate.of(angsuran.getTanggalJatuhTempo().getYear(), angsuran.getTanggalJatuhTempo().getMonth(), angsuran.getTanggalJatuhTempo().getDay());
+            String dd = angsuran.getTanggalJatuhTempo().toString().substring(0,10);
+            LocalDate l = LocalDate.parse(dd);
             LocalDateTime now1 = LocalDateTime.now();
             LocalDate now = LocalDate.of(now1.getYear(), now1.getMonthValue(), now1.getDayOfMonth());
             Long days = ChronoUnit.DAYS.between(l, now);

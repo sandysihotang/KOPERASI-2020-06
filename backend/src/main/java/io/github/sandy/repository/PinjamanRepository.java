@@ -34,9 +34,22 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
             nativeQuery = true)
     String getMaxKodePinjaman(Integer idKoperasi);
 
-    @Query(value = "SELECT sum(jumlah_pinjaman) from peminjaman WHERE id_koperasi = ?1 AND status = ?2",
+    @Query(value = "select case when " +
+            "(SELECT count(*) from peminjaman WHERE id_koperasi = ?1 AND status = ?2) > 0 " +
+            "then (SELECT sum(jumlah_pinjaman) from peminjaman WHERE id_koperasi = ?1 AND status = ?2) else 0 end" ,
             nativeQuery = true)
     Integer getPinjaman(Integer idKoperasi, Integer status);
+
+    @Query(value = "select case when " +
+            "(select count(*) from angsuran " +
+            "inner join peminjaman p on angsuran.id_pinjaman = p.id where " +
+            "p.id_koperasi = ?1 and angsuran.status_bayar = false and tanggal_jatuh_tempo < CURRENT_DATE) > 0" +
+            " then (select sum(angsuran_pokok) from angsuran " +
+            "inner join peminjaman p on angsuran.id_pinjaman = p.id where " +
+            "p.id_koperasi = ?1 and angsuran.status_bayar = false and tanggal_jatuh_tempo < CURRENT_DATE)" +
+            "else 0 end",
+            nativeQuery = true)
+    Integer getPinjamanJatuhTempo(Integer idKoperasi);
 
     @Query(value = "select case when (SELECT count(*) from peminjaman WHERE id_koperasi = ?1 AND status = ?2) > 0 then true else false end ",
             nativeQuery = true)

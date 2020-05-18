@@ -454,6 +454,7 @@ public class KoperasiController {
         HashMap<String, Integer> data = new HashMap<>();
         data.put("pinjamantersalur", (pinjamanRepository.existsByKoperasiAndStatus((Integer) koperasi.get("id"), 2) ? pinjamanRepository.getPinjaman((Integer) koperasi.get("id"), 2) : 0));
         data.put("pinjamanterbayar", (pinjamanRepository.existsByKoperasiAndStatus((Integer) koperasi.get("id"), 6) ? pinjamanRepository.getPinjaman((Integer) koperasi.get("id"), 6) : 0));
+        data.put("pinjamanJatuhTempo", pinjamanRepository.getPinjamanJatuhTempo((Integer) koperasi.get("id")));
         return data;
     }
 
