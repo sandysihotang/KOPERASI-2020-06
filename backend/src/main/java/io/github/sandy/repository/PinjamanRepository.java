@@ -36,7 +36,7 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
 
     @Query(value = "select case when " +
             "(SELECT count(*) from peminjaman WHERE id_koperasi = ?1 AND status = ?2) > 0 " +
-            "then (SELECT sum(jumlah_pinjaman) from peminjaman WHERE id_koperasi = ?1 AND status = ?2) else 0 end" ,
+            "then (SELECT sum(jumlah_pinjaman) from peminjaman WHERE id_koperasi = ?1 AND status = ?2) else 0 end",
             nativeQuery = true)
     Integer getPinjaman(Integer idKoperasi, Integer status);
 
@@ -85,7 +85,9 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
             nativeQuery = true)
     Boolean existsByUserAndStatus(Integer user, int status);
 
-    Pinjaman getFirstByUserAndStatus(User user, int status);
+    @Query(value = "SELECT * from peminjaman where id_user = ?1 AND status = ?2 limit 1",
+            nativeQuery = true)
+    Map<String, Object> getFirstByUserAndStatus(Integer user, int status);
 
     @Query(value = "SELECT p.id, kode_pinjaman, first_name, last_name, jaminan, jumlah_pinjaman, tenor," +
             "created_at, date_pengajuan_diterima, updated_at FROM peminjaman p " +

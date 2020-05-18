@@ -119,11 +119,18 @@ public class PeminjamanController {
     }
 
     @RequestMapping(value = "/api/gettagihan", method = RequestMethod.GET)
-    public Pinjaman getTagihan(HttpServletRequest request) {
+    public Map<String, Object> getTagihan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
-        return pinjamanRepository.getFirstByUserAndStatus(userRepository.getOne((Integer) user.get("id")), 2);
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> pinjaman =pinjamanRepository.getFirstByUserAndStatus((Integer) user.get("id"), 2);
+        data.put("kodePinjaman", pinjaman.get("kode_pinjaman"));
+        data.put("id", pinjaman.get("id"));
+        Map<String, Object> angsuran = angsuranRepository.getFirstByPinjamanAndStatusBayarOrderByUrutanKe((Integer) pinjaman.get("id"), false);
+        data.put("totalAngsuran", angsuran.get("total_angsuran"));
+        data.put("tanggalJatuhTempo", angsuran.get("tanggal_jatuh_tempo"));
+        return data;
     }
 
     @RequestMapping(value = "/api/savepinjamanfrompengurus/{id}", method = RequestMethod.PUT)
@@ -166,12 +173,6 @@ public class PeminjamanController {
         return angsuranRepository.getAllByPinjamanAndStatusBayar((Integer) pinjaman.get("id"), false);
     }
 
-    @RequestMapping(value = "/api/getangsuranbasedidpinjaman/{id}", method = RequestMethod.GET)
-    public Map<String, Object> getDataForAnggota(@PathVariable("id") int id) {
-        Map<String, Object> pinjaman = pinjamanRepository.getFirstById(id);
-        Map<String, Object> angsuran = angsuranRepository.getFirstByPinjamanAndStatusBayarOrderByUrutanKe((Integer) pinjaman.get("id"), false);
-        return angsuran;
-    }
 
     @RequestMapping(value = "/api/pembayaransukses/{id}", method = RequestMethod.PUT)
     public void pembayaranAngsuran(@PathVariable("id") int id, @RequestBody Requestbody requestbody) {

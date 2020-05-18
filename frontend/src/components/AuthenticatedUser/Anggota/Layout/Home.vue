@@ -208,17 +208,6 @@
           .then((res) => {
             this.kodePinjaman = res.data.kodePinjaman
             this.idPinjaman = res.data.id
-            this.getAngsuran()
-          })
-          .catch(() => {
-            this.$q.loading.hide()
-          })
-      },
-      getAngsuran() {
-        this.$http.get(`/api/getangsuranbasedidpinjaman/${this.idPinjaman}`, {
-          headers: this.$auth.getHeader()
-        })
-          .then((res) => {
             this.jumlahPembayaranBerikutnya = res.data.totalAngsuran
             this.tanggalPembayaranBerikutnya = res.data.tanggalJatuhTempo
           })
