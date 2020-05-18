@@ -53,7 +53,7 @@ public class AuthenticationController {
     }
 
     @RequestMapping(value = "/api/getnonauthenticateduser", method = RequestMethod.GET)
-    public List<User> get() {
+    public List<Map<String, Object>> get() {
         return userDetailRepository.findByRole();
     }
 

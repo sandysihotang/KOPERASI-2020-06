@@ -11,13 +11,14 @@ import java.util.Optional;
 
 public interface KoperasiRepository extends JpaRepository<Koperasi, Integer> {
     @Query(
-            value = "SELECT * FROM koperasi " +
+            value = "SELECT nama_koperasi, koperasi.id, jenis_koperasi, nama_pendiri, alamat_koperasi, " +
+                    "tahun_berdiri_koperasi, koperasi.email, no_izin_koperasi, users.have_koperasi FROM koperasi " +
                     "INNER JOIN users " +
                     "ON users.id = koperasi.id_user " +
                     "WHERE users.have_koperasi != 0",
             nativeQuery = true
     )
-    List<Koperasi> findByIsHaveKoperasi();
+    List<Map<String, Object>> findByIsHaveKoperasi();
 
     @Query(
             value = "SELECT koperasi.id,nama_koperasi, alamat_koperasi, tahun_berdiri_koperasi, no_izin_koperasi, nama_pendiri, logo_koperasi, jenis_koperasi,email, have_field_register_member FROM koperasi " +
@@ -47,6 +48,14 @@ public interface KoperasiRepository extends JpaRepository<Koperasi, Integer> {
             nativeQuery = true
     )
     Integer getJenisFromKoperasi(Integer idUser);
+
+    @Query(
+            value = "select k.id, nama_koperasi, alamat_koperasi, tahun_berdiri_koperasi, no_izin_koperasi, nama_pendiri, logo_koperasi, jenis_koperasi, have_field_register_member from koperasi k " +
+                    "INNER JOIN aktivasi_simpanan a on k.id = a.id_koperasi " +
+                    "where a.id = ?1 limit 1",
+            nativeQuery = true
+    )
+    Map<String, Object> getKoperasibySimpanan(Integer idSimpanan);
 
     Koperasi findFirstByUser(User user);
 }

@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class Requestbody {
     private int id;
+    private String text;
     private String kategori;
     private String username;
     private String password;
@@ -49,6 +50,14 @@ public class Requestbody {
     private Integer uangBeli;
     private String dateFrom;
     private String dateTo;
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 
     public String getDateFrom() {
         return dateFrom;

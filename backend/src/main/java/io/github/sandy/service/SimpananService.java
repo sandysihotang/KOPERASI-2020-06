@@ -85,8 +85,9 @@ public class SimpananService {
 
     public void saveTransaksiSimpanan(Integer id, Requestbody requestbody) {
         AktivasiSimpanan aktivasiSimpanan = aktivasiSimpananRepository.getOne(id);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasibySimpanan(id);
         TransaksiSimpanan transaksiSimpanan = new TransaksiSimpanan();
-        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan(aktivasiSimpanan.getKoperasi().getId()));
+        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan((Integer) koperasi.get("id")));
         transaksiSimpanan.setJumlahTransaksi(requestbody.getJumlahTransaksi());
         transaksiSimpanan.setJenisTransaksi(1);
         transaksiSimpanan.setCreatedAt(new Date(requestbody.getDate()));

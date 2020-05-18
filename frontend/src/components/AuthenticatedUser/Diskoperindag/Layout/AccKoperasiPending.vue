@@ -11,13 +11,13 @@
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="name" :props="props">
-            {{ `${props.row.userDetail.firstName} ${props.row.userDetail.lastName}` }}
+            {{ `${props.row.first_name} ${props.row.last_name}` }}
           </q-td>
           <q-td key="username" :props="props">
             {{ props.row.username }}
           </q-td>
           <q-td key="address" :props="props">
-            {{ props.row.userDetail.address }}
+            {{ props.row.address }}
           </q-td>
           <q-td key="email" :props="props">
             {{ props.row.email }}
@@ -25,9 +25,10 @@
           <q-td key="aksi" :props="props">
             <div class="row">
               <div class="col">
-                                <q-btn class="glossy" @click="terima(props.row.id)" round color="primary" icon="check" size="10px">
-                                  <q-tooltip content-class="bg-accent">Terima</q-tooltip>
-                                </q-btn>
+                <q-btn class="glossy" @click="terima(props.row.id)" round color="primary"
+                       icon="check" size="10px">
+                  <q-tooltip content-class="bg-accent">Terima</q-tooltip>
+                </q-btn>
               </div>
               <div class="col">
                 <q-btn class="glossy" @click="tolak(props.row.id)" round color="deep-orange"

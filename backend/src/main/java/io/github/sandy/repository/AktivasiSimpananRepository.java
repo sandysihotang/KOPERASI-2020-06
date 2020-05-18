@@ -19,9 +19,13 @@ public interface AktivasiSimpananRepository extends JpaRepository<AktivasiSimpan
             "INNER JOIN user_detail ud on u.id = ud.user_id " +
             "where a.id_koperasi = ?1",
             nativeQuery = true)
-    List<Map<String,Object>> findAllByKoperasi(Integer koperasi);
+    List<Map<String, Object>> findAllByKoperasi(Integer koperasi);
 
-    AktivasiSimpanan getFirstByUserAndJenisSimpanan(User user, Integer jenisSimpanan);
+    @Query(value = "SELECT total_simpanan " +
+            "from aktivasi_simpanan  " +
+            "where id_user = ?1 AND jenis_simpanan = ?2 limit 1",
+            nativeQuery = true)
+    Map<String, Object> getFirstByUserAndJenisSimpanan(Integer user, Integer jenisSimpanan);
 
     @Query(value = "SELECT sum(total_simpanan) from aktivasi_simpanan " +
             "WHERE id_user = ?1",

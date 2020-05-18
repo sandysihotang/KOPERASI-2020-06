@@ -116,15 +116,12 @@ public class KoperasiService {
         }
     }
 
-    public void changeStateKoperasi(int id, boolean state) {
+    public void changeStateKoperasi(int id, String text, boolean state) {
         Map<String, Object> koperasi = koperasiRepository.getKoperasiID(id);
         MailSender mailSender = new MailSender();
-//        mailSender.sendEmailSetStateKoperasi(javaMailSender, koperasi.getEmail(), (state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
+//        mailSender.sendEmailSetStateKoperasi(javaMailSender, (String) koperasi.get("email"), text, (state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
 
-        User user = userRepository.getOne((Integer) koperasi.get("id_user"));
-        user.setHaveKoperasi((!state ? 3 : 2));
-        userRepository.save(user);
-
+        userRepository.update((Integer) koperasi.get("id_user"), (!state ? 3 : 2));
     }
 
     public void saveFormRegisterMember(Map<String, Object> user, String pattern) {
@@ -179,7 +176,7 @@ public class KoperasiService {
         pengaturanPinjaman.setMinTenor(requestbody.getMinTenor());
         pengaturanPinjaman.setPersentaseDenda(requestbody.getPersentaseDenda() / 100);
 
-        Koperasi kop =koperasiRepository.getOne((Integer) koperasi.get("id"));
+        Koperasi kop = koperasiRepository.getOne((Integer) koperasi.get("id"));
         pengaturanPinjamanRepository.save(pengaturanPinjaman);
         if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(kop, true)) {
             KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(kop, true).get();

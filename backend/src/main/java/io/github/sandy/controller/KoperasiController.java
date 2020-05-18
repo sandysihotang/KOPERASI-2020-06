@@ -100,21 +100,21 @@ public class KoperasiController {
     @RequestMapping(value = "/api/getallkoperasi", method = RequestMethod.GET)
     public List<Map<String, Object>> get() throws IOException {
         List<Map<String, Object>> data = new ArrayList<>();
-        List<Koperasi> koperasis = koperasiRepository.findByIsHaveKoperasi();
-        for (Koperasi koperasi : koperasis) {
+        List<Map<String, Object>> koperasis = koperasiRepository.findByIsHaveKoperasi();
+        for (Map<String,Object> koperasi : koperasis) {
             Map<String, Object> res = new HashMap<>();
-            res.put("namaKoperasi", koperasi.getNamaKoperasi());
-            res.put("id", koperasi.getId());
-            res.put("jenisKoperasi", koperasi.getJenisKoperasi());
-            res.put("namaPendiri", koperasi.getNamaPendiri());
-            res.put("alamatKoperasi", koperasi.getAlamatKoperasi());
-            res.put("tahunBerdiriKoperasi", koperasi.getTahunBerdiriKoperasi());
-            res.put("email", koperasi.getEmail());
-            res.put("noIzinKoperasi", koperasi.getNoIzinKoperasi());
-            res.put("haveKoperasi", koperasi.getUser().getHaveKoperasi());
-            if (koperasi.getLogoKoperasi() != null) {
+            res.put("namaKoperasi", koperasi.get("nama_koperasi"));
+            res.put("id", koperasi.get("id"));
+            res.put("jenisKoperasi", koperasi.get("jenis_koperasi"));
+            res.put("namaPendiri", koperasi.get("nama_pendiri"));
+            res.put("alamatKoperasi", koperasi.get("alamat_koperasi"));
+            res.put("tahunBerdiriKoperasi", koperasi.get("tahun_berdiri_koperasi"));
+            res.put("email", koperasi.get("email"));
+            res.put("noIzinKoperasi", koperasi.get("no_izin_koperasi"));
+            res.put("haveKoperasi", koperasi.get("have_koperasi"));
+            if (koperasi.get("logo_koperasi") != null) {
                 File files = new File("");
-                FileInputStream file = new FileInputStream(files.getAbsoluteFile() + koperasi.getLogoKoperasi());
+                FileInputStream file = new FileInputStream(files.getAbsoluteFile() + (String)koperasi.get("logo_koperasi"));
                 res.put("logoKoperasi", IOUtils.toByteArray(file));
             } else {
                 res.put("logoKoperasi", null);
@@ -144,7 +144,7 @@ public class KoperasiController {
     public ResponseEntity<Err> changeState(@RequestBody Requestbody requestbody, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String user = principal.getName();
-        koperasiService.changeStateKoperasi(requestbody.getId(), requestbody.isState());
+        koperasiService.changeStateKoperasi(requestbody.getId(),requestbody.getText(), requestbody.isState());
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }
 
