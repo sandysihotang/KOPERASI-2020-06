@@ -78,4 +78,9 @@ public interface AngsuranRepository extends JpaRepository<Angsuran, Integer> {
 
     @Query(value = "SELECT * from angsuran where id_pinjaman = ?1", nativeQuery = true)
     List<Map<String, Object>> getAllByPinjaman(Integer id);
+
+    @Query(value = "select p.id_user, p.status, p.kode_pinjaman from angsuran " +
+            "inner join peminjaman p on angsuran.id_pinjaman = p.id" +
+            " where angsuran.id = ?1 limit 1", nativeQuery = true)
+    Map<String, Object> getDataPinjaman(Integer id);
 }

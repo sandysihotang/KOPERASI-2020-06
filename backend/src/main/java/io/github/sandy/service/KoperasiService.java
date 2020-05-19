@@ -72,6 +72,9 @@ public class KoperasiService {
     @Autowired
     PenjualanProdukRepository penjualanProdukRepository;
 
+    @Autowired
+    NotifikasiAnggotaRepository notifikasiAnggotaRepository;
+
     public Err createKoperasi(Requestbody requestbody, String uname) throws Exception {
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Koperasi koperasi = new Koperasi();
@@ -194,7 +197,8 @@ public class KoperasiService {
     public void checkDenda() {
         List<Angsuran> angsurans = angsuranRepository.getExistDenda();
         for (Angsuran angsuran : angsurans) {
-            String dd = angsuran.getTanggalJatuhTempo().toString().substring(0,10);
+            Double denda = angsuran.getDenda() == null ? 0.0 : angsuran.getDenda();
+            String dd = angsuran.getTanggalJatuhTempo().toString().substring(0, 10);
             LocalDate l = LocalDate.parse(dd);
             LocalDateTime now1 = LocalDateTime.now();
             LocalDate now = LocalDate.of(now1.getYear(), now1.getMonthValue(), now1.getDayOfMonth());
@@ -205,9 +209,42 @@ public class KoperasiService {
             Double total = ((Double) pinjaman.get("jumlah_pinjaman") * (Double) pengaturanPinjaman.get("persentase_denda") / 100) * day;
             angsuran.setDenda(total);
             angsuranRepository.save(angsuran);
+            Boolean existNotif = notifikasiAnggotaRepository.checkExistBy(angsuran.getId());
+            if (!existNotif || denda.intValue() != angsuran.getDenda().intValue()) {
+                NotifikasiAnggota notifikasiAnggota = new NotifikasiAnggota();
+                notifikasiAnggota.setIdAngsuran(angsuran.getId());
+                Map<String, Object> getDataAngsuran = angsuranRepository.getDataPinjaman(angsuran.getId());
+                notifikasiAnggota.setIdUser((Integer) getDataAngsuran.get("id_user"));
+                notifikasiAnggota.setTanggalNotifikasi(new Date());
+                notifikasiAnggota.setPesan("Angsuran anda yang ke " + angsuran.getUrutanKe() +
+                        ". Dengan Kode Pinjaman #" + getDataAngsuran.get("kode_pinjaman") +
+                        ". Dikenakan denda sebesar " + toIDR(total.intValue()));
+                notifikasiAnggota.setStatus(false);
+                notifikasiAnggotaRepository.save(notifikasiAnggota);
+            }
         }
     }
 
+    public String toIDR(Integer num) {
+        String nums = String.format("%d", num);
+
+        String ans = "";
+        int coma = 0;
+        for (int i = nums.length() - 1; i >= 0; i--) {
+            ans = String.format("%s%c", ans, nums.charAt(i));
+            if (coma == 2 && i != 0) {
+                ans = String.format("%s,", ans);
+                coma = 0;
+            } else {
+                coma++;
+            }
+        }
+        String res = "Rp ";
+        for (int i = ans.length() - 1; i >= 0; i--) {
+            res = String.format("%s%c", res, ans.charAt(i));
+        }
+        return res;
+    }
     public Map<String, Object> getLaporanPemasukanDanLaba(Map<String, Object> koperasi, Date dateFrom, Date dateTo) {
         Map<String, Object> data = new HashMap<>();
         data.put("namaKoperasi", koperasi.get("nama_koperasi"));
