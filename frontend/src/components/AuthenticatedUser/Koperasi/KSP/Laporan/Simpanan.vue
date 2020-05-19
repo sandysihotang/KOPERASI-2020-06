@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card>
+    <q-card v-if="show">
       <q-card-section>
         <center>
           <p class="text-h6">Rekapitulasi Simpanan</p>
@@ -64,8 +64,8 @@
       </q-card-section>
       <q-card-section>
         <q-table v-if="show"
-          :columns="columns"
-          :data="res.dataTable"/>
+                 :columns="columns"
+                 :data="res.dataTable"/>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn color="primary" icon="print" label="Export Excel" @click="download"/>

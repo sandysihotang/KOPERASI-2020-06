@@ -87,6 +87,9 @@ public class KoperasiController {
     @Autowired
     JavaMailSender javaMailSender;
 
+    @Autowired
+    NotifikasiAnggotaRepository notifikasiAnggotaRepository;
+
     @RequestMapping(value = "/api/createkoperasi", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Err> createKoperasi(@ModelAttribute Requestbody requestbody, HttpServletRequest request) throws Exception {
@@ -101,7 +104,7 @@ public class KoperasiController {
     public List<Map<String, Object>> get() throws IOException {
         List<Map<String, Object>> data = new ArrayList<>();
         List<Map<String, Object>> koperasis = koperasiRepository.findByIsHaveKoperasi();
-        for (Map<String,Object> koperasi : koperasis) {
+        for (Map<String, Object> koperasi : koperasis) {
             Map<String, Object> res = new HashMap<>();
             res.put("namaKoperasi", koperasi.get("nama_koperasi"));
             res.put("id", koperasi.get("id"));
@@ -114,7 +117,7 @@ public class KoperasiController {
             res.put("haveKoperasi", koperasi.get("have_koperasi"));
             if (koperasi.get("logo_koperasi") != null) {
                 File files = new File("");
-                FileInputStream file = new FileInputStream(files.getAbsoluteFile() + (String)koperasi.get("logo_koperasi"));
+                FileInputStream file = new FileInputStream(files.getAbsoluteFile() + (String) koperasi.get("logo_koperasi"));
                 res.put("logoKoperasi", IOUtils.toByteArray(file));
             } else {
                 res.put("logoKoperasi", null);
@@ -144,7 +147,7 @@ public class KoperasiController {
     public ResponseEntity<Err> changeState(@RequestBody Requestbody requestbody, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String user = principal.getName();
-        koperasiService.changeStateKoperasi(requestbody.getId(),requestbody.getText(), requestbody.isState());
+        koperasiService.changeStateKoperasi(requestbody.getId(), requestbody.getText(), requestbody.isState());
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }
 
@@ -588,6 +591,42 @@ public class KoperasiController {
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         koperasiService.savePengaturanPeminjaman(koperasi, requestbody);
+    }
+
+    @RequestMapping(value = "/api/notifikasianggota", method = RequestMethod.GET)
+    public Map<String, Object> savePengaturanPeminjaman(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Boolean exist = notifikasiAnggotaRepository.checkExistByUser((Integer) user.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("exist", exist);
+        if (exist) {
+            data.put("total", notifikasiAnggotaRepository.getTotal((Integer)user.get("id")));
+        }
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getnotifuser", method = RequestMethod.GET)
+    public Map<String, Object> getNotif(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Boolean exist = notifikasiAnggotaRepository.checkExistByUserHome((Integer) user.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("exist", exist);
+        if(exist){
+            data.put("notif", notifikasiAnggotaRepository.getNotifikasiByUser((Integer) user.get("id")));
+        }
+        return data;
+    }
+
+    @RequestMapping(value = "/api/changestatusnotif", method = RequestMethod.GET)
+    public void ubahStatusNotifikasi(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        notifikasiAnggotaRepository.ubahStatus((Integer)user.get("id"));
     }
 
     @RequestMapping(value = "/api/nonactivememberkoperasi/{id}", method = RequestMethod.PUT)

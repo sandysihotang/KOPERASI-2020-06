@@ -252,6 +252,9 @@ const routes = [
       }, {
         path: '/history',
         component: () => import('../components/AuthenticatedUser/Anggota/Layout/History.vue'),
+      }, {
+        path: '/notifikasi',
+        component: () => import('../components/AuthenticatedUser/Anggota/Layout/Notifikasi.vue'),
       },
     ]
   },

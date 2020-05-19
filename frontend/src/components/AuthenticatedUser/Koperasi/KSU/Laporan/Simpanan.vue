@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card>
+    <q-card  v-if="show">
       <q-card-section>
         <center>
           <p class="text-h6">Rekapitulasi Simpanan</p>
