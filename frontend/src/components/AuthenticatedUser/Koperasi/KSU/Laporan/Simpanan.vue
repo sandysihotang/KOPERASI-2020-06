@@ -2,7 +2,7 @@
   <div>
     <q-card>
       <q-card-section>
-        <center>
+        <center v-if="show">
           <p class="text-h6">Rekapitulasi Simpanan</p>
           <p>Koperasi {{ res.namaKoperasi }}</p>
         </center>
