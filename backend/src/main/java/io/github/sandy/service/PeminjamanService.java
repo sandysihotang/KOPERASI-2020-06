@@ -6,10 +6,7 @@ import io.github.sandy.request.Requestbody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PeminjamanService {
@@ -25,18 +22,25 @@ public class PeminjamanService {
     @Autowired
     AngsuranRepository angsuranRepository;
 
-    public void requestPinjaman(User user, Requestbody requestbody) {
+    @Autowired
+    KoperasiRepository koperasiRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    public void requestPinjaman(Map<String, Object> user, Requestbody requestbody) {
         Pinjaman pinjaman = new Pinjaman();
         PengaturanPinjaman pengaturanPinjaman = pengaturanPinjamanRepository.findFirstById(requestbody.getId()).get();
 
-        String kodePinjaman = getKodePinjaman(user.getKoperasi().getId());
-        Koperasi koperasi = angotaKoperasiRepository.findFirstByUser(user).get().getKoperasi();
+        User us = userRepository.getOne((Integer) user.get("id"));
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserIdInnerAnggota((Integer) user.get("id"));
+        String kodePinjaman = getKodePinjaman((Integer) koperasi.get("id"));
         pinjaman.setPengaturanPinjaman(pengaturanPinjaman);
-        pinjaman.setUser(user);
+        pinjaman.setUser(us);
         pinjaman.setJaminan(requestbody.getJaminan());
         pinjaman.setStatus(5);
         pinjaman.setCreatedAt(new Date());
-        pinjaman.setKoperasi(koperasi);
+        pinjaman.setKoperasi(koperasiRepository.getOne((Integer) koperasi.get("id")));
         pinjaman.setKodePinjaman(kodePinjaman);
         pinjaman.setTenor(requestbody.getTenor());
         pinjaman.setJumlahPinjaman(Double.parseDouble(Integer.toString(requestbody.getPrice())) / 100);

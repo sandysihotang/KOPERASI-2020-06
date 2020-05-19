@@ -2,7 +2,10 @@ package io.github.sandy.controller;
 
 import io.github.sandy.ErrorCode.Err;
 import io.github.sandy.model.User;
+import io.github.sandy.model.UserDetail;
+import io.github.sandy.repository.DetailUserRepository;
 import io.github.sandy.repository.KoperasiRepository;
+import io.github.sandy.repository.RoleRepository;
 import io.github.sandy.repository.UserRepository;
 import io.github.sandy.request.Requestbody;
 import io.github.sandy.service.MailSender;
@@ -15,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -35,6 +40,12 @@ public class AuthenticationController {
     @Autowired
     KoperasiRepository koperasiRepository;
 
+    @Autowired
+    DetailUserRepository detailUserRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
+
     @RequestMapping(value = "/send", method = RequestMethod.GET)
     public void send() {
         MailSender mailSender = new MailSender();
@@ -42,7 +53,7 @@ public class AuthenticationController {
     }
 
     @RequestMapping(value = "/api/getnonauthenticateduser", method = RequestMethod.GET)
-    public List<User> get() {
+    public List<Map<String, Object>> get() {
         return userDetailRepository.findByRole();
     }
 
@@ -50,14 +61,22 @@ public class AuthenticationController {
     public Integer getJenisKoperasi(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
-        return koperasiRepository.getJenisFromKoperasi(user.getId());
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        return koperasiRepository.getJenisFromKoperasi((Integer) user.get("id"));
     }
 
     @RequestMapping(value = "/api/login/currentuser", method = RequestMethod.GET)
-    public Principal hello(HttpServletRequest request) {
+    public Map<String, Object> hello(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        return principal;
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> userDetail = detailUserRepository.findUserDetail((Integer) user.get("id"));
+        data.put("userDetail", userDetail);
+        data.put("haveKoperasi", user.get("have_koperasi"));
+        Map<String, Object> role = roleRepository.find((Integer) user.get("id"));
+        data.put("name", role.get("name"));
+        return data;
     }
 
     @RequestMapping(value = "/api/currentuser", method = RequestMethod.GET)

@@ -51,7 +51,7 @@
             name: 'kodetran',
             label: 'Kode Transaksi',
             align: 'center',
-            field: row => row.kodeTransaksi,
+            field: row => row.kode_transaksi,
             sortable: true,
           },
           {
@@ -60,7 +60,7 @@
             align: 'center',
             field: (row) => {
               moment.lang('id')
-              return moment(row.tanggalTransaksi)
+              return moment(row.tanggal_transaksi)
                 .format('dddd, Do MMMM YYYY');
             },
             sortable: true,
@@ -76,7 +76,7 @@
             name: 'totalbeli',
             label: 'Total Beli',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.uangMasuk)),
+            field: row => this.toIDR(parseInt(row.uang_masuk)),
             sortable: true,
           }
         ],

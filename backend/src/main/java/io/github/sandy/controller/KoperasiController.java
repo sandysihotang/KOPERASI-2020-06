@@ -3,6 +3,7 @@ package io.github.sandy.controller;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import io.github.sandy.ErrorCode.Err;
+import io.github.sandy.additional.ExportExcel;
 import io.github.sandy.model.*;
 import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
@@ -38,6 +40,12 @@ public class KoperasiController {
     KoperasiService koperasiService;
 
     @Autowired
+    DetailUserRepository detailUserRepository;
+
+    @Autowired
+    ProdukBaruRepository produkBaruRepository;
+
+    @Autowired
     UserRepository userDetailRepository;
 
     @Autowired
@@ -48,6 +56,9 @@ public class KoperasiController {
 
     @Autowired
     DaftarAnggotaKoperasiRepository daftarAnggotaKoperasiRepository;
+
+    @Autowired
+    AktivasiSimpananRepository aktivasiSimpananRepository;
 
     @Autowired
     AngotaKoperasiRepository angotaKoperasiRepository;
@@ -89,21 +100,21 @@ public class KoperasiController {
     @RequestMapping(value = "/api/getallkoperasi", method = RequestMethod.GET)
     public List<Map<String, Object>> get() throws IOException {
         List<Map<String, Object>> data = new ArrayList<>();
-        List<Koperasi> koperasis = koperasiRepository.findByIsHaveKoperasi();
-        for (Koperasi koperasi : koperasis) {
+        List<Map<String, Object>> koperasis = koperasiRepository.findByIsHaveKoperasi();
+        for (Map<String,Object> koperasi : koperasis) {
             Map<String, Object> res = new HashMap<>();
-            res.put("namaKoperasi", koperasi.getNamaKoperasi());
-            res.put("id", koperasi.getId());
-            res.put("jenisKoperasi", koperasi.getJenisKoperasi());
-            res.put("namaPendiri", koperasi.getNamaPendiri());
-            res.put("alamatKoperasi", koperasi.getAlamatKoperasi());
-            res.put("tahunBerdiriKoperasi", koperasi.getTahunBerdiriKoperasi());
-            res.put("email", koperasi.getEmail());
-            res.put("noIzinKoperasi", koperasi.getNoIzinKoperasi());
-            res.put("haveKoperasi", koperasi.getUser().getHaveKoperasi());
-            if (koperasi.getLogoKoperasi() != null) {
+            res.put("namaKoperasi", koperasi.get("nama_koperasi"));
+            res.put("id", koperasi.get("id"));
+            res.put("jenisKoperasi", koperasi.get("jenis_koperasi"));
+            res.put("namaPendiri", koperasi.get("nama_pendiri"));
+            res.put("alamatKoperasi", koperasi.get("alamat_koperasi"));
+            res.put("tahunBerdiriKoperasi", koperasi.get("tahun_berdiri_koperasi"));
+            res.put("email", koperasi.get("email"));
+            res.put("noIzinKoperasi", koperasi.get("no_izin_koperasi"));
+            res.put("haveKoperasi", koperasi.get("have_koperasi"));
+            if (koperasi.get("logo_koperasi") != null) {
                 File files = new File("");
-                FileInputStream file = new FileInputStream(files.getAbsoluteFile() + koperasi.getLogoKoperasi());
+                FileInputStream file = new FileInputStream(files.getAbsoluteFile() + (String)koperasi.get("logo_koperasi"));
                 res.put("logoKoperasi", IOUtils.toByteArray(file));
             } else {
                 res.put("logoKoperasi", null);
@@ -117,16 +128,15 @@ public class KoperasiController {
     public Map<String, Object> getLabaPengeluranPemasukan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
-        Koperasi koperasi = koperasiRepository.findFirstByUser(user);
-        System.out.println(angsuranRepository.getRealisasiJasa(koperasi.getId()));
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         Map<String, Object> data = new HashMap<>();
-        data.put("pemasukan", angsuranRepository.getRealisasiJasa(koperasi.getId()) +
-                (transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 1) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 1)) +
-                (transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 2) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 2)) +
-                transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 3) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 3));
-        data.put("pengeluaran", angsuranRepository.getPengeluaran(koperasi.getId()));
-        data.put("laba", angsuranRepository.getRealisasiJasa(koperasi.getId()));
+        data.put("pemasukan", angsuranRepository.getRealisasiJasa((Integer) koperasi.get("id")) +
+                (transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 1, 1) - transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 2, 1)) +
+                (transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 1, 2) - transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 2, 2)) +
+                transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 1, 3) - transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 2, 3));
+        data.put("pengeluaran", angsuranRepository.getPengeluaran((Integer) koperasi.get("id")));
+        data.put("laba", angsuranRepository.getRealisasiJasa((Integer) koperasi.get("id")));
         return data;
     }
 
@@ -134,27 +144,270 @@ public class KoperasiController {
     public ResponseEntity<Err> changeState(@RequestBody Requestbody requestbody, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String user = principal.getName();
-        koperasiService.changeStateKoperasi(requestbody.getId(), requestbody.isState());
+        koperasiService.changeStateKoperasi(requestbody.getId(),requestbody.getText(), requestbody.isState());
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/api/getlaporanpemasukandanlaba", method = RequestMethod.POST)
+    public Map<String, Object> getLaporanPemasukanDanLaba(@RequestBody Requestbody requestbody, HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return koperasiService.getLaporanPemasukanDanLaba(koperasi, new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+    }
+
+    @RequestMapping(value = "/api/getlaporantransaksisimpanan", method = RequestMethod.POST)
+    public Map<String, Object> getLaporanTransaksiSimpanan(@RequestBody Requestbody requestbody, HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return koperasiService.getLaporanTransaksiSimpanan(koperasi, new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+    }
+
+    @RequestMapping(value = "/api/getlaporantransaksipinjaman", method = RequestMethod.POST)
+    public Map<String, Object> getLaporanTransaksiPinjaman(@RequestBody Requestbody requestbody, HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return koperasiService.getLaporanTransaksiPinjaman(koperasi, new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+    }
+
+    @RequestMapping(value = "/api/getlaporanpemasukanproduk", method = RequestMethod.POST)
+    public Map<String, Object> getLaporanPemasukanProduk(@RequestBody Requestbody requestbody, HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return koperasiService.getLaporanPemasukanProduk(koperasi, new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+    }
+
+    @RequestMapping(value = "/api/getlaporanpenjualanproduk", method = RequestMethod.POST)
+    public Map<String, Object> getLaporanPenjualanProduk(@RequestBody Requestbody requestbody, HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return koperasiService.getLaporanPenjualanProduk(koperasi, new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+    }
+
+    @RequestMapping(value = "/api/getlaporanpenjualanproduk/download", method = RequestMethod.POST)
+    public void getLaporanPenjualanDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> data = koperasiService.getLaporanPenjualanProduk(koperasi, new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+        data.put("periode", requestbody.getDateFrom() + " (s/d) " + requestbody.getDateTo());
+        ByteArrayInputStream byteArray = exportExcel.downloadPenjualanProduk(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/api/getanggotalaporan", method = RequestMethod.GET)
+    public Map<String, Object> getLaporanAnggota(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        data.put("pengaturanField", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")).get("pattern_field"));
+        data.put("anggota", angotaKoperasiRepository.getALlAnggotaKoperasiEnable((Integer) koperasi.get("id"), true));
+        data.put("totalAnggota", angotaKoperasiRepository.getCountAnggota((Integer) koperasi.get("id"), true));
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getlaporanproduk", method = RequestMethod.GET)
+    public Map<String, Object> getLaporanProduk(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        data.put("dataTable", produkRepository.getAllData((Integer) koperasi.get("id")));
+        data.put("jumlahProduk", produkRepository.getTotalProduk((Integer) koperasi.get("id")));
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getlaporanproduk/download", method = RequestMethod.GET)
+    public void getLaporanProdukDownload(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", user.getKoperasi().getNamaKoperasi());
+        data.put("dataTable", produkRepository.getAllData(user.getKoperasi().getId()));
+        data.put("jumlahProduk", produkRepository.getTotalProduk(user.getKoperasi().getId()));
+        ByteArrayInputStream byteArray = exportExcel.downloadLaporanProduk(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/api/getanggotalaporan/download", method = RequestMethod.GET)
+    public void getLaporanAnggotaDownload(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        data.put("pengaturanField", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")).get("pattern_field"));
+        data.put("anggota", angotaKoperasiRepository.getALlAnggotaKoperasiEnable((Integer) koperasi.get("id"), true));
+        data.put("totalAnggota", angotaKoperasiRepository.getCountAnggota((Integer) koperasi.get("id"), true));
+        ByteArrayInputStream byteArray = exportExcel.downloadAnggotaAktif(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/api/getlaporantransaksisimpanan/download", method = RequestMethod.POST)
+    public void getLaporanTransaksiSimpananDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> data = koperasiService.getLaporanTransaksiSimpanan(koperasi, new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+        data.put("periode", requestbody.getDateFrom() + " (s/d) " + requestbody.getDateTo());
+        ByteArrayInputStream byteArray = exportExcel.downloadTransaksiSimpanan(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/api/getlaporanpemasukanproduk/download", method = RequestMethod.POST)
+    public void getLaporanPemasukanProdukDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        List<Map<String, Object>> produkMasuk = produkBaruRepository.getTransaksiProdukMasukLaporan((Integer) koperasi.get("id"), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+        data.put("totProdMasuk", produkBaruRepository.getTotalTransaksiProdukMasukLaporan((Integer) koperasi.get("id"), new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo())));
+        data.put("dataTable", produkMasuk);
+        data.put("periode", requestbody.getDateFrom() + " (s/d) " + requestbody.getDateTo());
+        ByteArrayInputStream byteArray = exportExcel.downloadPemasukanProduk(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/api/getlaporantransaksipinjaman/download", method = RequestMethod.POST)
+    public void getLaporanPinjamanDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> data = koperasiService.getLaporanTransaksiPinjaman(koperasi, new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+        data.put("periode", requestbody.getDateFrom() + " (s/d) " + requestbody.getDateTo());
+        ByteArrayInputStream byteArray = exportExcel.downloadPinjaman(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/api/getlaporanpemasukandanlaba/download", method = RequestMethod.POST)
+    public void getLaporanPemasukanDanLabaDownload(@RequestBody Requestbody requestbody, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> data = koperasiService.getLaporanPemasukanDanLaba(koperasi, new Date(requestbody.getDateFrom()), new Date(requestbody.getDateTo()));
+        data.put("periode", requestbody.getDateFrom() + " (s/d) " + requestbody.getDateTo());
+
+        ByteArrayInputStream byteArray = exportExcel.downloadLabaDanMasuk(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
     }
 
     @RequestMapping(value = "/api/isHaveField", method = RequestMethod.GET)
     public boolean checkIshaveFieldMember(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        String user = principal.getName();
-        Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(user).get().getKoperasi().getId());
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return (boolean) koperasi.get("have_field_register_member");
+    }
 
-        return koperasi.isHaveFieldRegisterMember();
+    @RequestMapping(value = "/api/getlaporanusersimpanan", method = RequestMethod.GET)
+    public Map<String, Object> getDataLaporanSimpananUser(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> usera = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) usera.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        List<Map<String, Object>> users = userRepository.findByKoperasiforReport((Integer) koperasi.get("id"));
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (Map<String, Object> user : users) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("name", user.get("first_name") + " " + user.get("last_name"));
+            temp.put("pokok", aktivasiSimpananRepository.getTransaksi((Integer) user.get("id"), 1));
+            temp.put("wajib", aktivasiSimpananRepository.getTransaksi((Integer) user.get("id"), 2));
+            temp.put("sukarela", aktivasiSimpananRepository.getTransaksi((Integer) user.get("id"), 3));
+            res.add(temp);
+        }
+        data.put("dataTable", res);
+        data.put("pokok", aktivasiSimpananRepository.getTransaksiKoperasi((Integer) koperasi.get("id"), 1));
+        data.put("wajib", aktivasiSimpananRepository.getTransaksiKoperasi((Integer) koperasi.get("id"), 2));
+        data.put("sukarela", aktivasiSimpananRepository.getTransaksiKoperasi((Integer) koperasi.get("id"), 3));
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getlaporansimpanan/download", method = RequestMethod.GET)
+    public void getLaporanSimpananDownload(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ExportExcel exportExcel = new ExportExcel();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> usera = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) usera.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        List<Map<String, Object>> users = userRepository.findByKoperasiforReport((Integer) koperasi.get("id"));
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (Map<String, Object> user : users) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("name", user.get("first_name") + " " + user.get("last_name"));
+            temp.put("pokok", aktivasiSimpananRepository.getTransaksi((Integer) user.get("id"), 1));
+            temp.put("wajib", aktivasiSimpananRepository.getTransaksi((Integer) user.get("id"), 2));
+            temp.put("sukarela", aktivasiSimpananRepository.getTransaksi((Integer) user.get("id"), 3));
+            res.add(temp);
+        }
+        data.put("dataTable", res);
+        data.put("pokok", aktivasiSimpananRepository.getTransaksiKoperasi((Integer) koperasi.get("id"), 1));
+        data.put("wajib", aktivasiSimpananRepository.getTransaksiKoperasi((Integer) koperasi.get("id"), 2));
+        data.put("sukarela", aktivasiSimpananRepository.getTransaksiKoperasi((Integer) koperasi.get("id"), 3));
+
+        ByteArrayInputStream byteArray = exportExcel.downloadSimpanan(data);
+        IOUtils.copy(byteArray, response.getOutputStream());
     }
 
     @RequestMapping(value = "/api/getanggotaaknonak", method = RequestMethod.GET)
     public HashMap<String, Integer> getAngotaAktifNonAktif(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        String user = principal.getName();
+        String uname = principal.getName();
         HashMap<String, Integer> data = new HashMap<>();
-        Koperasi koperasi = userRepository.findByUsername(user).get().getKoperasi();
-        Integer aktif = angotaKoperasiRepository.getCountJumlahAnggota(koperasi.getId(), true);
-        Integer nonAktif = angotaKoperasiRepository.getCountJumlahAnggota(koperasi.getId(), false);
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Integer aktif = angotaKoperasiRepository.getCountJumlahAnggota((Integer) koperasi.get("id"), true);
+        Integer nonAktif = angotaKoperasiRepository.getCountJumlahAnggota((Integer) koperasi.get("id"), false);
         data.put("aktif", aktif);
         data.put("nonAktif", nonAktif);
 
@@ -164,27 +417,29 @@ public class KoperasiController {
     @RequestMapping(value = "/api/getsimpanananggota", method = RequestMethod.GET)
     public HashMap<String, Integer> getSimpanan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        String user = principal.getName();
+        String uname = principal.getName();
         HashMap<String, Integer> data = new HashMap<>();
-        Koperasi koperasi = userRepository.findByUsername(user).get().getKoperasi();
-        data.put("pokok", transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 1) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 1));
-        data.put("wajib", transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 2) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 2));
-        data.put("sukarela", transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 1, 3) - transaksiSimpananRepository.getJumlahYangMeminjam(koperasi.getId(), 2, 3));
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        data.put("pokok", transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 1, 1) - transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 2, 1));
+        data.put("wajib", transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 1, 2) - transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 2, 2));
+        data.put("sukarela", transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 1, 3) - transaksiSimpananRepository.getJumlahYangMeminjam((Integer) koperasi.get("id"), 2, 3));
         return data;
     }
 
     @RequestMapping(value = "/api/produkkoperasi", method = RequestMethod.GET)
     public HashMap<String, Integer> getKoperasiDashboard(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        String user = principal.getName();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         HashMap<String, Integer> data = new HashMap<>();
-        Koperasi koperasi = userRepository.findByUsername(user).get().getKoperasi();
-        data.put("totalproduk", (produkRepository.existsByKoperasi(koperasi) ? produkRepository.getTotalProduk(koperasi.getId()) : 0));
-        data.put("totalprodukterjual", (penjualanProdukRepository.existsByKoperasiAndStatus(koperasi, true) ?
-                penjualanProdukRepository.getJumlahTerjual(koperasi.getId(), true) : 0));
-        data.put("totaluangprodukterjual", (penjualanProdukRepository.existsByKoperasiAndStatus(koperasi, true) ?
-                penjualanProdukRepository.getJumlahUangTerjualAnggota(koperasi.getId()) +
-                        penjualanProdukRepository.getJumlahUangTerjualNonAnggota(koperasi.getId())
+        data.put("totalproduk", (produkRepository.existsByKoperasi((Integer) koperasi.get("id")) ? produkRepository.getTotalProduk((Integer) koperasi.get("id")) : 0));
+        data.put("totalprodukterjual", (penjualanProdukRepository.existsByKoperasiAndStatus((Integer) koperasi.get("id"), true) ?
+                penjualanProdukRepository.getJumlahTerjual((Integer) koperasi.get("id"), true) : 0));
+        data.put("totaluangprodukterjual", (penjualanProdukRepository.existsByKoperasiAndStatus((Integer) koperasi.get("id"), true) ?
+                penjualanProdukRepository.getJumlahUangTerjualAnggota((Integer) koperasi.get("id")) +
+                        penjualanProdukRepository.getJumlahUangTerjualNonAnggota((Integer) koperasi.get("id"))
                 : 0));
 
         return data;
@@ -193,11 +448,13 @@ public class KoperasiController {
     @RequestMapping(value = "/api/getpinjamanfordashboard", method = RequestMethod.GET)
     public HashMap<String, Integer> getPinjamanForDashboard(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        String user = principal.getName();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         HashMap<String, Integer> data = new HashMap<>();
-        Koperasi koperasi = userRepository.findByUsername(user).get().getKoperasi();
-        data.put("pinjamantersalur", (pinjamanRepository.existsByKoperasiAndStatus(koperasi, 2) ? pinjamanRepository.getPinjaman(koperasi.getId(), 2) : 0));
-        data.put("pinjamanterbayar", (pinjamanRepository.existsByKoperasiAndStatus(koperasi, 6) ? pinjamanRepository.getPinjaman(koperasi.getId(), 6) : 0));
+        data.put("pinjamantersalur", (pinjamanRepository.existsByKoperasiAndStatus((Integer) koperasi.get("id"), 2) ? pinjamanRepository.getPinjaman((Integer) koperasi.get("id"), 2) : 0));
+        data.put("pinjamanterbayar", (pinjamanRepository.existsByKoperasiAndStatus((Integer) koperasi.get("id"), 6) ? pinjamanRepository.getPinjaman((Integer) koperasi.get("id"), 6) : 0));
+        data.put("pinjamanJatuhTempo", pinjamanRepository.getPinjamanJatuhTempo((Integer) koperasi.get("id")));
         return data;
     }
 
@@ -205,31 +462,33 @@ public class KoperasiController {
     @RequestMapping(value = "/api/getcolumnmember", method = RequestMethod.GET)
     public String getcolumn(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        String user = principal.getName();
-        Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(user).get().getKoperasi().getId());
-        String pattern = daftarAnggotaKoperasiRepository.findByKoperasiId(koperasi.getId()).get().getPatternField();
-        return pattern;
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> pattern = daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id"));
+        return (String) pattern.get("pattern_field");
     }
 
     @RequestMapping(value = "/api/getcolumnmember/{id}", method = RequestMethod.GET)
     public String getColumnPersetujuan(@PathVariable("id") int id) {
-        Pinjaman pinjaman = pinjamanRepository.getFirstById(id);
-        String pattern = daftarAnggotaKoperasiRepository.findByKoperasiId(pinjaman.getKoperasi().getId()).get().getPatternField();
-        return pattern;
+        Map<String, Object> pinjaman = pinjamanRepository.getFirstById(id);
+        Map<String, Object> pattern = daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) pinjaman.get("id_koperasi"));
+        return (String) pattern.get("pattern_field");
     }
 
     @RequestMapping(value = "/api/getdatamember", method = RequestMethod.GET)
-    public Set<AnggotaKoperasi> getData(HttpServletRequest request) {
+    public Set<Map<String, Object>> getData(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        String user = principal.getName();
-        Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(user).get().getKoperasi().getId());
-        return angotaKoperasiRepository.getALlAnggotaKoperasiEnable(koperasi.getId(), true);
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return angotaKoperasiRepository.getALlAnggotaKoperasiEnable((Integer) koperasi.get("id"), true);
     }
 
     @RequestMapping(value = "/api/getdatamember/{id}", method = RequestMethod.GET)
-    public Set<AnggotaKoperasi> getData(@PathVariable("id") int id) {
-        Pinjaman pinjaman = pinjamanRepository.getFirstById(id);
-        return angotaKoperasiRepository.getByUser(pinjaman.getUser());
+    public Set<Map<String, Object>> getData(@PathVariable("id") int id) {
+        Map<String, Object> pinjaman = pinjamanRepository.getFirstById(id);
+        return angotaKoperasiRepository.getByUser((Integer) pinjaman.get("id_user"));
     }
 
     @RequestMapping(value = "/api/saveanggota", method = RequestMethod.POST)
@@ -253,12 +512,13 @@ public class KoperasiController {
     public Map<String, Object> getStateKoperasi(HttpServletRequest request) throws IOException {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         Map<String, Object> data = new HashMap<>();
-        data.put("nama", user.getKoperasi().getNamaKoperasi());
-        if (user.getKoperasi().getLogoKoperasi() != null) {
+        data.put("nama", koperasi.get("nama_koperasi"));
+        if (koperasi.get("logo_koperasi") != null) {
             File files = new File("");
-            FileInputStream file = new FileInputStream(files.getAbsoluteFile() + user.getKoperasi().getLogoKoperasi());
+            FileInputStream file = new FileInputStream(String.format("%s%s", files.getAbsoluteFile(), koperasi.get("logo_koperasi")));
             data.put("logoKoperasi", IOUtils.toByteArray(file));
         } else {
             data.put("logoKoperasi", null);
@@ -270,21 +530,25 @@ public class KoperasiController {
     public String getNameKoperasi(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
-        AnggotaKoperasi anggotaKoperasi = angotaKoperasiRepository.findFirstByUser(user).get();
-        return anggotaKoperasi.getKoperasi().getNamaKoperasi();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+
+        Map<String, Object> anggotaKoperasi = angotaKoperasiRepository.getByFirstByIdUser((Integer) user.get("id"));
+        return angotaKoperasiRepository.getNameKoperasi((Integer) anggotaKoperasi.get("id"));
     }
 
     @RequestMapping(value = "/api/getnameanggota", method = RequestMethod.GET)
     public Map<String, Object> getNameMember(HttpServletRequest request) throws Exception {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> data = new HashMap<>();
-        data.put("name", user.getUserDetail().getFirstName() + " " + user.getUserDetail().getLastName());
-        AnggotaKoperasi anggotaKoperasi = angotaKoperasiRepository.getFirstByUser(user);
-        if (anggotaKoperasi.getKoperasi().getLogoKoperasi() != null) {
+        Map<String, Object> userDetail = detailUserRepository.findUserDetail((Integer) user.get("id"));
+        data.put("name", userDetail.get("first_name") + " " + userDetail.get("last_name"));
+        Map<String, Object> anggotaKoperasi = angotaKoperasiRepository.getFirstByUser((Integer) user.get("id"));
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiID((Integer) anggotaKoperasi.get("id_koperasi"));
+        if (koperasi.get("logo_koperasi") != null) {
             File files = new File("");
-            FileInputStream file = new FileInputStream(files.getAbsoluteFile() + anggotaKoperasi.getKoperasi().getLogoKoperasi());
+            FileInputStream file = new FileInputStream(files.getAbsoluteFile() + (String) koperasi.get("logo_koperasi"));
             data.put("logoKoperasi", IOUtils.toByteArray(file));
         } else {
             data.put("logoKoperasi", null);
@@ -293,13 +557,14 @@ public class KoperasiController {
     }
 
     @RequestMapping(value = "/api/getpengaturanpinjaman", method = RequestMethod.GET)
-    public PengaturanPinjaman getPengaturanPeminjaman(HttpServletRequest request) {
+    public Map<String, Object> getPengaturanPeminjaman(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        Koperasi koperasi = koperasiRepository.findFirstByUser(user);
-        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(koperasi, true)) {
-            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(koperasi, true).get();
-            return pengaturanPinjamanRepository.findFirstById(koperasiPengaturanPinjaman.getPengaturanPinjaman().getId()).get();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatusInPengaturan((Integer) koperasi.get("id"), true)) {
+            Map<String, Object> koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatusInPengaturan((Integer) koperasi.get("id"), true);
+            return pengaturanPinjamanRepository.getFirstById((Integer) koperasiPengaturanPinjaman.get("id_pengaturan"));
         }
         return null;
     }
@@ -319,8 +584,9 @@ public class KoperasiController {
     @RequestMapping(value = "/api/savepengaturanpinjaman", method = RequestMethod.POST)
     public void savePengaturanPeminjaman(HttpServletRequest request, @RequestBody Requestbody requestbody) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        Koperasi koperasi = koperasiRepository.findFirstByUser(user);
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         koperasiService.savePengaturanPeminjaman(koperasi, requestbody);
     }
 

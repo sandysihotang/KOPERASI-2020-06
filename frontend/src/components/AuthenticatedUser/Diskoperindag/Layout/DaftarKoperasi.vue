@@ -44,7 +44,7 @@
             <div class="col">{{ toggle(props.row.id, props.row.haveKoperasi) }}
               <q-toggle
                 v-model="selected[props.row.id]"
-                @input="changeState(props.row.id)"
+                @input="show(props.row.id)"
               />
             </div>
           </q-td>
@@ -58,6 +58,30 @@
         </q-input>
       </template>
     </q-table>
+    <q-dialog v-model="acc" persistent transition-show="scale"
+              transition-hide="scale">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Kirim Pesan Untuk Koperasi</div>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <div class="q-pa-md" style="max-width: 300px">
+            <q-input
+              v-model="text"
+              filled
+              label="Pesan"
+              type="textarea"
+            />
+          </div>
+          <br>
+          <center>
+            <q-btn color="red" label="Tutup" v-close-popup/>&nbsp;
+            <q-btn color="primary" label="Kirim Pesan" @click="changeState(id)" v-close-popup/>
+          </center>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -67,6 +91,8 @@
   export default {
     data() {
       return {
+        text: null,
+        acc: false,
         filter: '',
         columns: [
           {
@@ -132,6 +158,7 @@
         ],
         data: [],
         selected: [],
+        id: null
       };
     },
     methods: {
@@ -153,6 +180,10 @@
           .catch(() => {
             this.$q.loading.hide();
           });
+      },
+      show(id) {
+        this.acc = true
+        this.id = id
       },
       changeState(id) {
         this.$swal.fire({
@@ -181,11 +212,14 @@
         this.$q.loading.show();
         this.$http.post('/api/changestatekoperasi', {
           id,
-          state: this.selected[id]
+          state: this.selected[id],
+          text: this.text
         }, {
           headers: this.$auth.getHeader(),
         })
           .then(() => {
+            this.id = null
+            this.text = null
             this.getData();
             this.$q.loading.hide();
             this.$swal.fire(

@@ -72,6 +72,12 @@
               </q-item>
             </q-list>
           </q-expansion-item>
+          <q-item clickable v-ripple :to="'/laporan'">
+            <q-item-section avatar>
+              <q-icon color="primary" name="report"/>
+            </q-item-section>
+            <q-item-section>Laporan</q-item-section>
+          </q-item>
         </q-list>
       </q-scroll-area>
     </q-drawer>

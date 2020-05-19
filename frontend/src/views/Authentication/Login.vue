@@ -10,7 +10,7 @@
             <div class="row">
               <q-card square class="shadow-24" style="width:300px;height:485px;">
                 <q-card-section class="bg-deep-purple-7">
-                  <h4 class="text-h5 text-white q-my-md">Koperasi</h4>
+                  <h4 class="text-h5 text-white q-my-md">TobaKo</h4>
                   <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
                     <router-link to="/register">
                       <q-btn round icon="add" color="purple-4"/>
@@ -87,9 +87,9 @@
                 headers: this.$auth.getHeader(),
               })
                 .then((res) => {
-                  this.$auth.setAuthenticatedUser(res.data.userAuthentication.principal.userDetail);
-                  this.$auth.setUserRole(res.data.userAuthentication.principal.roles[0].name);
-                  this.$auth.setHaveKoperasi(res.data.userAuthentication.principal.haveKoperasi);
+                  this.$auth.setAuthenticatedUser(res.data.userDetail);
+                  this.$auth.setUserRole(res.data.name);
+                  this.$auth.setHaveKoperasi(res.data.haveKoperasi);
                   if (parseInt(localStorage.getItem('havekoperasi')) === 3) {
                     this.$http.get('/api/jeniskoperasi', {
                       headers: this.$auth.getHeader()

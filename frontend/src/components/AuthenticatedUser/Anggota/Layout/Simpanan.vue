@@ -95,12 +95,12 @@
           .then((res) => {
             const { data } = res
             for (let i = 0; i < 3; i++) {
-              if (data[i].jenisSimpanan === 1) {
-                this.pokok = data[i].totalSimpanan
-              } else if (data[i].jenisSimpanan === 2) {
-                this.wajib = data[i].totalSimpanan
+              if (data[i].jenis_simpanan === 1) {
+                this.pokok = data[i].total_simpanan
+              } else if (data[i].jenis_simpanan === 2) {
+                this.wajib = data[i].total_simpanan
               } else {
-                this.sukarela = data[i].totalSimpanan
+                this.sukarela = data[i].total_simpanan
               }
             }
             this.$q.loading.hide()

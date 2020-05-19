@@ -20,8 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class KoperasiService {
@@ -64,9 +63,17 @@ public class KoperasiService {
     @Autowired
     PinjamanRepository pinjamanRepository;
 
-    public Err createKoperasi(Requestbody requestbody, String uname) throws Exception {
-        User user = userRepository.findByUsername(uname).get();
+    @Autowired
+    TransaksiSimpananRepository transaksiSimpananRepository;
 
+    @Autowired
+    ProdukBaruRepository produkBaruRepository;
+
+    @Autowired
+    PenjualanProdukRepository penjualanProdukRepository;
+
+    public Err createKoperasi(Requestbody requestbody, String uname) throws Exception {
+        Map<String, Object> user = userRepository.getUserUsername(uname);
         Koperasi koperasi = new Koperasi();
 
         koperasi.setAlamatKoperasi(requestbody.getAlamat());
@@ -76,12 +83,12 @@ public class KoperasiService {
         koperasi.setNoIzinKoperasi(requestbody.getIzin());
         koperasi.setTahunBerdiriKoperasi(new Date(requestbody.getDate()));
         koperasi.setEmail(requestbody.getEmail());
-        koperasi.setUser(user);
+        koperasi.setUser(userRepository.getOne((Integer) user.get("id")));
         String path = saveImage(requestbody.getImage());
         koperasi.setLogoKoperasi(path);
         koperasiRepository.save(koperasi);
 
-        User user1 = userRepository.getOne(user.getId());
+        User user1 = userRepository.getOne((Integer) user.get("id"));
         user1.setHaveKoperasi(2);
         userRepository.save(user1);
 
@@ -109,30 +116,24 @@ public class KoperasiService {
         }
     }
 
-    public void changeStateKoperasi(int id, boolean state) {
-        Koperasi koperasi = koperasiRepository.findById(id).get();
+    public void changeStateKoperasi(int id, String text, boolean state) {
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiID(id);
         MailSender mailSender = new MailSender();
-//        mailSender.sendEmailSetStateKoperasi(javaMailSender, koperasi.getEmail(), (state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
+//        mailSender.sendEmailSetStateKoperasi(javaMailSender, (String) koperasi.get("email"), text, (state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
 
-        User user = userRepository.getOne(koperasi.getUser().getId());
-        user.setHaveKoperasi((!state ? 3 : 2));
-        userRepository.save(user);
-
+        userRepository.update((Integer) koperasi.get("id_user"), (!state ? 3 : 2));
     }
 
-    public void saveFormRegisterMember(String uname, String pattern) {
-        User user = userRepository.findByUsername(uname).get();
-        Koperasi koperasi = user.getKoperasi();
-
+    public void saveFormRegisterMember(Map<String, Object> user, String pattern) {
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
 
         FieldDaftarAnggota fieldDaftarAnggota = new FieldDaftarAnggota();
-        fieldDaftarAnggota.setKoperasi(koperasi);
+        fieldDaftarAnggota.setKoperasi(koperasiRepository.getOne((Integer) koperasi.get("id")));
         fieldDaftarAnggota.setPatternField(pattern);
 
         daftarAnggotaKoperasiRepository.save(fieldDaftarAnggota);
 
-        Koperasi changeStateForm = koperasiRepository.getOne(koperasi.getId());
-        koperasi.setHaveFieldRegisterMember(true);
+        Koperasi changeStateForm = koperasiRepository.getOne((Integer) koperasi.get("id"));
         koperasiRepository.save(changeStateForm);
     }
 
@@ -167,7 +168,7 @@ public class KoperasiService {
         angotaKoperasiRepository.save(anggotaKoperasi);
     }
 
-    public void savePengaturanPeminjaman(Koperasi koperasi, Requestbody requestbody) {
+    public void savePengaturanPeminjaman(Map<String, Object> koperasi, Requestbody requestbody) {
         PengaturanPinjaman pengaturanPinjaman = new PengaturanPinjaman();
         pengaturanPinjaman.setBungaPinjaman(requestbody.getBungaPinjaman() / 100);
         pengaturanPinjaman.setAmbangBatasDenda(requestbody.getAmbangBatasDenda());
@@ -175,16 +176,17 @@ public class KoperasiService {
         pengaturanPinjaman.setMinTenor(requestbody.getMinTenor());
         pengaturanPinjaman.setPersentaseDenda(requestbody.getPersentaseDenda() / 100);
 
+        Koperasi kop = koperasiRepository.getOne((Integer) koperasi.get("id"));
         pengaturanPinjamanRepository.save(pengaturanPinjaman);
-        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(koperasi, true)) {
-            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(koperasi, true).get();
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(kop, true)) {
+            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(kop, true).get();
             KoperasiPengaturanPinjaman update = koperasiPengaturanPinjamanRepository.getOne(koperasiPengaturanPinjaman.getId());
             update.setStatus(false);
             koperasiPengaturanPinjamanRepository.save(update);
         }
         KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = new KoperasiPengaturanPinjaman();
         koperasiPengaturanPinjaman.setStatus(true);
-        koperasiPengaturanPinjaman.setKoperasi(koperasi);
+        koperasiPengaturanPinjaman.setKoperasi(kop);
         koperasiPengaturanPinjaman.setPengaturanPinjaman(pengaturanPinjaman);
         koperasiPengaturanPinjamanRepository.save(koperasiPengaturanPinjaman);
     }
@@ -192,15 +194,103 @@ public class KoperasiService {
     public void checkDenda() {
         List<Angsuran> angsurans = angsuranRepository.getExistDenda();
         for (Angsuran angsuran : angsurans) {
-            LocalDate l = LocalDate.of(angsuran.getTanggalJatuhTempo().getYear(), angsuran.getTanggalJatuhTempo().getMonth(), angsuran.getTanggalJatuhTempo().getDay());
-            LocalDate now = LocalDate.of(new Date().getYear(), new Date().getMonth(), new Date().getDay());
+            String dd = angsuran.getTanggalJatuhTempo().toString().substring(0,10);
+            LocalDate l = LocalDate.parse(dd);
+            LocalDateTime now1 = LocalDateTime.now();
+            LocalDate now = LocalDate.of(now1.getYear(), now1.getMonthValue(), now1.getDayOfMonth());
             Long days = ChronoUnit.DAYS.between(l, now);
-            Pinjaman pinjaman = pinjamanRepository.getFirstById(angsuran.getPinjaman().getId());
-            PengaturanPinjaman pengaturanPinjaman = pengaturanPinjamanRepository.getFirstById(pinjaman.getPengaturanPinjaman().getId());
-            long day = days + pengaturanPinjaman.getAmbangBatasDenda();
-            Double total = (pinjaman.getJumlahPinjaman() * pengaturanPinjaman.getPersentaseDenda() / 100) * day;
+            Map<String, Object> pinjaman = pinjamanRepository.getFirstById(angsuran.getPinjaman().getId());
+            Map<String, Object> pengaturanPinjaman = pengaturanPinjamanRepository.getFirstById((Integer) pinjaman.get("id_pengaturan_pinjaman"));
+            long day = days + (Integer) pengaturanPinjaman.get("ambang_batas_denda");
+            Double total = ((Double) pinjaman.get("jumlah_pinjaman") * (Double) pengaturanPinjaman.get("persentase_denda") / 100) * day;
             angsuran.setDenda(total);
             angsuranRepository.save(angsuran);
         }
+    }
+
+    public Map<String, Object> getLaporanPemasukanDanLaba(Map<String, Object> koperasi, Date dateFrom, Date dateTo) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        Long realisasiJasa = angsuranRepository.getRealisasiJasaDateFromTo((Integer) koperasi.get("id"), dateFrom, dateTo);
+        data.put("realisasiJasa", realisasiJasa);
+        Long denda = angsuranRepository.getDenda((Integer) koperasi.get("id"), dateFrom, dateTo);
+        data.put("tunggakan", denda);
+        Long simpananPokok = transaksiSimpananRepository.getTransaksi((Integer) koperasi.get("id"), 1, 1, dateFrom, dateTo);
+        data.put("simpananPokok", simpananPokok);
+        Long simpananWajib = transaksiSimpananRepository.getTransaksi((Integer) koperasi.get("id"), 1, 2, dateFrom, dateTo);
+        data.put("simpananWajib", simpananWajib);
+        Long simpananSukarela = transaksiSimpananRepository.getTransaksi((Integer) koperasi.get("id"), 1, 3, dateFrom, dateTo);
+        data.put("simpananSukarela", simpananSukarela);
+        return data;
+    }
+
+    public Map<String, Object> getLaporanTransaksiSimpanan(Map<String, Object> koperasi, Date dateFrom, Date dateTo) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        List<Map<String, Object>> transaksiSimpanans = transaksiSimpananRepository.getTransaksiSimpananLaporan((Integer) koperasi.get("id"), dateFrom, dateTo);
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (Map<String, Object> transaksiSimpanan : transaksiSimpanans) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("noTransaksi", transaksiSimpanan.get("kode_transaksi"));
+            temp.put("nama", transaksiSimpanan.get("first_name") + " " + transaksiSimpanan.get("last_name"));
+            temp.put("tipeTransaksi", ((Integer) transaksiSimpanan.get("jenis_transaksi") == 1 ? "Setor Dana" : "Tarik Dana"));
+            temp.put("produk", ((Integer) transaksiSimpanan.get("jenis_simpanan") == 1 ? "Simpanan Pokok" : ((Integer) transaksiSimpanan.get("jenis_simpanan") == 2 ? "Simpanan Wajib" : "Simpanan Sukarela")));
+            temp.put("tglTransaksi", transaksiSimpanan.get("created_at"));
+            temp.put("nominal", transaksiSimpanan.get("jumlah_transaksi"));
+            res.add(temp);
+        }
+        data.put("dataTable", res);
+        return data;
+    }
+
+    public Map<String, Object> getLaporanTransaksiPinjaman(Map<String, Object> koperasi, Date dateFrom, Date dateTo) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        List<Map<String, Object>> transaksiPinjaman = pinjamanRepository.getLaporanPinjaman((Integer) koperasi.get("id"), dateFrom, dateTo);
+        List<Map<String, Object>> res = new ArrayList<>();
+        double totPinjaman = 0.0, totLaba = 0.0;
+        for (Map<String, Object> pinjaman : transaksiPinjaman) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("noTransaksi", pinjaman.get("kode_pinjaman"));
+            temp.put("nama", pinjaman.get("first_name") + " " + pinjaman.get("last_name"));
+            temp.put("jaminan", pinjaman.get("jaminan"));
+            temp.put("jumlahPinjaman", pinjaman.get("jumlah_pinjaman"));
+            temp.put("tenor", pinjaman.get("tenor"));
+            totPinjaman += (Double) pinjaman.get("jumlah_pinjaman");
+            double total = 0.0;
+            List<Map<String, Object>> angsurans = angsuranRepository.getAllByPinjaman((Integer) pinjaman.get("id"));
+            for (Map<String, Object> angsuran : angsurans) {
+                total += (Double) angsuran.get("bunga") + (Double) angsuran.get("denda");
+            }
+            totLaba += total;
+            temp.put("laba", total);
+            temp.put("tglPengajuan", pinjaman.get("created_at"));
+            temp.put("tglDiterimaPengajuan", pinjaman.get("date_pengajuan_diterima"));
+            temp.put("tglSelesaiCicilan", (pinjaman.get("updated_at") == null ? "-" : pinjaman.get("updated_at")));
+            res.add(temp);
+        }
+        data.put("totLaba", totLaba);
+        data.put("totPinjaman", totPinjaman);
+        data.put("dataTable", res);
+        return data;
+    }
+
+    public Map<String, Object> getLaporanPemasukanProduk(Map<String, Object> koperasi, Date dateFrom, Date dateTo) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        List<Map<String, Object>> produkMasuk = produkBaruRepository.getTransaksiProdukMasukLaporan((Integer) koperasi.get("id"), dateFrom, dateTo);
+        data.put("totProdMasuk", produkBaruRepository.getTotalTransaksiProdukMasukLaporan((Integer) koperasi.get("id"), dateFrom, dateTo));
+        data.put("dataTable", produkMasuk);
+        return data;
+    }
+
+    public Map<String, Object> getLaporanPenjualanProduk(Map<String, Object> koperasi, Date dateFrom, Date dateTo) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        List<Map<String, Object>> penjualanProduk = penjualanProdukRepository.getLaporanPenjualan((Integer) koperasi.get("id"), dateFrom, dateTo);
+        data.put("totProdTerjual", penjualanProdukRepository.getTotalLaporanPenjualan((Integer) koperasi.get("id"), dateFrom, dateTo));
+        data.put("totTerjual", penjualanProdukRepository.getTotalJual((Integer) koperasi.get("id"), dateFrom, dateTo));
+        data.put("dataTable", penjualanProduk);
+        return data;
     }
 }

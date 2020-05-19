@@ -46,6 +46,9 @@ public class ProdukController {
     @Autowired
     TransaksiProdukRepository transaksiProdukRepository;
 
+    @Autowired
+    KoperasiRepository koperasiRepository;
+
     @RequestMapping(value = "/api/simpanvendor", method = RequestMethod.POST)
     public Vendor saveVendor(@RequestBody Requestbody requestbody, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
@@ -75,10 +78,12 @@ public class ProdukController {
     }
 
     @RequestMapping(value = "/api/getoptions", method = RequestMethod.GET)
-    public List<KategoriProduk> getOptions(HttpServletRequest request) {
+    public List<Map<String, Object>> getOptions(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return kategoriProdukRepository.getAllByKoperasi(user.getKoperasi());
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return kategoriProdukRepository.getAllByKoperasi((Integer) koperasi.get("id"));
     }
 
     @RequestMapping(value = "/api/getprodukbaruvendor/{idVendor}", method = RequestMethod.GET)
@@ -129,17 +134,21 @@ public class ProdukController {
     }
 
     @RequestMapping(value = "/api/getdataproduk", method = RequestMethod.GET)
-    public Set<Produk> getDataProduk(HttpServletRequest request) {
+    public Set<Map<String, Object>> getDataProduk(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return produkRepository.getAllByKoperasi(user.getKoperasi());
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return produkRepository.getAllByKoperasi((Integer) koperasi.get("id"));
     }
 
     @RequestMapping(value = "/api/getdatavendorkoperasi", method = RequestMethod.GET)
-    public List<Vendor> getDataProdukBaru(HttpServletRequest request) {
+    public List<Map<String, Object>> getDataProdukBaru(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return vendorRepository.getAllByKoperasiAndStatusOrderByTanggalMasukDesc(user.getKoperasi(), true);
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return vendorRepository.getAllByKoperasiAndStatusOrderByTanggalMasukDesc((Integer) koperasi.get("id"), true);
     }
 
     @RequestMapping(value = "/api/getprodukbyvendor/{id}", method = RequestMethod.GET)
@@ -151,19 +160,24 @@ public class ProdukController {
     @RequestMapping(value = "/api/getkodetransaksiproduk", method = RequestMethod.GET)
     public String getKodeTransaksiProduk(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return produkService.getKodeTransaksi(user.getKoperasi());
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return produkService.getKodeTransaksi((Integer) koperasi.get("id"));
     }
 
     @RequestMapping(value = "/api/getprodukbybarcode", method = RequestMethod.POST)
     public Map<String, Object> getKodeTransaksiProduk(HttpServletRequest request, @RequestBody Requestbody requestbody) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        Boolean exist = produkRepository.existsByKodeProdukAndKoperasi(requestbody.getBarCode(), user.getKoperasi());
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Koperasi ko = koperasiRepository.getOne((Integer) koperasi.get("id"));
+        Boolean exist = produkRepository.existsByKodeProdukAndKoperasi(requestbody.getBarCode(), ko);
         HashMap<String, Object> res = new HashMap<>();
         res.put("exist", exist);
         if (exist) {
-            Produk produk = produkRepository.getFirstByKodeProdukAndKoperasi(requestbody.getBarCode(), user.getKoperasi());
+            Produk produk = produkRepository.getFirstByKodeProdukAndKoperasi(requestbody.getBarCode(), ko);
             Harga harga = hargaRepository.getFirstByProdukAndStatus(produk, true);
             res.put("id", produk.getId());
             res.put("jumlah", produk.getJumlahProduk());
@@ -175,28 +189,43 @@ public class ProdukController {
     @RequestMapping(value = "/api/tambahkerangjang", method = RequestMethod.POST)
     public void tambahKeranjang(HttpServletRequest request, @RequestBody Requestbody requestbody) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        produkService.tambahKeranjang(requestbody, user.getKoperasi());
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        produkService.tambahKeranjang(requestbody, koperasiRepository.getOne((Integer) koperasi.get("id")));
     }
 
     @RequestMapping(value = "/api/savetransaksi", method = RequestMethod.POST)
     public void saveTransaksi(HttpServletRequest request, @RequestBody Requestbody requestbody) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        produkService.saveTransaksi(user.getKoperasi(), requestbody);
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        produkService.saveTransaksi((Integer) koperasi.get("id"), requestbody);
     }
 
     @RequestMapping(value = "/api/getprodukbeli", method = RequestMethod.GET)
-    public List<PenjualanProduk> getPenjualanProduk(HttpServletRequest request) {
+    public List<Map<String, Object>> getPenjualanProduk(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return penjualanProdukRepository.findAllByKoperasiAndStatus(user.getKoperasi(), false);
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return penjualanProdukRepository.findAllByKoperasiAndStatusPen((Integer) koperasi.get("id"), false);
     }
 
     @RequestMapping(value = "/api/deleteprod/{id}", method = RequestMethod.DELETE)
     public void deleteProd(@PathVariable("id") Integer id) {
         PenjualanProduk penjualanProduk = penjualanProdukRepository.getOne(id);
         penjualanProdukRepository.delete(penjualanProduk);
+    }
+
+    @RequestMapping(value = "/api/deleteallprod", method = RequestMethod.DELETE)
+    public void deleteProd(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        penjualanProdukRepository.deleteAllByKoperasiAndStatus((Integer) koperasi.get("id"), false);
     }
 
     @RequestMapping(value = "/api/ubahprod/{id}", method = RequestMethod.PUT)
@@ -207,15 +236,16 @@ public class ProdukController {
     }
 
     @RequestMapping(value = "/api/gettransaksiterkiniprod", method = RequestMethod.GET)
-    public List<TransaksiProduk> getTransaksiTerkini(HttpServletRequest request) {
+    public List<Map<String, Object>> getTransaksiTerkini(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return transaksiProdukRepository.getAllByKoperasi(user.getKoperasi());
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        return transaksiProdukRepository.getAllByKoperasi((Integer) koperasi.get("id"));
     }
 
     @RequestMapping(value = "/api/getdetailtransaksiproduk/{id}", method = RequestMethod.GET)
     public List<PenjualanProduk> getDetailTransaksiTerkini(@PathVariable("id") Integer id) {
-        TransaksiProduk transaksiProduk = transaksiProdukRepository.getOne(id);
-        return penjualanProdukRepository.findAllByTransaksiProduk(transaksiProduk);
+        return penjualanProdukRepository.findAllByTransaksiProduk(transaksiProdukRepository.getOne(id));
     }
 }

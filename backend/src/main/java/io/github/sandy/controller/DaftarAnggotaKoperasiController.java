@@ -2,6 +2,7 @@ package io.github.sandy.controller;
 
 import io.github.sandy.ErrorCode.Err;
 import io.github.sandy.model.FieldDaftarAnggota;
+import io.github.sandy.model.User;
 import io.github.sandy.model.UserDetail;
 import io.github.sandy.repository.DaftarAnggotaKoperasiRepository;
 import io.github.sandy.repository.DetailUserRepository;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class DaftarAnggotaKoperasiController {
@@ -28,15 +30,19 @@ public class DaftarAnggotaKoperasiController {
     @Autowired
     KoperasiService koperasiService;
 
+    @Autowired
+    UserRepository userRepository;
+
     @RequestMapping(value = "/ss", method = RequestMethod.GET)
-    public List<FieldDaftarAnggota> get(){
+    public List<FieldDaftarAnggota> get() {
         return daftarAnggotaKoperasiRepository.findAll();
     }
 
-    @RequestMapping(value = "/api/saveformregister" , method = RequestMethod.POST)
-    public ResponseEntity<Err> saveFormRegisterMember(@RequestBody Requestbody requestbody, HttpServletRequest request){
+    @RequestMapping(value = "/api/saveformregister", method = RequestMethod.POST)
+    public ResponseEntity<Err> saveFormRegisterMember(@RequestBody Requestbody requestbody, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        String user = principal.getName();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
         koperasiService.saveFormRegisterMember(user, requestbody.getFormField());
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }

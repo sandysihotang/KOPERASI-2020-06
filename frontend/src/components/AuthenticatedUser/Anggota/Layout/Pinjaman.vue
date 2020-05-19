@@ -39,10 +39,10 @@
                       </q-item-section>
 
                       <q-item-section class="text-black">
-                        <q-item-label caption>Kode Pinjaman: {{ dataPinjaman.kodePinjaman }}
+                        <q-item-label caption>Kode Pinjaman: {{ dataPinjaman.kode_pinjaman }}
                         </q-item-label>
                         <q-item-label class="text-caption">Total pengajuan:{{
-                          toIDR(parseInt(dataPinjaman.jumlahPinjaman)) }}
+                          toIDR(parseInt(dataPinjaman.jumlah_pinjaman)) }}
                         </q-item-label>
                         <q-item-label caption lines="1">
                           <q-chip class="glossy" color="primary" text-color="white">{{
@@ -81,10 +81,10 @@
                       </q-item-section>
 
                       <q-item-section class="text-black">
-                        <q-item-label caption>Kode Pinjaman: {{ dataSelesai.kodePinjaman }}
+                        <q-item-label caption>Kode Pinjaman: {{ dataSelesai.kode_pinjaman }}
                         </q-item-label>
                         <q-item-label class="text-caption">Total pengajuan:{{
-                          toIDR(parseInt(dataSelesai.jumlahPinjaman)) }}
+                          toIDR(parseInt(dataSelesai.jumlah_pinjaman)) }}
                         </q-item-label>
                         <q-item-label caption lines="1">
                           <q-chip class="glossy" color="primary" text-color="white">{{

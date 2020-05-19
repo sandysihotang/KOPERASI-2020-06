@@ -98,19 +98,19 @@
             name: 'nama',
             label: 'Nama',
             align: 'center',
-            field: row => `${row.userDetail.firstName} ${row.userDetail.lastName}`,
+            field: row => `${row.first_name} ${row.last_name}`,
             sortable: true,
           }, {
             name: 'alamat',
             label: 'Alamat',
             align: 'center',
-            field: row => row.userDetail.address,
+            field: row => row.address,
             sortable: true,
           }, {
             name: 'notelepon',
             label: 'No Telepon',
             align: 'center',
-            field: row => row.userDetail.noTelepon,
+            field: row => row.no_telepon,
             sortable: true,
           },
         ],
@@ -211,6 +211,7 @@
         })
           .then((res) => {
             const { data } = res;
+            this.dataS = []
             for (let i = 0; i < data.length; i++) {
               let str = `{"id" : ${data[i].id},`
               const obj = JSON.parse(data[i].data)
@@ -266,14 +267,9 @@
           })
       },
       setNama() {
-        this.nama = `${this.selected[0].userDetail.firstName} ${this.selected[0].userDetail.lastName}`
-        const res = this.selected[0].aktivasiSimpanan
-        for (let i = 0; i < res.length; i++) {
-          if (res[i].jenisSimpanan === 2) {
-            this.idAturan = res[i].id
-            break
-          }
-        }
+        this.nama = `${this.selected[0].first_name} ${this.selected[0].last_name}`
+        const res = this.selected[0]
+        this.idAturan = res.id_aktivasi
         this.loadColumn()
       },
       getAturan() {
@@ -281,8 +277,8 @@
           headers: this.$auth.getHeader()
         })
           .then((res) => {
-            this.jumlahSimpanan = res.data.minimalSimpanan
-            this.maxSimpanan = res.data.minimalSimpanan
+            this.jumlahSimpanan = res.data.minimal_simpanan
+            this.maxSimpanan = res.data.minimal_simpanan
           })
       }
     },

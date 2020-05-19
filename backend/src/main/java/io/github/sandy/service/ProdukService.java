@@ -34,6 +34,9 @@ public class ProdukService {
     @Autowired
     PenjualanProdukRepository penjualanProdukRepository;
 
+    @Autowired
+    KoperasiRepository koperasiRepository;
+
     public Vendor saveVendor(Koperasi koperasi, Requestbody requestbody) {
         Vendor vendor = new Vendor();
         vendor.setAlamatVendor(requestbody.getAlamat());
@@ -124,8 +127,8 @@ public class ProdukService {
     }
 
 
-    public String getKodeTransaksi(Koperasi koperasi) {
-        String kode = transaksiProdukRepository.getMaxKodePinjaman(koperasi.getId());
+    public String getKodeTransaksi(Integer koperasi) {
+        String kode = transaksiProdukRepository.getMaxKodePinjaman(koperasi);
         if (kode != null) {
             int noUrut = Integer.parseInt(kode.substring(1, 11));
             noUrut++;
@@ -145,17 +148,18 @@ public class ProdukService {
         penjualanProdukRepository.save(penjualanProduk);
     }
 
-    public void saveTransaksi(Koperasi koperasi, Requestbody requestbody) {
+    public void saveTransaksi(Integer koperasi, Requestbody requestbody) {
         TransaksiProduk transaksiProduk = new TransaksiProduk();
         transaksiProduk.setTanggalTransaksi(new Date());
         transaksiProduk.setKodeTransaksi(getKodeTransaksi(koperasi));
         transaksiProduk.setKeanggotaan(requestbody.getAnggota());
         transaksiProduk.setUangMasuk(requestbody.getUangBeli());
-        transaksiProduk.setKoperasi(koperasi);
+        Koperasi koperasi1 = koperasiRepository.getOne(koperasi);
+        transaksiProduk.setKoperasi(koperasi1);
 
         transaksiProdukRepository.save(transaksiProduk);
 
-        List<PenjualanProduk> penjualanProduks = penjualanProdukRepository.findAllByKoperasiAndStatus(koperasi, false);
+        List<PenjualanProduk> penjualanProduks = penjualanProdukRepository.findAllByKoperasiAndStatus(koperasi1, false);
         for (PenjualanProduk penjualanProduk : penjualanProduks) {
             PenjualanProduk penjualanProduk1 = penjualanProdukRepository.getOne(penjualanProduk.getId());
             penjualanProduk1.setStatus(true);

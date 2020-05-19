@@ -91,7 +91,7 @@
               </q-item-section>
 
               <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(parseInt(terbayar)) }}</q-item-label>
+                <q-item-label>{{ toIDR(parseInt(jatuhTempo)) }}</q-item-label>
                 <q-item-label caption>
                   Total Pinjaman Jatuh Tempo
                 </q-item-label>
@@ -180,6 +180,7 @@
     },
     data() {
       return {
+        jatuhTempo: 0,
         tersalur: 0,
         terbayar: 0,
         produk: false,
@@ -234,6 +235,7 @@
             const { data } = res
             this.tersalur = data.pinjamantersalur
             this.terbayar = data.pinjamanterbayar
+            this.jatuhTempo = data.pinjamanJatuhTempo
           })
       }
     },

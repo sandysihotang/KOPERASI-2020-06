@@ -438,6 +438,7 @@
           })
           .then((res) => {
             this.kategoriProd = null
+            this.getOptions()
             this.$q.notify({
               type: 'positive',
               message: `Berhasil menyimpan kategori`
@@ -616,9 +617,10 @@
         })
           .then((res) => {
             const { data } = res
+            this.options = []
             for (let i = 0; i < data.length; i++) {
               this.options.push({
-                label: data[i].namaKategori,
+                label: data[i].nama_kategori,
                 value: data[i].id
               })
             }

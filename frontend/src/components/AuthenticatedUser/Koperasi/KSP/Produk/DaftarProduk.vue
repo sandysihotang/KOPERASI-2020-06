@@ -47,73 +47,43 @@
             name: 'namabarang',
             label: 'Nama Barang',
             align: 'center',
-            field: row => row.namaProduk,
+            field: row => row.nama_produk,
             sortable: true,
           }, {
             name: 'kodebarang',
             label: 'Kode barang',
             align: 'center',
-            field: row => row.kodeProduk,
+            field: row => row.kode_produk,
             sortable: true,
           }, {
             name: 'kategoribarang',
             label: 'Kategori Barang',
             align: 'center',
-            field: row => row.kategoriProduk.namaKategori,
+            field: row => row.nama_kategori,
             sortable: true,
           }, {
             name: 'hargabeli',
             label: 'Harga Beli',
             align: 'center',
-            field: (row) => {
-              const { harga } = row
-              let hargaBeli = ''
-              for (let i = 0; i < harga.length; i++) {
-                if (harga[i].status === true) {
-                  hargaBeli = this.toIDR(parseInt(harga[i].hargaBeli))
-                  break
-                }
-              }
-              return hargaBeli
-            },
+            field: row => this.toIDR(parseInt(row.harga_beli)),
             sortable: true,
           }, {
             name: 'hargajualanggota',
             label: 'Harga Jual Anggota',
             align: 'center',
-            field: (row) => {
-              const { harga } = row
-              let jual = ''
-              for (let i = 0; i < harga.length; i++) {
-                if (harga[i].status === true) {
-                  jual = this.toIDR(parseInt(harga[i].hargaJualAnggota))
-                  break
-                }
-              }
-              return jual
-            },
+            field: row => this.toIDR(parseInt(row.harga_jual_anggota)),
             sortable: true,
           }, {
             name: 'hargajualnonanggota',
             label: 'Harga Jual Non Anggota',
             align: 'center',
-            field: (row) => {
-              const { harga } = row
-              let jual = ''
-              for (let i = 0; i < harga.length; i++) {
-                if (harga[i].status === true) {
-                  jual = this.toIDR(parseInt(harga[i].hargaJualNonAnggota))
-                  break
-                }
-              }
-              return jual
-            },
+            field: row => this.toIDR(parseInt(row.harga_jual_non_anggota)),
             sortable: true,
           }, {
             name: 'jumlahbarang',
             label: 'Jumlah Barang',
             align: 'center',
-            field: row => row.jumlahProduk,
+            field: row => row.jumlah_produk,
             sortable: true,
           },
         ],

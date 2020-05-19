@@ -75,19 +75,19 @@
             name: 'noPinjaman',
             label: 'No Pinjaman',
             align: 'center',
-            field: row => row.kodePinjaman,
+            field: row => row.kode_pinjaman,
             sortable: true,
           }, {
             name: 'jumlahPinjaman',
             label: 'Jumlah Pinjaman',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.jumlahPinjaman)),
+            field: row => this.toIDR(parseInt(row.jumlah_pinjaman)),
             sortable: true,
           }, {
             name: 'namaDebitur',
             label: 'Nama Debitur',
             align: 'center',
-            field: row => `${row.user.userDetail.firstName} ${row.user.userDetail.lastName}`,
+            field: row => `${row.first_name} ${row.last_name}`,
             sortable: true,
           },
           {
@@ -96,7 +96,7 @@
             align: 'center',
             field: (row) => {
               moment.lang('id')
-              return moment(row.createdAt)
+              return moment(row.created_at)
                 .format('dddd, Do MMMM YYYY');
             },
             sortable: true,

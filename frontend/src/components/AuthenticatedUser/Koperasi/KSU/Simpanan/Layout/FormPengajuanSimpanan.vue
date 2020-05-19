@@ -186,8 +186,8 @@
       },
       setAturan() {
         for (let i = 0; i < this.aturan.length; i++) {
-          if (this.aturan[i].jenisSimpanan === this.select) {
-            this.maxSimpanan = this.aturan[i].minimalSimpanan
+          if (this.aturan[i].jenis_simpanan === this.select) {
+            this.maxSimpanan = this.aturan[i].minimal_simpanan
             this.jumlahSimpanan = this.maxSimpanan
             return
           }
