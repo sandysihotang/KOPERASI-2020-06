@@ -1,8 +1,8 @@
 <template>
   <div>
-    <q-card>
+    <q-card  v-if="show">
       <q-card-section>
-        <center v-if="show">
+        <center>
           <p class="text-h6">Rekapitulasi Simpanan</p>
           <p>Koperasi {{ res.namaKoperasi }}</p>
         </center>
