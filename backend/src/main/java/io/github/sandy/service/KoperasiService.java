@@ -75,6 +75,10 @@ public class KoperasiService {
     @Autowired
     NotifikasiAnggotaRepository notifikasiAnggotaRepository;
 
+    @Autowired
+    LaporanKoperasiRepository laporanKoperasiRepository;
+
+
     public Err createKoperasi(Requestbody requestbody, String uname) throws Exception {
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Koperasi koperasi = new Koperasi();
@@ -245,6 +249,7 @@ public class KoperasiService {
         }
         return res;
     }
+
     public Map<String, Object> getLaporanPemasukanDanLaba(Map<String, Object> koperasi, Date dateFrom, Date dateTo) {
         Map<String, Object> data = new HashMap<>();
         data.put("namaKoperasi", koperasi.get("nama_koperasi"));
@@ -329,5 +334,50 @@ public class KoperasiService {
         data.put("totTerjual", penjualanProdukRepository.getTotalJual((Integer) koperasi.get("id"), dateFrom, dateTo));
         data.put("dataTable", penjualanProduk);
         return data;
+    }
+
+    public void buatLaporan(Integer id, Integer tahun, MultipartFile file) {
+        String pathLaporan = saveLaporan(file);
+        LaporanKoperasi laporanKoperasi = new LaporanKoperasi();
+        laporanKoperasi.setCreatedAt(new Date());
+        laporanKoperasi.setIdKoperasi(id);
+        laporanKoperasi.setOriginalName(file.getOriginalFilename());
+        laporanKoperasi.setPathLaporan(pathLaporan);
+        laporanKoperasi.setTahunLaporan(tahun);
+        laporanKoperasi.setStatus(1);
+        laporanKoperasi.setUpdatedAt(new Date());
+        laporanKoperasiRepository.save(laporanKoperasi);
+    }
+
+    private String saveLaporan(MultipartFile files) {
+        LocalDateTime myDateObj = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("ddMMyyyyHHmmss");
+        String name = myDateObj.format(myFormatObj);
+
+        File curFile = new File("");
+        String helper = curFile.getAbsolutePath();
+        String curDir = helper + "/backend/src/main/resources/static/laporan/";
+        String pict = name + ".xls";
+        Path path = Paths.get(curDir + pict);
+        byte[] images = new byte[0];
+        try {
+            images = files.getBytes();
+            Files.write(path, images);
+            return "/backend/src/main/resources/static/laporan/" + pict;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void saveEditLaporan(Integer id, Requestbody requestbody) {
+        LaporanKoperasi laporanKoperasi = laporanKoperasiRepository.getOne(id);
+        laporanKoperasi.setTahunLaporan(requestbody.getTahun());
+        if(requestbody.getFiles() != null){
+            String pathLaporan = saveImage(requestbody.getFiles());
+            laporanKoperasi.setPathLaporan(pathLaporan);
+            laporanKoperasi.setOriginalName(requestbody.getFiles().getOriginalFilename());
+        }
+        laporanKoperasiRepository.save(laporanKoperasi);
     }
 }

@@ -67,12 +67,14 @@ import {
   QDialog,
   ClosePopup,
   Notify,
-  QBtnDropdown
+  QBtnDropdown,
+  QFile
 } from 'quasar';
 
 Vue.use(Quasar, {
   config: {},
   components: {
+    QFile,
     QBtnDropdown,
     QDialog,
     QCheckbox,

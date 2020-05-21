@@ -21,6 +21,8 @@ public class Requestbody {
     private String izin;
     private String jenis;
     private MultipartFile image;
+    private MultipartFile files;
+    private Integer tahun;
     private boolean state;
     private int status;
     private String formField;
@@ -50,9 +52,34 @@ public class Requestbody {
     private Integer uangBeli;
     private String dateFrom;
     private String dateTo;
+    private String statusLaporan;
+
+    public String getStatusLaporan() {
+        return statusLaporan;
+    }
+
+    public void setStatusLaporan(String statusLaporan) {
+        this.statusLaporan = statusLaporan;
+    }
 
     public String getText() {
         return text;
+    }
+
+    public MultipartFile getFiles() {
+        return files;
+    }
+
+    public void setFiles(MultipartFile files) {
+        this.files = files;
+    }
+
+    public Integer getTahun() {
+        return tahun;
+    }
+
+    public void setTahun(Integer tahun) {
+        this.tahun = tahun;
     }
 
     public void setText(String text) {
