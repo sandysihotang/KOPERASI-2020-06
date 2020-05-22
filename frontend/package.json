@@ -19,6 +19,7 @@
     "luhn": "latest",
     "moment": "^2.24.0",
     "node-sass": "^4.13.0",
+    "xlsx": "^0.16.1",
     "npm-cli": "^0.1.0",
     "q-form-builder": "^0.1.9",
     "quasar": "^1.9.11",

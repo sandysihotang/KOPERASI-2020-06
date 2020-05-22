@@ -108,6 +108,27 @@ const routes = [
         meta: {
           roolTo: true,
         },
+      },
+      {
+        path: '/kirimlaporan',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Laporan/KirimLaporan/KirimLaporanKoperasi.vue'),
+        meta: {
+          roolTo: true,
+        },
+      },
+      {
+        path: '/laporanterkirim',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Laporan/KirimLaporan/LaporanTerkirim.vue'),
+        meta: {
+          roolTo: true,
+        },
+      },
+      {
+        path: '/notifikasiksp',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Notifikasi.vue'),
+        meta: {
+          roolTo: true,
+        },
       }
     ],
   },
@@ -218,6 +239,27 @@ const routes = [
           roolToKSU: true,
         },
       },
+      {
+        path: '/kirimlaporanksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Laporan/KirimLaporan/KirimLaporanKoperasi.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/laporanterkirimksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Laporan/KirimLaporan/LaporanTerkirim.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/notifikasiksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Notifikasi.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      }
     ],
   },
   {
@@ -278,6 +320,10 @@ const routes = [
       {
         path: '/semuakoperasi',
         component: () => import('../components/AuthenticatedUser/Diskoperindag/Layout/DaftarKoperasi.vue'),
+      },
+      {
+        path: '/laporankoperasi',
+        component: () => import('../components/AuthenticatedUser/Diskoperindag/Layout/LaporanTahunan.vue'),
       },
     ],
   },

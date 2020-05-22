@@ -25,6 +25,12 @@
             </q-item-section>
             <q-item-section>Daftar Koperasi di Toba</q-item-section>
           </q-item>
+          <q-item clickable v-ripple :to="'/laporankoperasi'">
+            <q-item-section avatar>
+              <q-icon color="primary" name="report"/>
+            </q-item-section>
+            <q-item-section>Laporan Tahunan Koperasi di Toba</q-item-section>
+          </q-item>
         </q-list>
       </q-scroll-area>
     </q-drawer>

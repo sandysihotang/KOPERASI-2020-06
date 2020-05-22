@@ -11,6 +11,9 @@
         <q-toolbar-title>
           {{ title }}
         </q-toolbar-title>
+        <q-btn dense color="primary" round icon="info" class="q-ml-md" @click="notif">
+          <q-badge color="red" floating v-if="existNotif">{{ totalNotif }}</q-badge>
+        </q-btn>
         <q-btn flat round dense icon="fa fa-sign-out-alt" @click="logOut"/>
       </q-toolbar>
     </q-header>
@@ -97,6 +100,19 @@
             </q-item-section>
             <q-item-section>Laporan</q-item-section>
           </q-item>
+          <q-expansion-item
+            expand-separator
+            icon="send"
+            label="Kirim Laporan Ke Dinas Koperasi Toba">
+            <q-list padding>
+              <q-item clickable v-ripple :to="'/kirimlaporanksu'">
+                <q-item-section>Kirim Laporan</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="'/laporanterkirimksu'">
+                <q-item-section>Laporan Terkirim</q-item-section>
+              </q-item>
+            </q-list>
+          </q-expansion-item>
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -112,7 +128,9 @@
       return {
         left: false,
         title: 'Selamat datang Koperasi ',
-        image: null
+        image: null,
+        existNotif: false,
+        totalNotif: 0
       };
     },
     methods: {
@@ -131,6 +149,42 @@
           .then((res) => {
             this.title = `${this.title} ${res.data.nama}`
             this.image = res.data.logoKoperasi
+            this.getNotif()
+          })
+      },
+      getNotif() {
+        this.$http.get('/api/getnotifikasikoperasi', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            const { data } = res
+            this.existNotif = data.exist
+            if (this.existNotif) {
+              this.totalNotif = data.total
+            }
+          })
+          .catch(() => {
+            this.$q.notify({
+              type: 'negative',
+              message: `Terjadi kesalahan, refresh (F5)`
+            })
+          })
+      },
+      notif() {
+        this.$q.loading.show()
+        this.$http.get('/api/changestatusnotifkoperasi', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.getNotif()
+            const temp = window.location;
+            const ss = temp.toString()
+              .split("/")
+            if (ss[ss.length - 1] !== 'notifikasiksu') {
+              this.$router.push('/notifikasiksu')
+            } else {
+              this.$q.loading.hide()
+            }
           })
       }
     },
