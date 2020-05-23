@@ -1,9 +1,11 @@
 package io.github.sandy.controller;
 
+import com.google.api.client.http.GenericUrl;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import io.github.sandy.ErrorCode.Err;
 import io.github.sandy.additional.ExportExcel;
+import io.github.sandy.gdrive.DriveQuickstart;
 import io.github.sandy.model.*;
 import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
@@ -101,7 +103,7 @@ public class KoperasiController {
     }
 
     @RequestMapping(value = "/api/getallkoperasi", method = RequestMethod.GET)
-    public List<Map<String, Object>> get() throws IOException {
+    public List<Map<String, Object>> get() throws Exception {
         List<Map<String, Object>> data = new ArrayList<>();
         List<Map<String, Object>> koperasis = koperasiRepository.findByIsHaveKoperasi();
         for (Map<String, Object> koperasi : koperasis) {
@@ -116,9 +118,13 @@ public class KoperasiController {
             res.put("noIzinKoperasi", koperasi.get("no_izin_koperasi"));
             res.put("haveKoperasi", koperasi.get("have_koperasi"));
             if (koperasi.get("logo_koperasi") != null) {
-                File files = new File("");
-                FileInputStream file = new FileInputStream(files.getAbsoluteFile() + (String) koperasi.get("logo_koperasi"));
-                res.put("logoKoperasi", IOUtils.toByteArray(file));
+                DriveQuickstart driveQuickstart = new DriveQuickstart();
+                InputStream files = driveQuickstart.getFile((String) koperasi.get("logo_koperasi"));
+//                FileInputStream file = new FileInputStream(files.get);
+//                String ss = files.getFullFileExtension();
+//                GenericUrl url = new GenericUrl();
+                res.put("logoKoperasi", IOUtils.toByteArray(files));
+                System.out.println();
             } else {
                 res.put("logoKoperasi", null);
             }

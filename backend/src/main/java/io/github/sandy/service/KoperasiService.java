@@ -2,6 +2,7 @@ package io.github.sandy.service;
 
 import io.github.sandy.ErrorCode.Err;
 import io.github.sandy.config.AuthorizationServerConfiguration;
+import io.github.sandy.gdrive.DriveQuickstart;
 import io.github.sandy.model.*;
 import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
@@ -92,6 +93,13 @@ public class KoperasiService {
         koperasi.setEmail(requestbody.getEmail());
         koperasi.setUser(userRepository.getOne((Integer) user.get("id")));
         String path = saveImage(requestbody.getImage());
+        if(!path.isEmpty()){
+            DriveQuickstart driveQuickstart = new DriveQuickstart();
+            File t = new File("");
+            File file = new File(t.getAbsolutePath() + path);
+            path = driveQuickstart.uploadLogo(file);
+            file.delete();
+        }
         koperasi.setLogoKoperasi(path);
         koperasiRepository.save(koperasi);
 
@@ -336,8 +344,15 @@ public class KoperasiService {
         return data;
     }
 
-    public void buatLaporan(Integer id, Integer tahun, MultipartFile file) {
+    public void buatLaporan(Integer id, Integer tahun, MultipartFile file) throws Exception {
         String pathLaporan = saveLaporan(file);
+        DriveQuickstart driveQuickstart = new DriveQuickstart();
+        File t = new File("");
+        File files = new File(t.getAbsolutePath() + pathLaporan);
+        pathLaporan = driveQuickstart.uploadSpreedSheet(files);
+        files.delete();
+
+
         LaporanKoperasi laporanKoperasi = new LaporanKoperasi();
         laporanKoperasi.setCreatedAt(new Date());
         laporanKoperasi.setIdKoperasi(id);

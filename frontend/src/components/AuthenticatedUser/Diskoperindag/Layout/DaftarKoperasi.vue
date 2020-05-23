@@ -33,7 +33,7 @@
             {{ props.row.noIzinKoperasi }}
           </q-td>
           <q-td key="logoKoperasi" :props="props">
-            <div v-if="props.row.logoKoperasi">
+            <div v-if="props.row.logoKoperasi!==null">
               <q-avatar>
                 <img :src="dataUrl(props.row.logoKoperasi)" alt="">
               </q-avatar>

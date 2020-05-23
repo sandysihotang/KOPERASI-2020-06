@@ -214,7 +214,7 @@
       downloadFile(response, filename) {
         // It is necessary to create a new blob object with mime-type explicitly set
         // otherwise only Chrome works like it should
-        const newBlob = new Blob([response], { type: 'application/vnd.ms-excel' })
+        const newBlob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
 
         // IE doesn't allow using a blob object directly as link href
         // instead it is necessary to use msSaveOrOpenBlob
@@ -228,7 +228,7 @@
         const data = window.URL.createObjectURL(newBlob)
         const link = document.createElement('a')
         link.href = data
-        link.download = `${filename}.xls`
+        link.download = `${filename}.xlsx`
         link.click()
         setTimeout(() => {
           // For Firefox it is necessary to delay revoking the ObjectURL

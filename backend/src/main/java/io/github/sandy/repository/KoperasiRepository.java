@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface KoperasiRepository extends JpaRepository<Koperasi, Integer> {
     @Query(
             value = "SELECT nama_koperasi, koperasi.id, jenis_koperasi, nama_pendiri, alamat_koperasi, " +
-                    "tahun_berdiri_koperasi, koperasi.email, no_izin_koperasi, users.have_koperasi FROM koperasi " +
+                    "tahun_berdiri_koperasi, koperasi.email, no_izin_koperasi, users.have_koperasi,logo_koperasi FROM koperasi " +
                     "INNER JOIN users " +
                     "ON users.id = koperasi.id_user " +
                     "WHERE users.have_koperasi != 0",
