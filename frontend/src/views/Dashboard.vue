@@ -6,7 +6,7 @@
       className="text-white" height-hint="98">
       <q-toolbar>
         <q-toolbar-title>
-          Koperasi
+          TobaKo
         </q-toolbar-title>
         <q-tabs align="left">
           <q-route-tab to="#home" label="Beranda"/>

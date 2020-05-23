@@ -79,6 +79,29 @@ public class AuthenticationController {
         return data;
     }
 
+    @RequestMapping(value = "/checkcredential", method = RequestMethod.POST)
+    public Map<String, Object> hello(@RequestBody Requestbody request) {
+        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> user = userRepository.getUserUsername(request.getUsername());
+        if(user.isEmpty()){
+            data.put("exist", false);
+            data.put("error", "Username atau Password yang anda masukkan salah");
+        }
+
+        if(!(Boolean) user.get("enabled")){
+            if((Integer) user.get("have_koperasi") == 0 ){
+                data.put("exist", false);
+                data.put("error", "Akun anda telah dinonaktifkan oleh Koperasi.");
+            } else {
+                data.put("exist", false);
+                data.put("error", "Silahkan menunggu aktivasi dari DISKOPERINDAG");
+            }
+        } else {
+            data.put("exist", true);
+        }
+        return data;
+    }
+
     @RequestMapping(value = "/api/currentuser", method = RequestMethod.GET)
     public User getUser(HttpServletRequest request) {
         User user = userDetailRepository.findByUsername(request.getUserPrincipal().getName()).get();

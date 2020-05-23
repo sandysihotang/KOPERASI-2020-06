@@ -75,28 +75,44 @@
           data.set('grant_type', 'password');
           data.set('username', this.form.username);
           data.set('password', this.form.password);
-          this.$http.post('oauth/token', data, {
-            auth: {
-              username: 'mobile',
-              password: 'pin',
-            },
-          })
-            .then((e) => {
-              this.$auth.setToken(e.data.access_token, (e.data.expires_in * 1000) + Date.now());
-              this.$http.get('api/login/currentuser', {
-                headers: this.$auth.getHeader(),
-              })
-                .then((res) => {
-                  this.$auth.setAuthenticatedUser(res.data.userDetail);
-                  this.$auth.setUserRole(res.data.name);
-                  this.$auth.setHaveKoperasi(res.data.haveKoperasi);
-                  if (parseInt(localStorage.getItem('havekoperasi')) === 3) {
-                    this.$http.get('/api/jeniskoperasi', {
-                      headers: this.$auth.getHeader()
+          this.$http.post('/checkcredential', { username: this.form.username })
+            .then((res) => {
+              if (res.data.exist) {
+                this.$http.post('oauth/token', data, {
+                  auth: {
+                    username: 'mobile',
+                    password: 'pin',
+                  },
+                })
+                  .then((e) => {
+                    this.$auth.setToken(e.data.access_token, (e.data.expires_in * 1000) + Date.now());
+                    this.$http.get('api/login/currentuser', {
+                      headers: this.$auth.getHeader(),
                     })
                       .then((res) => {
-                        this.$auth.setJenisKoperasi(res.data);
-                        window.location.href = '/';
+                        this.$auth.setAuthenticatedUser(res.data.userDetail);
+                        this.$auth.setUserRole(res.data.name);
+                        this.$auth.setHaveKoperasi(res.data.haveKoperasi);
+                        if (parseInt(localStorage.getItem('havekoperasi')) === 3) {
+                          this.$http.get('/api/jeniskoperasi', {
+                            headers: this.$auth.getHeader()
+                          })
+                            .then((res) => {
+                              this.$auth.setJenisKoperasi(res.data);
+                              window.location.href = '/';
+                            })
+                            .catch((err) => {
+                              this.$swal({
+                                position: 'center',
+                                type: 'error',
+                                title: 'Ada gangguan jaringan silahkan refresh (F5)',
+                                showConfirmButton: false,
+                                timer: 1500,
+                              });
+                            });
+                        } else {
+                          window.location.href = '/';
+                        }
                       })
                       .catch((err) => {
                         this.$swal({
@@ -106,33 +122,31 @@
                           showConfirmButton: false,
                           timer: 1500,
                         });
+                        this.loading = false;
                       });
-                  } else {
-                    window.location.href = '/';
-                  }
-                })
-                .catch((err) => {
-                  this.$swal({
-                    position: 'center',
-                    type: 'error',
-                    title: 'Ada gangguan jaringan silahkan refresh (F5)',
-                    showConfirmButton: false,
-                    timer: 1500,
+                    this.loading = false;
+                  })
+                  .catch((error) => {
+                    this.$swal({
+                      position: 'center',
+                      type: 'error',
+                      title: 'Username atau Password yang anda masukkan salah, Refresh(F5)',
+                      showConfirmButton: false,
+                      timer: 1500,
+                    });
+                    this.loading = false;
                   });
-                  this.loading = false;
+              } else {
+                this.$swal({
+                  position: 'center',
+                  type: 'error',
+                  title: res.data.error,
+                  showConfirmButton: false,
+                  timer: 1500,
                 });
-              this.loading = false;
+                this.loading = false;
+              }
             })
-            .catch((error) => {
-              this.$swal({
-                position: 'center',
-                type: 'error',
-                title: 'Silahkan Tunggu Konfirmasi dari Diskoperindag daerah anda',
-                showConfirmButton: false,
-                timer: 1500,
-              });
-              this.loading = false;
-            });
         } else {
           this.$swal({
             position: 'center',
