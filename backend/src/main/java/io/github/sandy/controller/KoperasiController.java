@@ -518,7 +518,7 @@ public class KoperasiController {
     }
 
     @RequestMapping(value = "/api/getstatekoperasi", method = RequestMethod.GET)
-    public Map<String, Object> getStateKoperasi(HttpServletRequest request) throws IOException {
+    public Map<String, Object> getStateKoperasi(HttpServletRequest request) throws Exception {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
@@ -526,9 +526,9 @@ public class KoperasiController {
         Map<String, Object> data = new HashMap<>();
         data.put("nama", koperasi.get("nama_koperasi"));
         if (koperasi.get("logo_koperasi") != null) {
-            File files = new File("");
-            FileInputStream file = new FileInputStream(String.format("%s%s", files.getAbsoluteFile(), koperasi.get("logo_koperasi")));
-            data.put("logoKoperasi", IOUtils.toByteArray(file));
+            DriveQuickstart driveQuickstart = new DriveQuickstart();
+            InputStream files = driveQuickstart.getFile((String) koperasi.get("logo_koperasi"));
+            data.put("logoKoperasi", IOUtils.toByteArray(files));
         } else {
             data.put("logoKoperasi", null);
         }
