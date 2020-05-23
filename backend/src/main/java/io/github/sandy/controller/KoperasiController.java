@@ -556,9 +556,9 @@ public class KoperasiController {
         Map<String, Object> anggotaKoperasi = angotaKoperasiRepository.getFirstByUser((Integer) user.get("id"));
         Map<String, Object> koperasi = koperasiRepository.getKoperasiID((Integer) anggotaKoperasi.get("id_koperasi"));
         if (koperasi.get("logo_koperasi") != null) {
-            File files = new File("");
-            FileInputStream file = new FileInputStream(files.getAbsoluteFile() + (String) koperasi.get("logo_koperasi"));
-            data.put("logoKoperasi", IOUtils.toByteArray(file));
+            DriveQuickstart driveQuickstart = new DriveQuickstart();
+            InputStream files = driveQuickstart.getFile((String) koperasi.get("logo_koperasi"));
+            data.put("logoKoperasi", IOUtils.toByteArray(files));
         } else {
             data.put("logoKoperasi", null);
         }
