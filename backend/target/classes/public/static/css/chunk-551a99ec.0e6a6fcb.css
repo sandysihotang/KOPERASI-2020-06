@@ -1,1 +1,0 @@
-table{width:100%;border-collapse:collapse}[dir] tr:nth-of-type(odd){background:#eee}th{color:#fff;font-weight:700}[dir] th{background:#333}[dir] td,[dir] th{padding:6px;border:1px solid #ccc}[dir=ltr] td,[dir=ltr] th{text-align:left}[dir=rtl] td,[dir=rtl] th{text-align:right}
