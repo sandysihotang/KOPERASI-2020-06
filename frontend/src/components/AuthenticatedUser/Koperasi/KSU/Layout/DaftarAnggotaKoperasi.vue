@@ -174,7 +174,7 @@
           })
           .catch((error) => {
             this.$q.loading.hide()
-            this.showAlert(error.response.data.error_description, 'error')
+            this.showAlert(error.response.data.err, 'error')
           })
       },
       onInput(val, id) {

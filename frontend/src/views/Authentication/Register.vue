@@ -151,7 +151,7 @@
             this.loading = false;
           })
           .catch((error) => {
-            this.showAlert(error.response.data.error_description, 'error');
+            this.showAlert(error.response.data.err, 'error');
             this.loading = false;
           });
       },
