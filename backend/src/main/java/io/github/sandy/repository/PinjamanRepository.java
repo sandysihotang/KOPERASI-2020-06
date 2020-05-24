@@ -99,4 +99,14 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
             "AND status = 6",
             nativeQuery = true)
     List<Map<String, Object>> getLaporanPinjaman(Integer idKoperasi, Date from, Date to);
+
+    @Query(value = "select case when (" +
+            "select count(*) from angsuran a " +
+            "inner join peminjaman p on a.id_pinjaman = p.id " +
+            "where p.id_koperasi = ?1 and a.status_bayar = false" +
+            ") > 0 then (select sum(angsuran_pokok) from angsuran a " +
+            "inner join peminjaman p on a.id_pinjaman = p.id " +
+            "where p.id_koperasi = ?1 and a.status_bayar = false" +
+            ") else 0 end" , nativeQuery = true)
+    Integer getpinjamanbelumbayar(Integer id);
 }

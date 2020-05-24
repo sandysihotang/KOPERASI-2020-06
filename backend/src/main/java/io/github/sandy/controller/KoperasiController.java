@@ -467,6 +467,19 @@ public class KoperasiController {
         return data;
     }
 
+    @RequestMapping(value = "/api/getpinjamanfortransasaksi", method = RequestMethod.GET)
+    public HashMap<String, Integer> getPinjamanForTransaksi(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        HashMap<String, Integer> data = new HashMap<>();
+        data.put("pinjamanbelumbayar", pinjamanRepository.getpinjamanbelumbayar((Integer) koperasi.get("id")));
+        data.put("pinjamanterbayar", (pinjamanRepository.existsByKoperasiAndStatus((Integer) koperasi.get("id"), 6) ? pinjamanRepository.getPinjaman((Integer) koperasi.get("id"), 6) : 0));
+        data.put("pinjamanJatuhTempo", pinjamanRepository.getPinjamanJatuhTempo((Integer) koperasi.get("id")));
+        return data;
+    }
+
 
     @RequestMapping(value = "/api/getcolumnmember", method = RequestMethod.GET)
     public String getcolumn(HttpServletRequest request) {
