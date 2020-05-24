@@ -93,7 +93,7 @@ public class KoperasiService {
         koperasi.setEmail(requestbody.getEmail());
         koperasi.setUser(userRepository.getOne((Integer) user.get("id")));
         String path = saveImage(requestbody.getImage());
-        if(!path.isEmpty()){
+        if (!path.isEmpty()) {
             DriveQuickstart driveQuickstart = new DriveQuickstart();
             File t = new File("");
             File file = new File(t.getAbsolutePath() + path);
@@ -152,7 +152,7 @@ public class KoperasiService {
         koperasiRepository.save(changeStateForm);
     }
 
-    public void saveUser(Requestbody requestbody, Koperasi koperasi) {
+    public void saveUser(Requestbody requestbody, Map<String, Object> koperasi) {
         User user = new User();
         user.setUsername(requestbody.getUsername());
         user.setPassword(auth.passwordEncoder.encode(requestbody.getPassword()));
@@ -177,7 +177,7 @@ public class KoperasiService {
 
         AnggotaKoperasi anggotaKoperasi = new AnggotaKoperasi();
         anggotaKoperasi.setData(requestbody.getFieldData());
-        anggotaKoperasi.setKoperasi(koperasi);
+        anggotaKoperasi.setKoperasi(koperasiRepository.getOne((Integer) koperasi.get("id")));
         anggotaKoperasi.setUser(user);
 
         angotaKoperasiRepository.save(anggotaKoperasi);
@@ -388,7 +388,7 @@ public class KoperasiService {
     public void saveEditLaporan(Integer id, Requestbody requestbody) {
         LaporanKoperasi laporanKoperasi = laporanKoperasiRepository.getOne(id);
         laporanKoperasi.setTahunLaporan(requestbody.getTahun());
-        if(requestbody.getFiles() != null){
+        if (requestbody.getFiles() != null) {
             String pathLaporan = saveImage(requestbody.getFiles());
             laporanKoperasi.setPathLaporan(pathLaporan);
             laporanKoperasi.setOriginalName(requestbody.getFiles().getOriginalFilename());

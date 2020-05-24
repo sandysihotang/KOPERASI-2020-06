@@ -511,8 +511,9 @@ public class KoperasiController {
             return new ResponseEntity<>(data, HttpStatus.FORBIDDEN);
         }
         Principal principal = request.getUserPrincipal();
-        String user = principal.getName();
-        Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(user).get().getKoperasi().getId());
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         koperasiService.saveUser(requestbody, koperasi);
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }

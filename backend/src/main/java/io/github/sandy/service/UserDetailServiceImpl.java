@@ -106,8 +106,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
     }
 
     public Err searchByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        if (optionalUser.isPresent()) {
+        Map<String,Object> user = userRepository.getUserUsername(username);
+        if (!user.isEmpty()) {
             return new Err(403, "Username already exist");
         }
         return new Err(200, "");
