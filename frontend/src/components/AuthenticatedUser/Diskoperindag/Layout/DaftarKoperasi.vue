@@ -188,12 +188,12 @@
       changeState(id) {
         this.$swal.fire({
           title: 'Anda yakin?',
-          text: `Ingin ${this.selected[id] ? 'menghidupkan' : 'nonaktifkan'} koperasi ini?`,
+          text: `Ingin ${this.selected[id] ? 'nonaktifkan' : 'mengaktifakan'} koperasi ini?`,
           type: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
-          confirmButtonText: `Ya, ${this.selected[id] ? 'aktifkan' : 'nonaktifkan'}!`,
+          confirmButtonText: `Ya, ${this.selected[id] ? 'nonaktifkan' : 'aktifkan'}!`,
         })
           .then((result) => {
             if (result.value) {
