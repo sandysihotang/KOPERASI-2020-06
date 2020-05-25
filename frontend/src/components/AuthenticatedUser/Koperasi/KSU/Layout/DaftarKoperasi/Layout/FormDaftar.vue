@@ -50,16 +50,11 @@
             title="Create an ad group"
             caption="Optional"
           >
-            <q-input filled square v-model="form.date"
-                     :rules="[val => !!val || 'Field is required']"
-                     label="Tahun Berdiri Koperasi">
-              <template v-slot:prepend>
-                <q-icon name="event"/>
-              </template>
+            <q-input filled v-model="form.date" label="Tanggal Berdiri" mask="date" :rules="['date']">
               <template v-slot:append>
-                <q-icon name="access_time" class="cursor-pointer">
-                  <q-popup-proxy transition-show="scale" transition-hide="scale">
-                    <q-date v-model="form.date"/>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                    <q-date v-model="form.date" @input="() => $refs.qDateProxy.hide()" />
                   </q-popup-proxy>
                 </q-icon>
               </template>
@@ -72,7 +67,7 @@
               </template>
             </q-input>
             <q-select filled square ref="input" clearable type="text" v-model="form.jenis"
-                      :options="options" :rules="['date', val => !!val || 'Field is required']"
+                      :options="options"
                       label="Jenis Koperasi">
               <template v-slot:prepend>
                 <q-icon name="list"/>
