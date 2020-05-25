@@ -135,7 +135,7 @@
               filled
               class="full-width"
               v-model="uangBeli"
-              label="Jumlah Beli"
+              label="Konfirmasi Harga"
               input-class="text-right"
             />
             <br>

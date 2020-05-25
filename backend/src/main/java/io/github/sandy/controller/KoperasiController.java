@@ -1,6 +1,5 @@
 package io.github.sandy.controller;
 
-import com.google.api.client.http.GenericUrl;
 import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import io.github.sandy.ErrorCode.Err;
