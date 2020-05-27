@@ -53,7 +53,7 @@
 
   export default {
     components: {
-      pdf: () => import('vue-pdf')
+      pdf: () => import('pdfvuer')
     },
     data() {
       return {
