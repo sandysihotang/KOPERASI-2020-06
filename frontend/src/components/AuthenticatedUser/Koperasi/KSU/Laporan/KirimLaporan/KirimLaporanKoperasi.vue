@@ -33,7 +33,7 @@
     </div>
     <br>
     <div class="row" v-if="change">
-      <q-card>
+      <q-card class="full-width">
         <q-card-section v-if="pd === true">
           <pdf class="full-width" :src="`data:application/octet-stream;base64,${this.nn}`"></pdf>
         </q-card-section>

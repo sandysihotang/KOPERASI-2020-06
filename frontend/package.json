@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "start": "node server.js",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint"
@@ -26,7 +27,8 @@
     "quasar": "^1.9.11",
     "sass-loader": "^8.0.0",
     "vue": "^2.6.10",
-    "vue-pdf": "^4.0.8",
+    "express": "^4.17.1",
+    "vue-pdf": "~4.0.8",
     "vue-axios": "^2.1.5",
     "vue-chartjs": "^3.5.0",
     "vue-currency-input": "^1.18.2",
