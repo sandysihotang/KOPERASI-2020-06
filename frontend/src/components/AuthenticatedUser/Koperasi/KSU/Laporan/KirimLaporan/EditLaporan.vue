@@ -183,7 +183,6 @@
             this.$q.loading.hide()
           })
           .catch((err) => {
-            console.log(err)
             this.$q.notify({
               type: 'negative',
               message: `Terjadi kesalahan refresh (F5)`
