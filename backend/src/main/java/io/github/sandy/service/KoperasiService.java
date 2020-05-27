@@ -348,11 +348,11 @@ public class KoperasiService {
         String pathLaporan = saveLaporan(file);
         DriveQuickstart driveQuickstart = new DriveQuickstart();
         File t = new File("");
+        String[] split = file.getOriginalFilename().split("\\.");
+        String extensiFile = split[split.length - 1];
         File files = new File(t.getAbsolutePath() + pathLaporan);
-        pathLaporan = driveQuickstart.uploadSpreedSheet(files);
+        pathLaporan = driveQuickstart.uploadSpreedSheet(files, extensiFile);
         files.delete();
-
-
         LaporanKoperasi laporanKoperasi = new LaporanKoperasi();
         laporanKoperasi.setCreatedAt(new Date());
         laporanKoperasi.setIdKoperasi(id);
@@ -361,6 +361,7 @@ public class KoperasiService {
         laporanKoperasi.setTahunLaporan(tahun);
         laporanKoperasi.setStatus(1);
         laporanKoperasi.setUpdatedAt(new Date());
+        laporanKoperasi.setExtensiFile(extensiFile);
         laporanKoperasiRepository.save(laporanKoperasi);
     }
 
@@ -372,7 +373,7 @@ public class KoperasiService {
         File curFile = new File("");
         String helper = curFile.getAbsolutePath();
         String curDir = helper + "/backend/src/main/resources/static/laporan/";
-        String pict = name + ".xls";
+        String pict = files.getOriginalFilename();
         Path path = Paths.get(curDir + pict);
         byte[] images = new byte[0];
         try {
@@ -385,13 +386,22 @@ public class KoperasiService {
         }
     }
 
-    public void saveEditLaporan(Integer id, Requestbody requestbody) {
+    public void saveEditLaporan(Integer id, Requestbody requestbody) throws Exception {
         LaporanKoperasi laporanKoperasi = laporanKoperasiRepository.getOne(id);
         laporanKoperasi.setTahunLaporan(requestbody.getTahun());
         if (requestbody.getFiles() != null) {
-            String pathLaporan = saveImage(requestbody.getFiles());
+            MultipartFile file = requestbody.getFiles();
+            String pathLaporan = saveLaporan(file);
+            DriveQuickstart driveQuickstart = new DriveQuickstart();
+            File t = new File("");
+            String[] split = file.getOriginalFilename().split("\\.");
+            String extensiFile = split[split.length - 1];
+            File files = new File(t.getAbsolutePath() + pathLaporan);
+            pathLaporan = driveQuickstart.uploadSpreedSheet(files, extensiFile);
+            files.delete();
+            laporanKoperasi.setExtensiFile(extensiFile);
             laporanKoperasi.setPathLaporan(pathLaporan);
-            laporanKoperasi.setOriginalName(requestbody.getFiles().getOriginalFilename());
+            laporanKoperasi.setOriginalName(file.getOriginalFilename());
         }
         laporanKoperasiRepository.save(laporanKoperasi);
     }

@@ -18,7 +18,7 @@
                    label="Lihat Laporan" @click="lihatLaporan = true"/>
           </div>
           <div class="col">
-            <q-btn color="primary" icon="edit" :disable="selected.length === 0"
+            <q-btn color="primary" icon="edit" :disable="selected.length === 0 || selected[0].status === 3"
                    size="xs"
                    label="Edit Laporan" @click="editLaporan = true"/>
           </div>

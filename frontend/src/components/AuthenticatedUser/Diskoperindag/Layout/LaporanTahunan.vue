@@ -193,14 +193,23 @@
         this.status = (this.selected[0].status === 1 ? 'Request' : (this.selected[0].status === 2 ? 'In Review' : 'Approve'))
         this.change = true
       },
+      base64ToArrayBuffer(base64) {
+        const string = window.atob(base64);
+        const len = string.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = string.charCodeAt(i);
+        }
+        return bytes.buffer;
+      },
       download() {
         this.$q.loading.show()
         this.$http.get(`/api/downloadlaporankeuangan/${this.selected[0].id}`, {
           headers: this.$auth.getHeader(),
-          responseType: 'arraybuffer'
+          // responseType: 'arraybuffer'
         })
           .then((res) => {
-            this.downloadFile(res.data, 'laporankeuangan')
+            this.downloadFile(this.base64ToArrayBuffer(res.data.file), 'laporankeuangan', res.data.ext)
             this.$q.loading.hide()
           })
           .catch(() => {
@@ -211,37 +220,54 @@
             this.$q.loading.hide()
           })
       },
-      downloadFile(response, filename) {
-        // It is necessary to create a new blob object with mime-type explicitly set
-        // otherwise only Chrome works like it should
-        const newBlob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+      downloadFile(response, filename, ext) {
+        if (ext === 'xls' || ext === 'xlsx') {
+          const newBlob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
 
-        // IE doesn't allow using a blob object directly as link href
-        // instead it is necessary to use msSaveOrOpenBlob
-        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-          window.navigator.msSaveOrOpenBlob(newBlob)
-          return
+          if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(newBlob)
+            return
+          }
+          const data = window.URL.createObjectURL(newBlob)
+          const link = document.createElement('a')
+          link.href = data
+          link.download = `${filename}.xlsx`
+          link.click()
+          setTimeout(() => {
+            window.URL.revokeObjectURL(data)
+          }, 100)
+          this.$swal({
+            position: 'center',
+            type: 'success',
+            width: 300,
+            title: 'Berhasil Mengexport Data',
+            showConfirmButton: false,
+            timer: 1500
+          })
+        } else {
+          const newBlob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
+
+          if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(newBlob)
+            return
+          }
+          const data = window.URL.createObjectURL(newBlob)
+          const link = document.createElement('a')
+          link.href = data
+          link.download = `${filename}.docx`
+          link.click()
+          setTimeout(() => {
+            window.URL.revokeObjectURL(data)
+          }, 100)
+          this.$swal({
+            position: 'center',
+            type: 'success',
+            width: 300,
+            title: 'Berhasil Mengexport Data',
+            showConfirmButton: false,
+            timer: 1500
+          })
         }
-
-        // For other browsers:
-        // Create a link pointing to the ObjectURL containing the blob.
-        const data = window.URL.createObjectURL(newBlob)
-        const link = document.createElement('a')
-        link.href = data
-        link.download = `${filename}.xlsx`
-        link.click()
-        setTimeout(() => {
-          // For Firefox it is necessary to delay revoking the ObjectURL
-          window.URL.revokeObjectURL(data)
-        }, 100)
-        this.$swal({
-          position: 'center',
-          type: 'success',
-          width: 300,
-          title: 'Berhasil Mengexport Data',
-          showConfirmButton: false,
-          timer: 1500
-        })
       },
       getDate(date) {
         moment.lang('id')

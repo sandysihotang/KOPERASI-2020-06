@@ -121,19 +121,35 @@ public class DriveQuickstart {
         return file.getId();
     }
 
-    public String uploadSpreedSheet(java.io.File filePath) throws Exception {
+    public String uploadSpreedSheet(java.io.File filePath, String extensiFile) throws Exception {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         File fileMetadata = new File();
         fileMetadata.setName("Report");
-        fileMetadata.setMimeType("application/vnd.google-apps.spreadsheet");
-        FileContent mediaContent = new FileContent("application/vnd.ms-excel", filePath);
-        File file = service.files().create(fileMetadata, mediaContent)
-                .setFields("id")
-                .execute();
-        return file.getId();
+        if (extensiFile.equals("xls") || extensiFile.equals("xlsx")) {
+            fileMetadata.setMimeType("application/vnd.google-apps.spreadsheet");
+            FileContent mediaContent = new FileContent("application/vnd.ms-excel", filePath);
+            File file = service.files().create(fileMetadata, mediaContent)
+                    .setFields("id")
+                    .execute();
+            return file.getId();
+        } else if (extensiFile.equals("pdf")) {
+            fileMetadata.setMimeType("application/pdf");
+            FileContent mediaContent = new FileContent("application/pdf", filePath);
+            File file = service.files().create(fileMetadata, mediaContent)
+                    .setFields("id")
+                    .execute();
+            return file.getId();
+        } else {
+            fileMetadata.setMimeType("application/vnd.google-apps.document");
+            FileContent mediaContent = new FileContent("application/vnd.openxmlformats-officedocument.wordprocessingml.document", filePath);
+            File file = service.files().create(fileMetadata, mediaContent)
+                    .setFields("id")
+                    .execute();
+            return file.getId();
+        }
     }
 
     public InputStream getFile(String id) throws Exception {
@@ -145,12 +161,26 @@ public class DriveQuickstart {
         return file;
     }
 
-    public Drive.Files.Export getFileXLS(String id) throws Exception {
+    public Drive.Files.Export getFileXLS(String id, String extensi) throws Exception {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-        Drive.Files.Export file = service.files().export(id,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        if (extensi.equals("xlsx") || extensi.equals("xls")) {
+            Drive.Files.Export file = service.files().export(id, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            return file;
+        } else {
+            Drive.Files.Export file = service.files().export(id, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+            return file;
+        }
+    }
+
+    public Drive.Files.Get getFilePDF(String id) throws Exception {
+        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                .setApplicationName(APPLICATION_NAME)
+                .build();
+        Drive.Files.Get file = service.files().get(id);
         return file;
     }
 }

@@ -7,7 +7,7 @@
         </q-card-section>
         <q-separator/>
         <q-card-section>
-          <q-file filled bottom-slots type="file" v-model="model" label="Pilih File Excel" counter
+          <q-file filled bottom-slots type="file" v-model="model" label="Pilih File" counter
                   @input="changeFile">
             <template v-slot:prepend>
               <q-icon name="cloud_upload" @click.stop/>
@@ -16,7 +16,7 @@
               <q-icon name="close" @click.stop="model = null" class="cursor-pointer"/>
             </template>
             <template v-slot:hint>
-              File Excel
+              File
             </template>
           </q-file>
           <br>
@@ -34,7 +34,10 @@
     <br>
     <div class="row" v-if="change">
       <q-card>
-        <q-card-section>
+        <q-card-section v-if="pd === true">
+          <pdf class="full-width" :src="`data:application/octet-stream;base64,${this.nn}`"></pdf>
+        </q-card-section>
+        <q-card-section v-else>
           <div v-for="htm in nn" :key="htm">
             <div v-html="htm"></div>
           </div>
@@ -46,10 +49,15 @@
 
 <script>
   import XLSX from 'xlsx';
+  import mammoth from 'mammoth';
 
   export default {
+    components: {
+      pdf: () => import('vue-pdf')
+    },
     data() {
       return {
+        pd: false,
         file: null,
         nn: [],
         change: false,
@@ -104,27 +112,59 @@
       },
       changeFile(e) {
         this.excel = e
-        if (e.type !== 'application/vnd.ms-excel') {
+        this.pd = false
+        if (e === undefined) {
           this.$q.notify({
             type: 'negative',
-            message: `File Harus dengan Format xls / xlsx`
+            message: `File Harus dengan Format xls / xlsx, Docx dan Pdf`
           })
           this.model = null
-          return;
+          return
         }
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(e)
-        reader.onload = (e) => {
-          const table = Buffer.from(e.target.result)
-            .toString("base64")
-          const wb = XLSX.read(table, { type: 'base64' });
-          this.nn = []
-          for (let i = 0; i < wb.SheetNames.length; i++) {
-            const ws = wb.Sheets[wb.SheetNames[i]];
-            this.nn.push(XLSX.utils.sheet_to_html(ws, {}))
+        this.$q.loading.show();
+        if (e.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+          const reader = new FileReader();
+          reader.onloadend = (event) => {
+            const arrayBuffer = reader.result
+            mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
+              .then((resultObject) => {
+                this.nn.push(resultObject.value)
+              })
+            this.change = true
           }
-          this.change = true
+          reader.readAsArrayBuffer(e);
+        } else if (e.type === 'application/pdf') {
+          const reader = new FileReader();
+          reader.readAsArrayBuffer(e)
+          reader.onload = (e) => {
+            const table = Buffer.from(e.target.result)
+              .toString("base64")
+            this.nn = table
+            this.pd = true
+            this.change = true
+          }
+        } else if (e.type === 'application/vnd.ms-excel') {
+          const reader = new FileReader();
+          reader.readAsArrayBuffer(e)
+          reader.onload = (e) => {
+            const table = Buffer.from(e.target.result)
+              .toString("base64")
+            const wb = XLSX.read(table, { type: 'base64' });
+            this.nn = []
+            for (let i = 0; i < wb.SheetNames.length; i++) {
+              const ws = wb.Sheets[wb.SheetNames[i]];
+              this.nn.push(XLSX.utils.sheet_to_html(ws, {}))
+            }
+            this.change = true
+          }
+        } else {
+          this.$q.notify({
+            type: 'negative',
+            message: `File Harus dengan Format xls / xlsx, Docx dan Pdf`
+          })
+          this.model = null
         }
+        this.$q.loading.hide()
       },
       getData() {
         this.$http.get('/api/getonefile', {

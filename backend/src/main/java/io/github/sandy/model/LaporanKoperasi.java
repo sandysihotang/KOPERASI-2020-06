@@ -26,6 +26,9 @@ public class LaporanKoperasi implements Serializable {
     @Column(name = "status")
     private Integer status;
 
+    @Column(name = "extensi_file")
+    private String extensiFile;
+
     @Column(name = "created_at")
     private Date createdAt;
 
@@ -42,6 +45,14 @@ public class LaporanKoperasi implements Serializable {
 
     public Integer getStatus() {
         return status;
+    }
+
+    public String getExtensiFile() {
+        return extensiFile;
+    }
+
+    public void setExtensiFile(String extensiFile) {
+        this.extensiFile = extensiFile;
     }
 
     public void setStatus(Integer status) {

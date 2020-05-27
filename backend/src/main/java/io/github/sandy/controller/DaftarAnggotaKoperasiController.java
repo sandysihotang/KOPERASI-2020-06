@@ -66,11 +66,19 @@ public class DaftarAnggotaKoperasiController {
 //                laporanKoperasi.getPathLaporan()));
         Map<String, Object> data = new HashMap<>();
         DriveQuickstart driveQuickstart = new DriveQuickstart();
-        Drive.Files.Export file = driveQuickstart.getFileXLS(laporanKoperasi.getPathLaporan());
-        OutputStream outputStream = new ByteArrayOutputStream();
-        file.executeMediaAndDownloadTo(outputStream);
-        ByteArrayOutputStream bos = (ByteArrayOutputStream) outputStream;
-        data.put("file", bos.toByteArray());
+        if(!laporanKoperasi.getExtensiFile().equals("pdf")){
+            Drive.Files.Export file = driveQuickstart.getFileXLS(laporanKoperasi.getPathLaporan(),laporanKoperasi.getExtensiFile());
+            OutputStream outputStream = new ByteArrayOutputStream();
+            file.executeMediaAndDownloadTo(outputStream);
+            ByteArrayOutputStream bos = (ByteArrayOutputStream) outputStream;
+            data.put("file", bos.toByteArray());
+        }else {
+            OutputStream outputStream = new ByteArrayOutputStream();
+            driveQuickstart.getFilePDF(laporanKoperasi.getPathLaporan()).executeMediaAndDownloadTo(outputStream);
+            ByteArrayOutputStream bos = (ByteArrayOutputStream) outputStream;
+            data.put("file", bos.toByteArray());
+        }
+        data.put("ext", laporanKoperasi.getExtensiFile());
         System.out.println();
         return data;
     }
@@ -84,7 +92,7 @@ public class DaftarAnggotaKoperasiController {
     }
 
     @RequestMapping(value = "/api/downloadlaporankeuangan/{id}", method = RequestMethod.GET)
-    public void downloadLaporanKoperasi(@PathVariable("id") Integer id, HttpServletResponse response) throws Exception {
+    public Map<String, Object> downloadLaporanKoperasi(@PathVariable("id") Integer id, HttpServletResponse response) throws Exception {
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xls");
 //        File files = new File("");
@@ -95,16 +103,16 @@ public class DaftarAnggotaKoperasiController {
 
         Map<String, Object> data = new HashMap<>();
         DriveQuickstart driveQuickstart = new DriveQuickstart();
-        Drive.Files.Export file = driveQuickstart.getFileXLS(laporanKoperasi.getPathLaporan());
+        Drive.Files.Export file = driveQuickstart.getFileXLS(laporanKoperasi.getPathLaporan(), laporanKoperasi.getExtensiFile());
         OutputStream outputStream = new ByteArrayOutputStream();
         file.executeMediaAndDownloadTo(outputStream);
         ByteArrayOutputStream bos = (ByteArrayOutputStream) outputStream;
-        data.put("file", bos.toByteArray());
         InputStream bytearr =new ByteArrayInputStream(bos.toByteArray());
-
+        data.put("file", bos.toByteArray());
+        data.put("ext", laporanKoperasi.getExtensiFile());
 //                IOUtils.write(bos.toByteArray(), response.getOutputStream());
-        IOUtils.copy(bytearr, response.getOutputStream());
-//        return data;
+//        IOUtils.copy(bytearr, response.getOutputStream());
+        return data;
 
     }
 
@@ -194,7 +202,7 @@ public class DaftarAnggotaKoperasiController {
 
     @RequestMapping(value = "/api/simpaneditlaporan/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public void editLaporanKoperasi(@ModelAttribute Requestbody requestbody, @PathVariable("id") Integer id) {
+    public void editLaporanKoperasi(@ModelAttribute Requestbody requestbody, @PathVariable("id") Integer id) throws Exception {
         koperasiService.saveEditLaporan(id, requestbody);
     }
 }
