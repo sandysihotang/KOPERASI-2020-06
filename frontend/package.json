@@ -26,7 +26,7 @@
     "quasar": "^1.9.11",
     "sass-loader": "^8.0.0",
     "vue": "^2.6.10",
-    "pdfvuer": "^1.6.0",
+    "vue-pdf": "^4.0.8",
     "vue-axios": "^2.1.5",
     "vue-chartjs": "^3.5.0",
     "vue-currency-input": "^1.18.2",

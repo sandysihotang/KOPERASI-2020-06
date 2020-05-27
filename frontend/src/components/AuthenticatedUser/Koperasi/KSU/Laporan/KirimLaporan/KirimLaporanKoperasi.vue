@@ -52,9 +52,6 @@
   import mammoth from 'mammoth';
 
   export default {
-    components: {
-      pdf: () => import('pdfvuer')
-    },
     data() {
       return {
         pd: false,
