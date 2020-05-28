@@ -25,7 +25,7 @@ public class MailSender {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(email);
         msg.setSubject("Account Koperasi");
-        msg.setText(message + "<br/>" + text);
+        msg.setText(message + "\n\n" + text);
         javaMailSender.send(msg);
     }
 
