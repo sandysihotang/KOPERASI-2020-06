@@ -6,7 +6,7 @@
       </q-card-section>
       <q-separator/>
       <q-card-section v-if="pd === true">
-        <pdf :src="`data:application/octet-stream;base64,${this.nn}`"></pdf>
+        <iframe class="full-width full-height" :src="`data:application/pdf;base64,${this.nn}`"></iframe>
       </q-card-section>
       <q-card-section v-else>
         <div class="desc" v-for="htm in nn" :key="htm">

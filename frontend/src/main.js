@@ -6,7 +6,6 @@ import Auth from './store/index';
 import router from './router';
 import './quasar';
 
-Vue.component('pdf', () => import("vue-pdf"))
 Vue.use(swal);
 Vue.use(Auth);
 Vue.prototype.$http = axios.create({

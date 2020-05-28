@@ -35,7 +35,7 @@
     <div class="row" v-if="change">
       <q-card class="full-width">
         <q-card-section v-if="pd === true">
-          <pdf class="full-width" :src="`data:application/octet-stream;base64,${this.nn}`"></pdf>
+          <iframe class="full-width full-height" :src="`data:application/pdf;base64,${this.nn}`"></iframe>
         </q-card-section>
         <q-card-section v-else>
           <div v-for="htm in nn" :key="htm">

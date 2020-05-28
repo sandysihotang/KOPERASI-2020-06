@@ -200,6 +200,7 @@
               this.change(id);
             } else {
               this.$q.loading.show();
+              this.text = null
               this.getData();
               this.$q.loading.hide();
             }
@@ -209,6 +210,13 @@
         this.selected[id] = (state === 3);
       },
       change(id) {
+        if (this.text === null) {
+          this.$q.notify({
+            type: 'negative',
+            message: 'Isi pesan untuk koperasi'
+          })
+          return
+        }
         this.$q.loading.show();
         this.$http.post('/api/changestatekoperasi', {
           id,
