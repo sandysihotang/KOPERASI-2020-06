@@ -11,12 +11,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,8 +51,6 @@ public class KoperasiService {
     @Autowired
     DaftarAnggotaKoperasiRepository daftarAnggotaKoperasiRepository;
 
-    @Autowired
-    JavaMailSender javaMailSender;
 
     @Autowired
     AngotaKoperasiRepository angotaKoperasiRepository;
@@ -131,10 +131,10 @@ public class KoperasiService {
         }
     }
 
-    public void changeStateKoperasi(int id, String text, boolean state) {
+    public void changeStateKoperasi(int id, String text, boolean state) throws GeneralSecurityException, IOException, MessagingException {
         Map<String, Object> koperasi = koperasiRepository.getKoperasiID(id);
         MailSender mailSender = new MailSender();
-//        mailSender.sendEmailSetStateKoperasi(javaMailSender, (String) koperasi.get("email"), text, (state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
+        mailSender.sendEmailSetStateKoperasi((String) koperasi.get("email"), text, (state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
 
         userRepository.update((Integer) koperasi.get("id_user"), (!state ? 3 : 2));
     }

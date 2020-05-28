@@ -5,6 +5,7 @@ import com.itextpdf.text.log.LoggerFactory;
 import io.github.sandy.ErrorCode.Err;
 import io.github.sandy.additional.ExportExcel;
 import io.github.sandy.gdrive.DriveQuickstart;
+import io.github.sandy.gdrive.GmailQuickStart;
 import io.github.sandy.model.*;
 import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
@@ -25,9 +26,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -101,6 +108,20 @@ public class KoperasiController {
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/coba", method = RequestMethod.GET)
+    public void cal() throws IOException, GeneralSecurityException, MessagingException {
+        GmailQuickStart gmailQuickStart = new GmailQuickStart();
+//        gmailQuickStart.call();
+        Properties properties = new Properties();
+        Session session = Session.getDefaultInstance(properties, null);
+        MimeMessage mimeMessage = new MimeMessage(session);
+        mimeMessage.addFrom(new InternetAddress[]{new InternetAddress("TobaKo")});
+        mimeMessage.setRecipients(Message.RecipientType.TO, new InternetAddress[]{new InternetAddress("sandysihotang868@gmail.com")});
+        mimeMessage.setSubject("Testing Subject");
+        mimeMessage.setText("Testing Text");
+        gmailQuickStart.sendMessage("me", mimeMessage);
+    }
+
     @RequestMapping(value = "/api/getallkoperasi", method = RequestMethod.GET)
     public List<Map<String, Object>> get() throws Exception {
         List<Map<String, Object>> data = new ArrayList<>();
@@ -149,7 +170,7 @@ public class KoperasiController {
     }
 
     @RequestMapping(value = "/api/changestatekoperasi", method = RequestMethod.POST)
-    public ResponseEntity<Err> changeState(@RequestBody Requestbody requestbody, HttpServletRequest request) {
+    public ResponseEntity<Err> changeState(@RequestBody Requestbody requestbody, HttpServletRequest request) throws GeneralSecurityException, IOException, MessagingException {
         Principal principal = request.getUserPrincipal();
         String user = principal.getName();
         koperasiService.changeStateKoperasi(requestbody.getId(), requestbody.getText(), requestbody.isState());
@@ -621,7 +642,7 @@ public class KoperasiController {
         Map<String, Object> data = new HashMap<>();
         data.put("exist", exist);
         if (exist) {
-            data.put("total", notifikasiAnggotaRepository.getTotal((Integer)user.get("id")));
+            data.put("total", notifikasiAnggotaRepository.getTotal((Integer) user.get("id")));
         }
         return data;
     }
@@ -634,7 +655,7 @@ public class KoperasiController {
         Boolean exist = notifikasiAnggotaRepository.checkExistByUserHome((Integer) user.get("id"));
         Map<String, Object> data = new HashMap<>();
         data.put("exist", exist);
-        if(exist){
+        if (exist) {
             data.put("notif", notifikasiAnggotaRepository.getNotifikasiByUser((Integer) user.get("id")));
         }
         return data;
@@ -645,17 +666,17 @@ public class KoperasiController {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
-        notifikasiAnggotaRepository.ubahStatus((Integer)user.get("id"));
+        notifikasiAnggotaRepository.ubahStatus((Integer) user.get("id"));
     }
 
     @RequestMapping(value = "/api/nonactivememberkoperasi/{id}", method = RequestMethod.PUT)
-    public void nonAktifkanAnggota(@PathVariable("id") Integer id) {
+    public void nonAktifkanAnggota(@PathVariable("id") Integer id) throws GeneralSecurityException, IOException, MessagingException {
         AnggotaKoperasi anggotaKoperasi = angotaKoperasiRepository.getOne(id);
         User user = userRepository.getOne(anggotaKoperasi.getUser().getId());
         user.setEnabled(false);
         userRepository.save(user);
         MailSender mailSender = new MailSender();
-//        mailSender.sendEmailNonActiveAccountMember(javaMailSender, user.getEmail(), "Account anda telah di nonaktifkan");
+        mailSender.sendEmailNonActiveAccountMember(user.getEmail(), "Account anda telah di nonaktifkan");
 
     }
 

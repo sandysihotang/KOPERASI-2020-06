@@ -16,7 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +34,6 @@ public class AuthenticationController {
     @Autowired
     UserDetailServiceImpl userDetailService;
 
-    @Autowired
-    JavaMailSender javaMailSender;
 
     @Autowired
     UserRepository userRepository;
@@ -122,7 +123,7 @@ public class AuthenticationController {
     }
 
     @RequestMapping(value = "/api/terimaacc", method = RequestMethod.POST)
-    public void terima(@RequestBody Requestbody requestbody) {
+    public void terima(@RequestBody Requestbody requestbody) throws GeneralSecurityException, IOException, MessagingException {
         userDetailService.setEnableAcc(requestbody.getId());
     }
 }

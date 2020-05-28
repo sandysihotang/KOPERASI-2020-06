@@ -6,13 +6,15 @@ import io.github.sandy.model.*;
 import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.*;
 
 @Service
@@ -31,9 +33,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Autowired
     DetailUserRepository detailUserRepository;
-
-    @Autowired
-    JavaMailSender javaMailSender;
 
     @Autowired
     PermissionRepository permissionRepository;
@@ -139,11 +138,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
         return new Err(200, "");
     }
 
-    public void setEnableAcc(int id){
+    public void setEnableAcc(int id) throws GeneralSecurityException, IOException, MessagingException {
         User user = userRepository.getOne(id);
 
         MailSender mailSender = new MailSender();
-//        mailSender.sendEmailEnableAccount(javaMailSender,user.getEmail());
+        mailSender.sendEmailEnableAccount(user.getEmail());
 
         user.setEnabled(true);
         userRepository.save(user);
