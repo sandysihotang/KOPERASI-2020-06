@@ -10,7 +10,7 @@ Vue.component('pdf', () => import("vue-pdf"))
 Vue.use(swal);
 Vue.use(Auth);
 Vue.prototype.$http = axios.create({
-  baseURL: 'http://localhost:8089/',
+  // baseURL: 'http://localhost:8089/',
 });
 new Vue({
   router,

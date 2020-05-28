@@ -220,6 +220,8 @@ public class KoperasiService {
             long day = days + (Integer) pengaturanPinjaman.get("ambang_batas_denda");
             Double total = ((Double) pinjaman.get("jumlah_pinjaman") * (Double) pengaturanPinjaman.get("persentase_denda") / 100) * day;
             angsuran.setDenda(total);
+            angsuran.setTotalTagihan(angsuran.getAngsuranPokok() + angsuran.getDenda() + angsuran.getBunga());
+            angsuran.setTotalAngsuran(angsuran.getAngsuranPokok() + angsuran.getDenda() + angsuran.getBunga());
             angsuranRepository.save(angsuran);
             Boolean existNotif = notifikasiAnggotaRepository.checkExistBy(angsuran.getId());
             if (!existNotif || denda.intValue() != angsuran.getDenda().intValue()) {
