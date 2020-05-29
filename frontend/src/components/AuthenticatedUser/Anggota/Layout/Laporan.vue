@@ -26,7 +26,7 @@
             <q-icon name="fa fa-smile" size="xl"/>
           </div>
           <div class="text-black">
-            Anda Tidak mempunyai Notifikasi
+            Koperasi belum memiliki laporan tahunan
           </div>
         </center>
       </q-card-section>

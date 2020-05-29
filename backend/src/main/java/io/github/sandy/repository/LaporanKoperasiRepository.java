@@ -29,7 +29,7 @@ public interface LaporanKoperasiRepository extends JpaRepository<LaporanKoperasi
     List<Map<String, Object>> getAllLaporan();
 
     @Query(value = "SELECT CASE WHEN (" +
-            "SELECT count(*) from laporan_koperasi where id_koperasi = ?1" +
+            "SELECT count(*) from laporan_koperasi where id_koperasi = ?1 AND status = 3" +
             ") > 0 then true else false end",
             nativeQuery = true)
     Boolean existsByIdKoperasi(Integer id);
