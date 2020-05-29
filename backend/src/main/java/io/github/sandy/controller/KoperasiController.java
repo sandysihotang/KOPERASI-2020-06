@@ -98,6 +98,9 @@ public class KoperasiController {
     @Autowired
     NotifikasiAnggotaRepository notifikasiAnggotaRepository;
 
+    @Autowired
+    LaporanKoperasiRepository laporanKoperasiRepository;
+
     @RequestMapping(value = "/api/createkoperasi", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Err> createKoperasi(@ModelAttribute Requestbody requestbody, HttpServletRequest request) throws Exception {
@@ -248,6 +251,21 @@ public class KoperasiController {
         data.put("pengaturanField", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")).get("pattern_field"));
         data.put("anggota", angotaKoperasiRepository.getALlAnggotaKoperasiEnable((Integer) koperasi.get("id"), true));
         data.put("totalAnggota", angotaKoperasiRepository.getCountAnggota((Integer) koperasi.get("id"), true));
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getlaporankoperasiforanggota", method = RequestMethod.GET)
+    public Map<String, Object> getLaporanKoperasiAnggota(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> anggota = angotaKoperasiRepository.getByFirstByIdUser((Integer) user.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        Boolean exist = laporanKoperasiRepository.existsByIdKoperasi((Integer) anggota.get("id_koperasi"));
+        data.put("exist", exist);
+        if (exist) {
+            data.put("datatable", laporanKoperasiRepository.getAllByKoperasiAndStatus((Integer) anggota.get("id_koperasi")));
+        }
         return data;
     }
 

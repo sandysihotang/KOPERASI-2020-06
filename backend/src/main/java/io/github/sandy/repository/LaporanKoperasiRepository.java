@@ -18,9 +18,21 @@ public interface LaporanKoperasiRepository extends JpaRepository<LaporanKoperasi
             nativeQuery = true)
     List<Map<String, Object>> getAllByKoperasi(Integer id);
 
+    @Query(value = "SELECT * FROM laporan_koperasi where id_koperasi = ?1 and status = 3 order by tahun_laporan desc ",
+            nativeQuery = true)
+    List<Map<String, Object>> getAllByKoperasiAndStatus(Integer id);
+
     @Query(value = "SELECT l.id, l.tahun_laporan, l.created_at, l.original_name," +
             "k.nama_koperasi,k.alamat_koperasi, l.status FROM laporan_koperasi l " +
             "INNER JOIN koperasi k on l.id_koperasi = k.id order by tahun_laporan desc ",
             nativeQuery = true)
     List<Map<String, Object>> getAllLaporan();
+
+    @Query(value = "SELECT CASE WHEN (" +
+            "SELECT count(*) from laporan_koperasi where id_koperasi = ?1" +
+            ") > 0 then true else false end",
+            nativeQuery = true)
+    Boolean existsByIdKoperasi(Integer id);
+
+
 }

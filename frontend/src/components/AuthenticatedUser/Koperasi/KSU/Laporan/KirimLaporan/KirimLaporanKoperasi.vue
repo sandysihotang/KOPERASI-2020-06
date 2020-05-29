@@ -35,7 +35,7 @@
     <div class="row" v-if="change">
       <q-card class="full-width">
         <q-card-section v-if="pd === true">
-          <iframe class="full-width full-height" :src="`data:application/pdf;base64,${this.nn}`"></iframe>
+          <embed class="full-width full-height" type="application/pdf" :src="`data:application/pdf;base64,${this.nn}#page=1`"/>
         </q-card-section>
         <q-card-section v-else>
           <div v-for="htm in nn" :key="htm">
@@ -125,9 +125,11 @@
             const arrayBuffer = reader.result
             mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
               .then((resultObject) => {
+                this.nn = []
                 this.nn.push(resultObject.value)
               })
             this.change = true
+            this.$q.loading.hide()
           }
           reader.readAsArrayBuffer(e);
         } else if (e.type === 'application/pdf') {
@@ -139,6 +141,7 @@
             this.nn = table
             this.pd = true
             this.change = true
+            this.$q.loading.hide()
           }
         } else if (e.type === 'application/vnd.ms-excel') {
           const reader = new FileReader();
@@ -153,6 +156,7 @@
               this.nn.push(XLSX.utils.sheet_to_html(ws, {}))
             }
             this.change = true
+            this.$q.loading.hide()
           }
         } else {
           this.$q.notify({
@@ -160,8 +164,17 @@
             message: `File Harus dengan Format xls / xlsx, Docx dan Pdf`
           })
           this.model = null
+          this.$q.loading.hide()
         }
-        this.$q.loading.hide()
+      },
+      base64ToArrayBuffer(base64) {
+        const string = window.atob(base64);
+        const len = string.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = string.charCodeAt(i);
+        }
+        return bytes.buffer;
       },
       getData() {
         this.$http.get('/api/getonefile', {

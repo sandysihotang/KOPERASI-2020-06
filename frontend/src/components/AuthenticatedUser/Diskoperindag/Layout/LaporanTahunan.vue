@@ -244,6 +244,28 @@
             showConfirmButton: false,
             timer: 1500
           })
+        } else if (ext === 'pdf') {
+          const newBlob = new Blob([response], { type: 'application/pdf' })
+          if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(newBlob)
+            return
+          }
+          const data = window.URL.createObjectURL(newBlob)
+          const link = document.createElement('a')
+          link.href = data
+          link.download = `${filename}.pdf`
+          link.click()
+          setTimeout(() => {
+            window.URL.revokeObjectURL(data)
+          }, 100)
+          this.$swal({
+            position: 'center',
+            type: 'success',
+            width: 300,
+            title: 'Berhasil Mengexport Data',
+            showConfirmButton: false,
+            timer: 1500
+          })
         } else {
           const newBlob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
 

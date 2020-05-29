@@ -103,12 +103,18 @@ public class DaftarAnggotaKoperasiController {
 
         Map<String, Object> data = new HashMap<>();
         DriveQuickstart driveQuickstart = new DriveQuickstart();
-        Drive.Files.Export file = driveQuickstart.getFileXLS(laporanKoperasi.getPathLaporan(), laporanKoperasi.getExtensiFile());
-        OutputStream outputStream = new ByteArrayOutputStream();
-        file.executeMediaAndDownloadTo(outputStream);
-        ByteArrayOutputStream bos = (ByteArrayOutputStream) outputStream;
-        InputStream bytearr =new ByteArrayInputStream(bos.toByteArray());
-        data.put("file", bos.toByteArray());
+        if(!laporanKoperasi.getExtensiFile().equals("pdf")){
+            Drive.Files.Export file = driveQuickstart.getFileXLS(laporanKoperasi.getPathLaporan(),laporanKoperasi.getExtensiFile());
+            OutputStream outputStream = new ByteArrayOutputStream();
+            file.executeMediaAndDownloadTo(outputStream);
+            ByteArrayOutputStream bos = (ByteArrayOutputStream) outputStream;
+            data.put("file", bos.toByteArray());
+        }else {
+            OutputStream outputStream = new ByteArrayOutputStream();
+            driveQuickstart.getFilePDF(laporanKoperasi.getPathLaporan()).executeMediaAndDownloadTo(outputStream);
+            ByteArrayOutputStream bos = (ByteArrayOutputStream) outputStream;
+            data.put("file", bos.toByteArray());
+        }
         data.put("ext", laporanKoperasi.getExtensiFile());
 //                IOUtils.write(bos.toByteArray(), response.getOutputStream());
 //        IOUtils.copy(bytearr, response.getOutputStream());
