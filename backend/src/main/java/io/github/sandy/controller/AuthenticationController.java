@@ -205,18 +205,16 @@ public class AuthenticationController {
         data.put("exist", exist);
         if (exist) {
             ResetPassword resPassword = resetPasswordRepository.findFirstByUniqueId(uuid);
-            if(resPassword.getStatus()){
+            if (resPassword.getStatus()) {
                 data.put("exist", false);
-                data.put("error","Password sudah pernah diganti sebelumnya");
+                data.put("error", "Password sudah pernah diganti sebelumnya");
             } else {
-                User user = userRepository.getOne(resPassword.getIdUser());
-                user.setPassword(auth.passwordEncoder.encode(requestbody.getPassword()));
-                userRepository.save(user);
+                userRepository.updateUser(resPassword.getIdUser(), auth.passwordEncoder.encode(requestbody.getPassword()));
                 ResetPassword up = resetPasswordRepository.getOne(resPassword.getId());
                 up.setStatus(true);
                 resetPasswordRepository.save(up);
             }
-        }else {
+        } else {
             data.put("error", "User tidak ditemukan");
         }
         return data;

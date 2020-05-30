@@ -69,4 +69,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "update users set have_koperasi= ?2 where id = ?1", nativeQuery = true)
     @Transactional
     void update(Integer id, Integer state);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update users set password= ?2 where id = ?1", nativeQuery = true)
+    @Transactional
+    void updateUser(Integer idUser, String encode);
 }
