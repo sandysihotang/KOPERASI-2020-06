@@ -15,7 +15,7 @@ import java.util.Properties;
 
 public class MailSender {
 
-    public void run(JavaMailSender javaMailSender){
+    public void run(JavaMailSender javaMailSender) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo("sandysihotang868@gmail.com");
         msg.setSubject("Confirm Register");
@@ -23,6 +23,7 @@ public class MailSender {
         javaMailSender.send(msg);
 
     }
+
     public void sendEmailEnableAccount(String email) throws GeneralSecurityException, MessagingException, IOException {
         GmailQuickStart gmailQuickStart = new GmailQuickStart();
         Properties properties = new Properties();
@@ -34,7 +35,8 @@ public class MailSender {
         mimeMessage.setText("Acoount anda telah diaktifkan oleh admin \n anda sudah dapat login kesistem");
         gmailQuickStart.sendMessage("me", mimeMessage);
     }
-    public void sendEmailSetStateKoperasi(String email, String text,String message) throws GeneralSecurityException, MessagingException, IOException {
+
+    public void sendEmailSetStateKoperasi(String email, String text, String message) throws GeneralSecurityException, MessagingException, IOException {
         GmailQuickStart gmailQuickStart = new GmailQuickStart();
         Properties properties = new Properties();
         Session session = Session.getDefaultInstance(properties, null);
@@ -55,6 +57,19 @@ public class MailSender {
         mimeMessage.setRecipients(Message.RecipientType.TO, new InternetAddress[]{new InternetAddress(email)});
         mimeMessage.setSubject("Account Koperasi");
         mimeMessage.setText(message);
+        gmailQuickStart.sendMessage("me", mimeMessage);
+    }
+
+    public void sendEmailResetPassword(String email, String baseUrl) throws Exception {
+        GmailQuickStart gmailQuickStart = new GmailQuickStart();
+        Properties properties = new Properties();
+        Session session = Session.getDefaultInstance(properties, null);
+        MimeMessage mimeMessage = new MimeMessage(session);
+        mimeMessage.addFrom(new InternetAddress[]{new InternetAddress("TobaKo")});
+        mimeMessage.setRecipients(Message.RecipientType.TO, new InternetAddress[]{new InternetAddress(email)});
+        mimeMessage.setSubject("Reset Password");
+        char petik = '"';
+        mimeMessage.setContent("<a href=" + petik + baseUrl + petik + ">Klik Untuk Reset Password</a>", "text/html; charset=utf-8");
         gmailQuickStart.sendMessage("me", mimeMessage);
     }
 }

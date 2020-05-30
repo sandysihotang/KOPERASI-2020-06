@@ -134,7 +134,7 @@ public class KoperasiService {
     public void changeStateKoperasi(int id, String text, boolean state) throws GeneralSecurityException, IOException, MessagingException {
         Map<String, Object> koperasi = koperasiRepository.getKoperasiID(id);
         MailSender mailSender = new MailSender();
-        mailSender.sendEmailSetStateKoperasi((String) koperasi.get("email"), text, (state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
+        mailSender.sendEmailSetStateKoperasi((String) koperasi.get("email"), text, (!state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
 
         userRepository.update((Integer) koperasi.get("id_user"), (!state ? 3 : 2));
     }

@@ -44,7 +44,7 @@
                   </q-btn>
                 </q-card-actions>
                 <q-card-section class="text-center q-pa-sm">
-                  <p class="text-grey-6">Forgot your password?</p>
+                  <p class="text-grey-6"><router-link to="/lupapassword">Lupa password?</router-link></p>
                 </q-card-section>
               </q-card>
             </div>
