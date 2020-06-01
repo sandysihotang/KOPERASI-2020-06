@@ -89,7 +89,7 @@
                         <q-stepper-navigation>
                           <q-btn v-if="step===2" :loading="loading" @click="register" unelevated
                                  size="lg"
-                                 color="purple-4" class="full-width text-white" label="Get Started">
+                                 color="purple-4" class="full-width text-white" label="Daftar Pemilik Koperasi">
                             <template v-slot:loading>
                               <q-spinner-hourglass class="on-left"/>
                               Loading...

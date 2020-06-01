@@ -73,7 +73,7 @@
           <q-stepper-navigation>
             <q-btn v-if="step===3" unelevated @click="saveAturan" :disable="Aturan"
                    size="lg"
-                   color="purple-4" class="full-width text-white" label="Get Started">
+                   color="purple-4" class="full-width text-white" label="Save Pengaturan">
             </q-btn>
             <q-btn v-else @click="$refs.stepper.next()" unelevated
                    size="lg"

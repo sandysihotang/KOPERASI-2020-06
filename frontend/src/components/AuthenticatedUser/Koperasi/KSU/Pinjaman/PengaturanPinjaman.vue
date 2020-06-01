@@ -85,7 +85,7 @@
           <q-stepper-navigation>
             <q-btn v-if="step===2" @click="save" unelevated
                    size="lg"
-                   color="purple-4" class="full-width text-white" label="Get Started">
+                   color="purple-4" class="full-width text-white" label="Simpan Pengaturan Pinjaman">
             </q-btn>
             <q-btn v-else @click="$refs.stepper.next()" unelevated
                    size="lg"
