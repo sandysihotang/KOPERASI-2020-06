@@ -631,13 +631,14 @@ public class KoperasiController {
     }
 
     @RequestMapping(value = "/api/getpengaturanpinjamanreqpinjaman", method = RequestMethod.GET)
-    public PengaturanPinjaman getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
+    public Map<String, Object> getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        AnggotaKoperasi anggotaKoperasi = angotaKoperasiRepository.findFirstByUser(user).get();
-        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(anggotaKoperasi.getKoperasi(), true)) {
-            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(anggotaKoperasi.getKoperasi(), true).get();
-            return pengaturanPinjamanRepository.findFirstById(koperasiPengaturanPinjaman.getPengaturanPinjaman().getId()).get();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> anggotaKoperasi = angotaKoperasiRepository.getByFirstByIdUser((Integer) user.get("id"));
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatusInPengaturan((Integer) anggotaKoperasi.get("id_koperasi"), true)) {
+            Map<String, Object> koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatusInPengaturan((Integer) anggotaKoperasi.get("id_koperasi"), true);
+            return pengaturanPinjamanRepository.getFirstById((Integer) koperasiPengaturanPinjaman.get("id_pengaturan"));
         }
         return null;
     }

@@ -145,7 +145,7 @@ public class PeminjamanController {
     }
 
     @RequestMapping(value = "/api/getdatapengajureqpinjaman", method = RequestMethod.GET)
-    public List<User> getDataPengajuSimpanan(HttpServletRequest request) {
+    public List<Map<String,Object>> getDataPengajuSimpanan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
@@ -154,15 +154,14 @@ public class PeminjamanController {
     }
 
     @RequestMapping(value = "/api/getpengaturanpinjamanreqpinjamaninpengurus", method = RequestMethod.GET)
-    public PengaturanPinjaman getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
+    public Map<String, Object> getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        Koperasi kop =koperasiRepository.getOne((Integer) koperasi.get("id"));
-        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(kop, true)) {
-            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(kop, true).get();
-            return pengaturanPinjamanRepository.findFirstById(koperasiPengaturanPinjaman.getPengaturanPinjaman().getId()).get();
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatusInPengaturan((Integer)koperasi.get("id"), true)) {
+            Map<String, Object> koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatusInPengaturan((Integer) koperasi.get("id"), true);
+            return pengaturanPinjamanRepository.getFirstById((Integer) koperasiPengaturanPinjaman.get("id_pengaturan"));
         }
         return null;
     }
