@@ -31,15 +31,11 @@ public class AktivasiSimpanan implements Serializable {
     @Column(name = "total_simpanan")
     private Long totalSimpanan;
 
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_koperasi", nullable = false)
-    private Koperasi koperasi;
+    @Column(name = "id_koperasi")
+    private Integer idKoperasi;
 
-    @JsonIgnoreProperties({"aktivasiSimpanan", "hibernateLazyInitializer", "handler"})
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_user", nullable = false)
-    private User user;
+    @Column(name = "id_user")
+    private Integer idUser;
 
     @JsonIgnoreProperties({"aktivasiSimpanan", "hibernateLazyInitializer", "handler"})
     @Fetch(FetchMode.JOIN)
@@ -113,19 +109,19 @@ public class AktivasiSimpanan implements Serializable {
         this.jenisSimpanan = jenisSimpanan;
     }
 
-    public Koperasi getKoperasi() {
-        return koperasi;
+    public Integer getIdKoperasi() {
+        return idKoperasi;
     }
 
-    public void setKoperasi(Koperasi koperasi) {
-        this.koperasi = koperasi;
+    public void setIdKoperasi(Integer idKoperasi) {
+        this.idKoperasi = idKoperasi;
     }
 
-    public User getUser() {
-        return user;
+    public Integer getIdUser() {
+        return idUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setIdUser(Integer idUser) {
+        this.idUser = idUser;
     }
 }

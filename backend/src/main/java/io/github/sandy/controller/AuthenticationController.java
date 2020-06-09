@@ -134,7 +134,7 @@ public class AuthenticationController {
         } else if (!(Boolean) user.get("enabled")) {
             if ((Integer) user.get("have_koperasi") == 0) {
                 data.put("exist", false);
-                data.put("error", "Akun anda telah dinonaktifkan oleh Koperasi.");
+                data.put("error", "Akun anda Sedang tidak aktif.");
             } else {
                 data.put("exist", false);
                 data.put("error", "Silahkan menunggu aktivasi dari DISKOPERINDAG");
@@ -155,7 +155,7 @@ public class AuthenticationController {
         } else if (!(Boolean) user.get("enabled")) {
             if ((Integer) user.get("have_koperasi") == 0) {
                 data.put("exist", false);
-                data.put("error", "Akun anda telah dinonaktifkan oleh Koperasi.");
+                data.put("error", "Akun anda sedang tidak aktif oleh Koperasi.");
             } else {
                 data.put("exist", false);
                 data.put("error", "Silahkan menunggu aktivasi dari DISKOPERINDAG");
@@ -177,9 +177,11 @@ public class AuthenticationController {
     }
 
     @RequestMapping(value = "/api/currentuser", method = RequestMethod.GET)
-    public User getUser(HttpServletRequest request) {
-        User user = userDetailRepository.findByUsername(request.getUserPrincipal().getName()).get();
-        return user;
+    public Map<String, Object> getUser(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String user = principal.getName();
+        Map<String, Object> current = userRepository.getUserUsername(user);
+        return current;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)

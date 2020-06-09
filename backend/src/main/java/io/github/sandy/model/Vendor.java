@@ -32,10 +32,8 @@ public class Vendor implements Serializable {
     @Column(name = "status")
     private Boolean status;
 
-    @JsonIgnoreProperties({"produk", "hibernateLazyInitializer", "handler"})
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_koperasi", nullable = false)
-    private Koperasi koperasi;
+    @Column(name = "id_koperasi")
+    private Integer idKoperasi;
 
     @JsonManagedReference
     @JsonIgnoreProperties({"vendor", "hibernateLazyInitializer", "handler"})
@@ -106,11 +104,11 @@ public class Vendor implements Serializable {
         this.alamatVendor = alamatVendor;
     }
 
-    public Koperasi getKoperasi() {
-        return koperasi;
+    public Integer getIdKoperasi() {
+        return idKoperasi;
     }
 
-    public void setKoperasi(Koperasi koperasi) {
-        this.koperasi = koperasi;
+    public void setIdKoperasi(Integer idKoperasi) {
+        this.idKoperasi = idKoperasi;
     }
 }

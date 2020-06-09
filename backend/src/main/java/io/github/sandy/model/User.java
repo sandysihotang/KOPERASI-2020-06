@@ -59,12 +59,6 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Pinjaman> pinjaman = new HashSet<>();
 
-    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
-    @Fetch(FetchMode.JOIN)
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<AktivasiSimpanan> aktivasiSimpanan = new HashSet<>();
-
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_user", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
@@ -73,14 +67,6 @@ public class User implements Serializable {
     private List<Role> roles;
 
     public User() {
-    }
-
-    public Set<AktivasiSimpanan> getAktivasiSimpanan() {
-        return aktivasiSimpanan;
-    }
-
-    public void setAktivasiSimpanan(Set<AktivasiSimpanan> aktivasiSimpanan) {
-        this.aktivasiSimpanan = aktivasiSimpanan;
     }
 
     public Koperasi getKoperasi() {

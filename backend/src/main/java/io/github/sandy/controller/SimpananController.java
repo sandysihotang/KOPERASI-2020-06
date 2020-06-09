@@ -68,7 +68,7 @@ public class SimpananController {
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        simpananService.saveAturanSimpanan(requestbody, koperasiRepository.getOne((Integer) koperasi.get("id")));
+        simpananService.saveAturanSimpanan(requestbody, (Integer) koperasi.get("id"));
     }
 
     @RequestMapping(value = "/api/aktivasisimpanan/{id}/{jenis_simpanan}", method = RequestMethod.POST)
@@ -80,16 +80,16 @@ public class SimpananController {
         String uname = principal.getName();
         Map<String, Object> u = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
-        User user = userRepository.getOne(id);
-        if (aktivasiSimpananRepository.existsByKoperasiAndUserAndJenisSimpanan(koperasiRepository.getOne((Integer) koperasi.get("id")), user, jenis_simpanan)) {
+//        User user = userRepository.getOne(id);
+        if (aktivasiSimpananRepository.existsByKoperasiAndUserAndJenisSimpanan((Integer) koperasi.get("id"), id, jenis_simpanan)) {
             return new ResponseEntity<>(new Err(400, ""), HttpStatus.OK);
         }
-        simpananService.saveActivasiSimpanan(requestbody, koperasi, user, jenis_simpanan);
+        simpananService.saveActivasiSimpanan(requestbody, koperasi, id, jenis_simpanan);
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/getdatapengajusimpanan", method = RequestMethod.GET)
-    public List<User> getDataPengajuSimpanan(HttpServletRequest request) {
+    public List<Map<String, Object>> getDataPengajuSimpanan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> u = userRepository.getUserUsername(uname);

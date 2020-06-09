@@ -289,11 +289,12 @@ public class KoperasiController {
         response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         Map<String, Object> data = new HashMap<>();
-        data.put("namaKoperasi", user.getKoperasi().getNamaKoperasi());
-        data.put("dataTable", produkRepository.getAllData(user.getKoperasi().getId()));
-        data.put("jumlahProduk", produkRepository.getTotalProduk(user.getKoperasi().getId()));
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        data.put("dataTable", produkRepository.getAllData((Integer) koperasi.get("id")));
+        data.put("jumlahProduk", produkRepository.getTotalProduk((Integer) koperasi.get("id")));
         ByteArrayInputStream byteArray = exportExcel.downloadLaporanProduk(data);
         IOUtils.copy(byteArray, response.getOutputStream());
     }

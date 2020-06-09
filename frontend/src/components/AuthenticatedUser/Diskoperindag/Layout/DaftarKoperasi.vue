@@ -188,7 +188,7 @@
       changeState(id) {
         this.$swal.fire({
           title: 'Anda yakin?',
-          text: `Ingin ${this.selected[id] ? 'nonaktifkan' : 'mengaktifakan'} koperasi ini?`,
+          text: `Ingin ${this.selected[id] ? 'nonaktifkan' : 'mengaktifkan'} koperasi ini?`,
           type: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',

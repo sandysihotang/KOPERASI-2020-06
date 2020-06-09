@@ -82,30 +82,35 @@ public class KoperasiService {
 
     public Err createKoperasi(Requestbody requestbody, String uname) throws Exception {
         Map<String, Object> user = userRepository.getUserUsername(uname);
-        Koperasi koperasi = new Koperasi();
+        //Koperasi koperasi = new Koperasi();
 
-        koperasi.setAlamatKoperasi(requestbody.getAlamat());
-        koperasi.setNamaKoperasi(requestbody.getName());
-        koperasi.setJenisKoperasi(requestbody.getJenis().trim().equals("Koperasi Serba Usaha (KSU)") ? 1 : 2);
-        koperasi.setNamaPendiri(requestbody.getPendiri());
-        koperasi.setNoIzinKoperasi(requestbody.getIzin());
-        koperasi.setTahunBerdiriKoperasi(new Date(requestbody.getDate()));
-        koperasi.setEmail(requestbody.getEmail());
-        koperasi.setUser(userRepository.getOne((Integer) user.get("id")));
+//        koperasi.setAlamatKoperasi(requestbody.getAlamat());
+//        koperasi.setNamaKoperasi(requestbody.getName());
+//        koperasi.setJenisKoperasi(requestbody.getJenis().trim().equals("Koperasi Serba Usaha (KSU)") ? 1 : 2);
+//        koperasi.setNamaPendiri(requestbody.getPendiri());
+//        koperasi.setNoIzinKoperasi(requestbody.getIzin());
+//        koperasi.setTahunBerdiriKoperasi(new Date(requestbody.getDate()));
+//        koperasi.setEmail(requestbody.getEmail());
+//        koperasi.setUser(userRepository.getOne((Integer) user.get("id")));
         String path = saveImage(requestbody.getImage());
-        if (!path.isEmpty()) {
+        if (path != null) {
             DriveQuickstart driveQuickstart = new DriveQuickstart();
             File t = new File("");
             File file = new File(t.getAbsolutePath() + path);
             path = driveQuickstart.uploadLogo(file);
             file.delete();
         }
-        koperasi.setLogoKoperasi(path);
-        koperasiRepository.save(koperasi);
+        //koperasi.setLogoKoperasi(path);
+        koperasiRepository.createKoperasi(requestbody.getAlamat(), requestbody.getName(),
+                requestbody.getJenis().trim().equals("Koperasi Serba Usaha (KSU)") ? 1 : 2,
+                requestbody.getPendiri(), requestbody.getIzin(), new Date(requestbody.getDate()),
+                requestbody.getEmail(), (Integer) user.get("id"), path);
+        //koperasiRepository.save(koperasi);
 
-        User user1 = userRepository.getOne((Integer) user.get("id"));
-        user1.setHaveKoperasi(2);
-        userRepository.save(user1);
+        userRepository.sethaveKoperasi((Integer) user.get("id"));
+//        User user1 = userRepository.getOne((Integer) user.get("id"));
+//        user1.setHaveKoperasi(2);
+//        userRepository.save(user1);
 
         return new Err(200, "Koperasi berhasil");
     }
@@ -126,7 +131,7 @@ public class KoperasiService {
             Files.write(path, images);
             return "/backend/src/main/resources/static/images/" + pict;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return null;
         }
     }
@@ -142,14 +147,9 @@ public class KoperasiService {
     public void saveFormRegisterMember(Map<String, Object> user, String pattern) {
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
 
-        FieldDaftarAnggota fieldDaftarAnggota = new FieldDaftarAnggota();
-        fieldDaftarAnggota.setKoperasi(koperasiRepository.getOne((Integer) koperasi.get("id")));
-        fieldDaftarAnggota.setPatternField(pattern);
+        daftarAnggotaKoperasiRepository.createHaveFieldKoperasi((Integer) koperasi.get("id"), pattern);
 
-        daftarAnggotaKoperasiRepository.save(fieldDaftarAnggota);
-
-        Koperasi changeStateForm = koperasiRepository.getOne((Integer) koperasi.get("id"));
-        koperasiRepository.save(changeStateForm);
+        koperasiRepository.haveField((Integer) koperasi.get("id"));
     }
 
     public void saveUser(Requestbody requestbody, Map<String, Object> koperasi) {

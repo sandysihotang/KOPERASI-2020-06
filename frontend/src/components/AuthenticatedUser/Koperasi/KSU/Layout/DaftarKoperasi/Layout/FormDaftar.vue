@@ -146,7 +146,7 @@
                 headers: this.$auth.getHeader(),
               })
                 .then((res) => {
-                  this.$auth.setHaveKoperasi(res.data.haveKoperasi);
+                  this.$auth.setHaveKoperasi(res.data.have_koperasi);
                   window.location.href = '/';
                 })
                 .catch((err) => {

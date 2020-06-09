@@ -3,8 +3,10 @@ package io.github.sandy.repository;
 import io.github.sandy.model.Koperasi;
 import io.github.sandy.model.TransaksiSimpanan;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,12 @@ public interface TransaksiSimpananRepository extends JpaRepository<TransaksiSimp
             "order by t.created_at DESC",
             nativeQuery = true)
     List<Map<String, Object>> findAllByKoperasi(Integer idKoperasi);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "INSERT INTO transaksi_simpanan(jumlah_transaksi, id_aktivasi,created_at, jenis_transaksi, kode_transaksi)" +
+            "VALUES (?1, ?2, ?3, ?4, ?5)", nativeQuery = true)
+    @Transactional
+    void insertToTransaksi(Integer jumlahTransaksi, Integer idAktivasim, Date createdAt, Integer jenisTransaksi, String kodeTransaksi);
 
     @Query(value = "SELECT t.jumlah_transaksi, t.id_aktivasi, t.created_at, t.kode_transaksi, t.jenis_transaksi," +
             " aktif, jenis_simpanan, total_simpanan, id_koperasi, id_user," +

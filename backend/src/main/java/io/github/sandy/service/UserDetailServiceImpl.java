@@ -139,12 +139,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
     }
 
     public void setEnableAcc(int id) throws GeneralSecurityException, IOException, MessagingException {
-        User user = userRepository.getOne(id);
+        Map<String, Object> user = userRepository.findFirstById(id);
 
         MailSender mailSender = new MailSender();
-        mailSender.sendEmailEnableAccount(user.getEmail());
+        mailSender.sendEmailEnableAccount((String) user.get("email"));
 
-        user.setEnabled(true);
-        userRepository.save(user);
+        userRepository.setEnablbe(id);
     }
 }

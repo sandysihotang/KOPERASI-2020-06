@@ -22,11 +22,8 @@ public class PenjualanProduk implements Serializable {
     @Column(name = "jumlah_beli")
     private Integer jumlahBeli;
 
-    @JsonBackReference
-    @JsonIgnoreProperties({"transaksiProduk", "hibernateLazyInitializer", "handler"})
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_koperasi", nullable = false)
-    private Koperasi koperasi;
+    @Column(name = "id_koperasi")
+    private Integer idKoperasi;
 
     @JsonBackReference
     @JsonIgnoreProperties({"transaksiProduk", "hibernateLazyInitializer", "handler"})
@@ -75,12 +72,12 @@ public class PenjualanProduk implements Serializable {
         this.status = status;
     }
 
-    public Koperasi getKoperasi() {
-        return koperasi;
+    public Integer getIdKoperasi() {
+        return idKoperasi;
     }
 
-    public void setKoperasi(Koperasi koperasi) {
-        this.koperasi = koperasi;
+    public void setIdKoperasi(Integer idKoperasi) {
+        this.idKoperasi = idKoperasi;
     }
 
     public Harga getHarga() {

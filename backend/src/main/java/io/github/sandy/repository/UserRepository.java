@@ -39,10 +39,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Map<String, Object> getUserUsername(String user);
 
 
-    @Query(value = "SELECT * FROM users u " +
+    @Query(value = "SELECT u.id,first_name, last_name, address, no_telepon FROM users u " +
             "INNER JOIN anggota_koperasi a ON u.id = a.id_user " +
+            "INNER JOIN user_detail ud on u.id = ud.user_id " +
             "WHERE a.id_koperasi = ?1", nativeQuery = true)
-    List<User> findAllForPengaju(Integer idKoperasi);
+    List<Map<String, Object>> findAllForPengaju(Integer idKoperasi);
 
     @Query(value = "SELECT first_name, last_name, ud.address, ud.no_telepon," +
             "a.id as id_aktivasi, u.id, a.aktif, a.jenis_simpanan, a.total_simpanan FROM users u " +
@@ -70,6 +71,16 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "update users set have_koperasi= ?2 where id = ?1", nativeQuery = true)
     @Transactional
     void update(Integer id, Integer state);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update users set enabled= true where id = ?1", nativeQuery = true)
+    @Transactional
+    void setEnablbe(Integer id);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update users set have_koperasi= 2 where id = ?1", nativeQuery = true)
+    @Transactional
+    void sethaveKoperasi(Integer id);
 
     @Modifying(clearAutomatically = true)
     @Query(value = "update users set password= ?2 where id = ?1", nativeQuery = true)

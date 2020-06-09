@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface PenjualanProdukRepository extends JpaRepository<PenjualanProduk, Integer> {
-    List<PenjualanProduk> findAllByKoperasiAndStatus(Koperasi koperasi, Boolean status);
+    List<PenjualanProduk> findAllByIdKoperasiAndStatus(Integer koperasi, Boolean status);
 
     @Query(value = "SELECT p.id, id_transaksi,  id_harga, keanggotaan, jumlah_beli," +
             " harga_beli, harga_jual_non_anggota, harga_jual_anggota, " +
@@ -26,7 +26,12 @@ public interface PenjualanProdukRepository extends JpaRepository<PenjualanProduk
             nativeQuery = true)
     List<Map<String, Object>> findAllByKoperasiAndStatusPen(Integer koperasi, Boolean status);
 
-    List<PenjualanProduk> findAllByTransaksiProduk(TransaksiProduk transaksiproduk);
+    @Query(value = "SELECT nama_produk, kode_produk, jumlah_beli, keanggotaan," +
+            "harga_jual_non_anggota, harga_jual_anggota from penjualan_produk " +
+            "INNER JOIN harga h on penjualan_produk.id_harga = h.id " +
+            "INNER JOIN produk p on h.id_produk = p.id WHERE penjualan_produk.id_transaksi = ?1",
+            nativeQuery = true)
+    List<Map<String, Object>> findAllByTransaksiProduk(Integer transaksiproduk);
 
     @Query(value = "select case when (SELECT count(*) FROM penjualan_produk where id_koperasi = ?1 and status = ?2) > 0 then true else false end",
             nativeQuery = true)

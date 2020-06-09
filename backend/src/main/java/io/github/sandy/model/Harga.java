@@ -31,10 +31,8 @@ public class Harga implements Serializable {
     @Column(name = "status")
     private Boolean status;
 
-    @JsonIgnoreProperties({"harga", "hibernateLazyInitializer", "handler"})
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_produk", nullable = false)
-    private Produk produk;
+    @Column(name = "id_produk")
+    private Integer idProduk;
 
     @JsonIgnoreProperties({"harga", "hibernateLazyInitializer", "handler"})
     @Fetch(FetchMode.JOIN)
@@ -60,6 +58,14 @@ public class Harga implements Serializable {
 
     public Integer getHargaBeli() {
         return hargaBeli;
+    }
+
+    public Integer getIdProduk() {
+        return idProduk;
+    }
+
+    public void setIdProduk(Integer idProduk) {
+        this.idProduk = idProduk;
     }
 
     public void setHargaBeli(Integer hargaBeli) {
@@ -90,11 +96,4 @@ public class Harga implements Serializable {
         this.status = status;
     }
 
-    public Produk getProduk() {
-        return produk;
-    }
-
-    public void setProduk(Produk produk) {
-        this.produk = produk;
-    }
 }

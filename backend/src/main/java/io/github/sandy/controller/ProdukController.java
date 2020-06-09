@@ -49,30 +49,38 @@ public class ProdukController {
     @Autowired
     KoperasiRepository koperasiRepository;
 
+    @Autowired
+    ExportExcel exportExcel;
+
     @RequestMapping(value = "/api/simpanvendor", method = RequestMethod.POST)
     public Vendor saveVendor(@RequestBody Requestbody requestbody, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        return produkService.saveVendor(user.getKoperasi(), requestbody);
+        String uname = principal.getName();
+        Map<String, Object> u = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
+        return produkService.saveVendor(koperasi, requestbody);
     }
 
     @RequestMapping(value = "/api/savekategori", method = RequestMethod.POST)
     public void saveKategori(@RequestBody Requestbody requestbody, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        produkService.saveKategori(user.getKoperasi(), requestbody.getKategori());
+        String uname = principal.getName();
+        Map<String, Object> u = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
+        produkService.saveKategori(koperasi, requestbody.getKategori());
     }
 
     @RequestMapping(value = "/api/getproduk/{kodeProduk}", method = RequestMethod.GET)
     public HashMap<String, Object> getProdukByKode(@PathVariable("kodeProduk") String kodeProduk, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
-        Boolean exist = produkRepository.existsByKodeProdukAndKoperasi(kodeProduk, user.getKoperasi());
+        Map<String, Object> u = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
+        Boolean exist = produkRepository.getExistByKodeProdukAndKoperasi(kodeProduk, (Integer)koperasi.get("id"));
         HashMap<String, Object> found = new HashMap<>();
         found.put("exist", exist);
         if (exist) {
-            found.put("data", produkRepository.getFirstByKodeProdukAndKoperasi(kodeProduk, user.getKoperasi()));
+            found.put("data", produkRepository.getFirstForScan(kodeProduk, (Integer)koperasi.get("id")));
         }
         return found;
     }
@@ -87,16 +95,18 @@ public class ProdukController {
     }
 
     @RequestMapping(value = "/api/getprodukbaruvendor/{idVendor}", method = RequestMethod.GET)
-    public List<ProdukBaru> getOptions(@PathVariable("idVendor") Integer idVendor) {
+    public List<Map<String, Object>> getOptions(@PathVariable("idVendor") Integer idVendor) {
         Vendor vendor = vendorRepository.getOne(idVendor);
-        return produkBaruRepository.getAllByVendor(vendor);
+        return produkBaruRepository.getPembelianProdukBaru(vendor.getId());
     }
 
     @RequestMapping(value = "/api/saveprodukbaru/{id}", method = RequestMethod.POST)
     public void saveProdukBaru(@RequestBody Requestbody requestbody, @PathVariable("id") Integer id, HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        produkService.saveProdukBaru(requestbody, user.getKoperasi(), id);
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        produkService.saveProdukBaru(requestbody, koperasi, id);
     }
 
     @RequestMapping(value = "/api/saveproduktambah/{idVendor}/{idProduk}", method = RequestMethod.POST)
@@ -126,7 +136,6 @@ public class ProdukController {
 
     @RequestMapping(value = "/api/download/{id}", method = RequestMethod.GET)
     public void download(@PathVariable("id") Integer idVendor, HttpServletResponse response) throws IOException {
-        ExportExcel exportExcel = new ExportExcel();
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
         ByteArrayInputStream stream = exportExcel.downloadBarangMasuk(vendorRepository.findById(idVendor).get());
@@ -152,9 +161,9 @@ public class ProdukController {
     }
 
     @RequestMapping(value = "/api/getprodukbyvendor/{id}", method = RequestMethod.GET)
-    public List<ProdukBaru> getDataProdukBaruByVendor(@PathVariable("id") Integer idVendor) {
+    public List<Map<String, Object>> getDataProdukBaruByVendor(@PathVariable("id") Integer idVendor) {
         Vendor vendor = vendorRepository.getOne(idVendor);
-        return produkBaruRepository.getAllByVendor(vendor);
+        return produkBaruRepository.getPembelianProdukBaru(vendor.getId());
     }
 
     @RequestMapping(value = "/api/getkodetransaksiproduk", method = RequestMethod.GET)
@@ -172,15 +181,14 @@ public class ProdukController {
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        Koperasi ko = koperasiRepository.getOne((Integer) koperasi.get("id"));
-        Boolean exist = produkRepository.existsByKodeProdukAndKoperasi(requestbody.getBarCode(), ko);
+        Boolean exist = produkRepository.getExistByKodeProdukAndKoperasi(requestbody.getBarCode(), (Integer) koperasi.get("id"));
         HashMap<String, Object> res = new HashMap<>();
         res.put("exist", exist);
         if (exist) {
-            Produk produk = produkRepository.getFirstByKodeProdukAndKoperasi(requestbody.getBarCode(), ko);
-            Harga harga = hargaRepository.getFirstByProdukAndStatus(produk, true);
-            res.put("id", produk.getId());
-            res.put("jumlah", produk.getJumlahProduk());
+            Map<String,Object> produk =  produkRepository.getFirstForScan(requestbody.getBarCode(), (Integer) koperasi.get("id"));
+            Harga harga = hargaRepository.getFirstByIdProdukAndStatus((Integer) produk.get("id"), true);
+            res.put("id", produk.get("id"));
+            res.put("jumlah", produk.get("jumlah_produk"));
             res.put("harga", (requestbody.getAnggota() ? harga.getHargaJualAnggota() : harga.getHargaJualNonAnggota()));
         }
         return res;
@@ -192,7 +200,7 @@ public class ProdukController {
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        produkService.tambahKeranjang(requestbody, koperasiRepository.getOne((Integer) koperasi.get("id")));
+        produkService.tambahKeranjang(requestbody, koperasi);
     }
 
     @RequestMapping(value = "/api/savetransaksi", method = RequestMethod.POST)
@@ -245,7 +253,7 @@ public class ProdukController {
     }
 
     @RequestMapping(value = "/api/getdetailtransaksiproduk/{id}", method = RequestMethod.GET)
-    public List<PenjualanProduk> getDetailTransaksiTerkini(@PathVariable("id") Integer id) {
-        return penjualanProdukRepository.findAllByTransaksiProduk(transaksiProdukRepository.getOne(id));
+    public List<Map<String, Object>> getDetailTransaksiTerkini(@PathVariable("id") Integer id) {
+        return penjualanProdukRepository.findAllByTransaksiProduk(id);
     }
 }

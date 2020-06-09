@@ -2,11 +2,14 @@ package io.github.sandy.additional;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.github.sandy.model.*;
+import io.github.sandy.repository.ProdukRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,7 +18,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Service
 public class ExportExcel {
+    @Autowired
+    ProdukRepository produkRepository;
+
     public String toIDR(Integer num) {
         String nums = String.format("%d", num);
 
@@ -81,8 +88,9 @@ public class ExportExcel {
             int totalHarga = 0;
             for (ProdukBaru produkBaru1 : vendor.getProdukBaru()) {
                 Row dataRow = sheet.createRow(i + 1);
-                dataRow.createCell(0).setCellValue(produkBaru1.getProduk().getNamaProduk());
-                dataRow.createCell(1).setCellValue(produkBaru1.getProduk().getKodeProduk());
+                Produk produk = produkRepository.findById(produkBaru1.getIdProduk()).get();
+                dataRow.createCell(0).setCellValue(produk.getNamaProduk());
+                dataRow.createCell(1).setCellValue(produk.getKodeProduk());
                 dataRow.createCell(2).setCellValue(produkBaru1.getJumlahProduk());
                 dataRow.createCell(3).setCellValue(toIDR(produkBaru1.getHargaBeli()));
                 dataRow.createCell(4).setCellValue(toIDR(produkBaru1.getHargaBeli() * produkBaru1.getJumlahProduk()));
@@ -745,13 +753,16 @@ public class ExportExcel {
         }
 
 
-        Set<AnggotaKoperasi> temp = (Set<AnggotaKoperasi>) data.get("anggota");
-        AnggotaKoperasi[] dataCol = new AnggotaKoperasi[temp.size()];
-        temp.toArray(dataCol);
-        for (int i = 0; i < dataCol.length; i++) {
+        Set<Map<String, Object>> temp = (Set<Map<String, Object>>) data.get("anggota");
+//        AnggotaKoperasi[] dataCol = new AnggotaKoperasi[temp.size()];
+//        ArrayList<AnggotaKoperasi> dataCol = new ArrayList<>(temp);
+//        temp.toArray(dataCol);
+        int i = 0;
+        for (Iterator<Map<String, Object>> it = temp.iterator(); it.hasNext(); ) {
             Row rowData = sheet.createRow(4 + i + 1);
             headerCellStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
-            JSONArray rowTable = new JSONArray(dataCol[i].getData());
+            Map<String, Object> a = it.next();
+            JSONArray rowTable = new JSONArray((String) a.get("data"));
             JSONObject temps = new JSONObject();
             for (int k = 0; k < rowTable.length(); k++) {
                 JSONObject jsonObject = (JSONObject) rowTable.get(k);
@@ -773,6 +784,7 @@ public class ExportExcel {
                 Cell cell = rowData.createCell(j + 1);
                 cell.setCellValue(String.valueOf(temps.get(cid.get(j))));
             }
+            i++;
         }
 
         sheet.autoSizeColumn(0);

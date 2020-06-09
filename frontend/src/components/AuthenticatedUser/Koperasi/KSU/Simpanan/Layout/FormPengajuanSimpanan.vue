@@ -101,19 +101,19 @@
             name: 'nama',
             label: 'Nama',
             align: 'center',
-            field: row => `${row.userDetail.firstName} ${row.userDetail.lastName}`,
+            field: row => `${row.first_name} ${row.last_name}`,
             sortable: true,
           }, {
             name: 'alamat',
             label: 'Alamat',
             align: 'center',
-            field: row => row.userDetail.address,
+            field: row => row.address,
             sortable: true,
           }, {
             name: 'notelepon',
             label: 'No Telepon',
             align: 'center',
-            field: row => row.userDetail.noTelepon,
+            field: row => row.no_telepon,
             sortable: true,
           },
         ],
@@ -194,7 +194,7 @@
         }
       },
       setNama() {
-        this.nama = `${this.selected[0].userDetail.firstName} ${this.selected[0].userDetail.lastName}`
+        this.nama = `${this.selected[0].first_name} ${this.selected[0].last_name}`
       },
       deleteName() {
         this.nama = null

@@ -1,17 +1,23 @@
 package io.github.sandy.repository;
 
 import io.github.sandy.model.*;
+import org.omg.CORBA.INTERNAL;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public interface AktivasiSimpananRepository extends JpaRepository<AktivasiSimpanan, Integer> {
-    Boolean existsByKoperasiAndUserAndJenisSimpanan(Koperasi koperasi, User user, Integer jenisSimpanan);
-
+    @Query(value = "select case when (" +
+            "SELECT count(*) from aktivasi_simpanan where id_koperasi=?1 AND id_user = ?2 AND jenis_simpanan = ?3" +
+            ") > 0 then true else false end",
+            nativeQuery = true)
+    Boolean existsByKoperasiAndUserAndJenisSimpanan(Integer koperasi, Integer user, Integer jenisSimpanan);
 
     @Query(value = "SELECT a.created_at, a.tanggal_mulai, a.total_simpanan, a.jenis_simpanan," +
             "a.aktif, first_name,last_name from aktivasi_simpanan a " +
