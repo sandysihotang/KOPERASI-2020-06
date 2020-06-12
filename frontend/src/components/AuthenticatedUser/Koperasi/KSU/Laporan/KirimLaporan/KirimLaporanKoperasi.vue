@@ -88,7 +88,7 @@
             } else {
               this.$q.notify({
                 type: 'positive',
-                message: 'Pengajuan Laporan Berhasil dilakukan'
+                message: 'Pengiriman Laporan Berhasil dilakukan'
               })
             }
             this.$q.loading.hide()

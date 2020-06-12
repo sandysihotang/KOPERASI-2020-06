@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-table
       :dense="$q.screen.lt.md"
-      title="Laporan Keuangan"
+      title="Daftar Laporan Tahunan"
       :data="data"
       :columns="columns"
       :filter="filter"
@@ -22,11 +22,12 @@
         <q-btn color="primary" icon="edit"
                :disable="selected.length === 0 || selected[0].status === 3"
                size="xs"
-               label="Change Status" @click="changes"/>
+               label="Ubah Status" @click="changes"/>
         <q-btn color="primary" icon="fa fa-download" :disable="selected.length === 0"
                size="xs"
-               label="Download Laporan" @click="download"/>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+               label="Unduh Laporan" @click="download"/>
+        <q-input borderless dense debounce="300" style="margin-left: 15px" v-model="filter"
+                 placeholder="Cari">
           <template v-slot:append>
             <q-icon name="search"/>
           </template>
@@ -126,19 +127,19 @@
             sortable: true,
           }, {
             name: 'file',
-            label: 'File (xls)',
+            label: 'File',
             align: 'center',
             field: row => row.original_name,
             sortable: true,
           }, {
             name: 'laporan',
-            label: 'Laporan (Tahun)',
+            label: 'Tahun Laporan',
             align: 'center',
             field: row => row.tahun_laporan,
             sortable: true,
           }, {
             name: 'pengajuan',
-            label: 'Tanggal Pengajuan',
+            label: 'Tanggal Pengiriman',
             align: 'center',
             field: row => this.getDate(row.created_at),
             sortable: true,

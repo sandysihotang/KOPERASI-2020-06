@@ -8,45 +8,50 @@
         >
           <div class="column q-pa-lg">
             <div class="row">
-              <q-card square class="shadow-24" style="width:300px;height:485px;">
-                <q-card-section class="bg-deep-purple-7">
-                  <h4 class="text-h5 text-white q-my-md">TobaKo</h4>
-                  <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
-                    <router-link to="/register">
-                      <q-btn round icon="add" color="purple-4"/>
-                    </router-link>
-                  </div>
-                </q-card-section>
-                <q-card-section>
-                  <q-form class="q-px-sm q-pt-xl">
-                    <q-input square clearable v-model="form.username" type="text" label="Username">
-                      <template v-slot:prepend>
-                        <q-icon name="person"/>
+              <q-form @submit="login">
+                <q-card square class="shadow-24" style="width:300px;height:485px;">
+                  <q-card-section class="bg-deep-purple-7">
+                    <h4 class="text-h5 text-white q-my-md">TobaKo</h4>
+                    <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
+                      <router-link to="/register">
+                        <q-btn round icon="add" color="purple-4"/>
+                      </router-link>
+                    </div>
+                  </q-card-section>
+                  <q-card-section>
+                    <div class="q-px-sm q-pt-xl">
+                      <q-input square clearable v-model="form.username" type="text"
+                               label="Username">
+                        <template v-slot:prepend>
+                          <q-icon name="person"/>
+                        </template>
+                      </q-input>
+                      <q-input
+                        square
+                        clearable v-model="form.password" type="password" label="Password">
+                        <template v-slot:prepend>
+                          <q-icon name="lock"/>
+                        </template>
+                      </q-input>
+                    </div>
+                  </q-card-section>
+                  <q-card-actions class="q-px-lg">
+                    <q-btn :loading="loading" unelevated
+                           size="lg"
+                           color="purple-4" class="full-width text-white" label="Masuk" type="submit">
+                      <template v-slot:loading>
+                        <q-spinner-hourglass class="on-left"/>
+                        Loading...
                       </template>
-                    </q-input>
-                    <q-input
-                      square
-                      clearable v-model="form.password" type="password" label="Password">
-                      <template v-slot:prepend>
-                        <q-icon name="lock"/>
-                      </template>
-                    </q-input>
-                  </q-form>
-                </q-card-section>
-                <q-card-actions class="q-px-lg">
-                  <q-btn :loading="loading" @click="login" unelevated
-                         size="lg"
-                         color="purple-4" class="full-width text-white" label="Sign In">
-                    <template v-slot:loading>
-                      <q-spinner-hourglass class="on-left"/>
-                      Loading...
-                    </template>
-                  </q-btn>
-                </q-card-actions>
-                <q-card-section class="text-center q-pa-sm">
-                  <p class="text-grey-6"><router-link to="/lupapassword">Lupa password?</router-link></p>
-                </q-card-section>
-              </q-card>
+                    </q-btn>
+                  </q-card-actions>
+                  <q-card-section class="text-center q-pa-sm">
+                    <p class="text-grey-6">
+                      <router-link to="/lupapassword">Lupa password?</router-link>
+                    </p>
+                  </q-card-section>
+                </q-card>
+              </q-form>
             </div>
           </div>
         </q-page>

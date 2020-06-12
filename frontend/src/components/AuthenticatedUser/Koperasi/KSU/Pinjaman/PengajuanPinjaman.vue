@@ -29,7 +29,7 @@
                    icon="check" @click="persetujuan"/>
           </div>
           <div class="col">
-            <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+            <q-input borderless dense debounce="300" v-model="filter" placeholder="Cari">
               <template v-slot:append>
                 <q-icon name="search"/>
               </template>

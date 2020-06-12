@@ -30,7 +30,7 @@
                     >
                       <q-step
                         :name="1"
-                        title="Account"
+                        title="Akun"
                         icon="settings"
                         :done="step > 1"
                       >
@@ -139,7 +139,7 @@
         this.$http.post('/register', this.form)
           .then((e) => {
             const { data } = e;
-            this.showAlert('Registrasi Account Berhasil', 'success');
+            this.showAlert('Registrasi Akun Berhasil', 'success');
             this.form.username = null;
             this.form.password = null;
             this.form.firstName = null;

@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-table
       :dense="$q.screen.lt.md"
-      title="Account yang pending"
+      title="Akun yang pending"
       :data="data"
       :columns="columns"
       row-key="name"
@@ -41,7 +41,7 @@
         </q-tr>
       </template>
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Cari">
           <template v-slot:append>
             <q-icon name="search"/>
           </template>

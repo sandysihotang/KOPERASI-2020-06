@@ -12,7 +12,7 @@
       <template v-slot:top-right>
         <q-btn size="xs" color="green" label="Detail Transaksi" icon="print"
                @click="detailTransaksi" :disable="selected.length === 0"/>&nbsp;
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Cari">
           <template v-slot:append>
             <q-icon name="search"/>
           </template>

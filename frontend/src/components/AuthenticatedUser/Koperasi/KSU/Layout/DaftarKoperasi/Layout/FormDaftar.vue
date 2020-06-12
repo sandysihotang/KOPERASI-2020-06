@@ -47,8 +47,7 @@
           <q-step
             :name="2"
             prefix="2"
-            title="Create an ad group"
-            caption="Optional"
+            title="Pertanyaan Untuk Koperasi"
           >
             <q-input filled v-model="form.date" label="Tanggal Berdiri" mask="date" :rules="['date']">
               <template v-slot:append>
@@ -78,7 +77,7 @@
           <q-step
             :name="3"
             prefix="3"
-            title="Create an ad"
+            title="Logo Koperasi"
           >
             <div class="row">
               <div class="col-md-2"/>
