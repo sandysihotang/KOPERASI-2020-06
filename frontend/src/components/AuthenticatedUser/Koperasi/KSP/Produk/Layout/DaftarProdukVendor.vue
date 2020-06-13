@@ -4,7 +4,7 @@
       <q-card-section>
         <q-table
           :dense="$q.screen.lt.md"
-          title="Daftar Barang yang dibeli"
+          title="Daftar Barang yang Dibeli"
           :data="data"
           :columns="columns"/>
       </q-card-section>

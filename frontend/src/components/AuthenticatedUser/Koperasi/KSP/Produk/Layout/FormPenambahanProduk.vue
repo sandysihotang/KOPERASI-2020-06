@@ -108,7 +108,7 @@
               />
               <br>
               <center>
-                <q-btn label="Cari Barang" type="submit" color="primary"/>
+                <q-btn label="Tambah Barang" type="submit" color="primary"/>
               </center>
             </q-form>
           </q-card-section>

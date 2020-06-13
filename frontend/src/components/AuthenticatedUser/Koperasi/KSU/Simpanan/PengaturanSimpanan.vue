@@ -101,7 +101,7 @@
     },
     methods: {
       existAturan() {
-        this.$http.get('da', {
+        this.$http.get('/api/existaturansimpanan', {
           headers: this.$auth.getHeader()
         })
           .then((res) => {
