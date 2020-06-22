@@ -31,6 +31,7 @@
             v-model="tenor"
             label="Tenor (Bulan)"
             mask="## Bln"
+            :hint="`Min Tenor:${aturan.min_tenor} Bulan, Max Tenor:${aturan.max_tenor} Bulan` "
             fill-mask="0"
             reverse-fill-mask
             unmasked-value
@@ -61,21 +62,24 @@
         <q-item>
           <q-item-section>Total Angsuran</q-item-section>
           <q-item-section>:</q-item-section>
-          <q-item-section>{{ toIDR(parseInt(((price/100) / tenor) + ((price/100) * persentase / 100))) }}
+          <q-item-section>{{ toIDR(parseInt(((price/100) / tenor) + ((price/100) * persentase /
+            100))) }}
           </q-item-section>
         </q-item>
         <q-item>
           <q-item-section>Total Bunga/Jasa</q-item-section>
           <q-item-section>:</q-item-section>
-          <q-item-section>{{ toIDR(parseInt((price / 100) * persentase / 100 * tenor)) }}</q-item-section>
+          <q-item-section>{{ toIDR(parseInt((price / 100) * persentase / 100 * tenor)) }}
+          </q-item-section>
         </q-item>
         <q-item>
           <q-item-section>Total Pinjaman</q-item-section>
           <q-item-section>:</q-item-section>
-          <q-item-section>{{ toIDR(parseInt((price/100) + ((price/100) * persentase / 100 * tenor))) }}
+          <q-item-section>{{ toIDR(parseInt((price/100) + ((price/100) * persentase / 100 * tenor)))
+            }}
           </q-item-section>
         </q-item>
-        <q-btn color="primary" class="full-width" @click="ajukanPinjaman">Ajukan Pinjaman</q-btn>
+        <q-btn color="primary" class="full-width" v-close-popup @click="ajukanPinjaman">Ajukan Pinjaman</q-btn>
       </q-list>
     </q-card>
 
@@ -117,6 +121,7 @@
   export default {
     data() {
       return {
+        aturan: [],
         showHandle: false,
         price: 0,
         jaminan: null,
@@ -124,27 +129,7 @@
         nama: null,
         namaPengaju: false,
         data: [],
-        columns: [
-          {
-            name: 'nama',
-            label: 'Nama',
-            align: 'center',
-            field: row => `${row.first_name} ${row.last_name}`,
-            sortable: true,
-          }, {
-            name: 'alamat',
-            label: 'Alamat',
-            align: 'center',
-            field: row => row.address,
-            sortable: true,
-          }, {
-            name: 'notelepon',
-            label: 'No Telepon',
-            align: 'center',
-            field: row => row.no_telepon,
-            sortable: true,
-          },
-        ],
+        columns: [],
         selected: [],
         filter: '',
         persentase: null,
@@ -153,7 +138,7 @@
     },
     methods: {
       setNama() {
-        this.nama = `${this.selected[0].first_name} ${this.selected[0].last_name}`
+        this.nama = `${this.selected[0][this.columns[0].name]}`
       },
       deleteName() {
         this.nama = null
@@ -168,7 +153,52 @@
           headers: this.$auth.getHeader()
         })
           .then((res) => {
-            this.data = res.data
+            const datas = res.data
+            const columns = JSON.parse(datas.pengaturan);
+            this.columns = []
+            for (let i = 0; i < columns.length; i++) {
+              this.columns.push(
+                {
+                  name: columns[i].cid,
+                  label: columns[i].label,
+                  align: 'center',
+                  field: columns[i].cid,
+                  sortable: true,
+                }
+              )
+            }
+            this.data = []
+            const data = datas.anggota
+            for (let i = 0; i < data.length; i++) {
+              let str = `{"id" : ${data[i].id},`
+              const obj = JSON.parse(data[i].data)
+              for (let j = 0; j < obj.length; j++) {
+                str = `${str} "${obj[j].uid}":`
+                if (obj[j].value instanceof Object) {
+                  const val = Object.values(obj[j].value)
+                  for (let k = 0; k < val.length; k++) {
+                    if (k === val.length - 1) {
+                      if (j === obj.length - 1) {
+                        str = `${str} ${val[k]}"`
+                      } else {
+                        str = `${str} ${val[k]}",`
+                      }
+                    } else if (k === 0) {
+                      str = `${str} "${val[k]}`
+                    } else {
+                      str = `${str} ${val[k]}`
+                    }
+                  }
+                } else if (j === obj.length - 1) {
+                  str = `${str} "${obj[j].value}"`
+                } else {
+                  str = `${str} "${obj[j].value}",`
+                }
+              }
+              str = `${str} }`
+              const ll = JSON.parse(str)
+              this.data.push(ll)
+            }
             this.$q.loading.hide()
           })
           .catch(() => {
@@ -198,6 +228,20 @@
         return res;
       },
       ajukanPinjaman() {
+        if (this.tenor < this.aturan.min_tenor) {
+          this.$q.notify({
+            type: 'negative',
+            message: `Tenor yang anda pilih tidak boleh kurang dari ${this.aturan.min_tenor}`
+          })
+          return;
+        }
+        if (this.tenor > this.aturan.max_tenor) {
+          this.$q.notify({
+            type: 'negative',
+            message: `Tenor yang anda pilih tidak boleh lebih dari ${this.aturan.max_tenor}`
+          })
+          return;
+        }
         if (parseInt(this.price) === 0 || parseInt(this.tenor) === 0 || this.jaminan.length === 0) {
           this.$q.notify({
             type: 'negative',
@@ -242,6 +286,7 @@
           headers: this.$auth.getHeader(),
         })
           .then((res) => {
+            this.aturan = res.data
             this.persentase = res.data.bunga_pinjaman
             this.id = res.data.id
             this.$q.loading.hide()

@@ -514,7 +514,7 @@ public class KoperasiController {
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         HashMap<String, Integer> data = new HashMap<>();
         data.put("pinjamanbelumbayar", pinjamanRepository.getpinjamanbelumbayar((Integer) koperasi.get("id")));
-        data.put("pinjamanterbayar", (pinjamanRepository.existsByKoperasiAndStatus((Integer) koperasi.get("id"), 6) ? pinjamanRepository.getPinjaman((Integer) koperasi.get("id"), 6) : 0));
+        data.put("pinjamanterbayar", pinjamanRepository.getpinjamanSudahBayarbelumbayar((Integer) koperasi.get("id")));
         data.put("pinjamanJatuhTempo", pinjamanRepository.getPinjamanJatuhTempo((Integer) koperasi.get("id")));
         return data;
     }
@@ -554,7 +554,7 @@ public class KoperasiController {
 
     @RequestMapping(value = "/api/saveanggota", method = RequestMethod.POST)
     public ResponseEntity<Err> saveMemberKoperasi(@RequestBody Requestbody requestbody, HttpServletRequest request) {
-        Err data = userDetailService.check(requestbody);
+        Err data = userDetailService.checkAnggota(requestbody);
         if (data.getErrCode() == 404) {
             return new ResponseEntity<>(data, HttpStatus.FORBIDDEN);
         }

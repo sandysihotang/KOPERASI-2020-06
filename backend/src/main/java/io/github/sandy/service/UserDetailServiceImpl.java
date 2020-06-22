@@ -103,6 +103,29 @@ public class UserDetailServiceImpl implements UserDetailsService {
         }
         return new Err(200, "");
     }
+    public Err checkAnggota(Requestbody requestbody) {
+        HashMap<String, String> data = new HashMap<>();
+        data.put("Username", requestbody.getUsername());
+        data.put("Password", requestbody.getPassword());
+        data.put("Email", requestbody.getEmail());
+        for (String i : data.keySet()) {
+            if (data.get(i).isEmpty()) {
+                return new Err(404, i + " Must be Field");
+            }
+        }
+        String email = data.get("Email");
+        boolean foundAT = false;
+        for (int i = 0; i < email.length(); i++) {
+            if (email.charAt(i) == '@') {
+                foundAT = true;
+                break;
+            }
+        }
+        if (!foundAT) {
+            return new Err(404, "Email Must be Field with @");
+        }
+        return new Err(200, "");
+    }
 
     public Err searchByUsername(String username) throws UsernameNotFoundException {
         Map<String,Object> user = userRepository.getUserUsername(username);

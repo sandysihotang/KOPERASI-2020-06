@@ -55,23 +55,21 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
             nativeQuery = true)
     Boolean existsByKoperasiAndStatus(Integer koperasi, Integer status);
 
-    @Query(value = "SELECT first_name, last_name," +
+    @Query(value = "SELECT " +
             "peminjaman.id, jumlah_pinjaman, jaminan, kode_pinjaman, " +
             " status, date_pengajuan_diterima, tenor, created_at, updated_at," +
             " bunga_pinjaman, min_tenor, max_tenor, ambang_batas_denda, persentase_denda" +
             " from peminjaman " +
             "INNER JOIN users u on peminjaman.id_user = u.id " +
-            "INNER JOIN user_detail ud on u.id = ud.user_id " +
             "INNER JOIN pengaturan_pinjaman pp on peminjaman.id_pengaturan_pinjaman = pp.id where id_koperasi = ?1", nativeQuery = true)
     List<Map<String, Object>> getAllByKoperasi(Integer koperasi);
 
-    @Query(value = "SELECT first_name, last_name," +
+    @Query(value = "SELECT " +
             "peminjaman.id, jumlah_pinjaman, jaminan, kode_pinjaman, peminjaman.tenor," +
             " status, date_pengajuan_diterima,  peminjaman.created_at, updated_at," +
             " bunga_pinjaman, min_tenor, max_tenor, ambang_batas_denda, persentase_denda" +
             " from peminjaman " +
             "INNER JOIN users u on peminjaman.id_user = u.id " +
-            "INNER JOIN user_detail ud on u.id = ud.user_id " +
             "INNER JOIN pengaturan_pinjaman pp on peminjaman.id_pengaturan_pinjaman = pp.id where id_koperasi = ?1 and status = ?2", nativeQuery = true)
     List<Map<String, Object>> getAllByKoperasiAndStatus(Integer koperasi, Integer status);
 
@@ -89,10 +87,9 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
             nativeQuery = true)
     Map<String, Object> getFirstByUserAndStatus(Integer user, int status);
 
-    @Query(value = "SELECT p.id, kode_pinjaman, first_name, last_name, jaminan, jumlah_pinjaman, tenor," +
+    @Query(value = "SELECT p.id, kode_pinjaman, jaminan, jumlah_pinjaman, tenor," +
             "created_at, date_pengajuan_diterima, updated_at FROM peminjaman p " +
             "INNER JOIN users u on p.id_user = u.id " +
-            "inner join user_detail ud on u.id = ud.user_id " +
             "WHERE p.id_koperasi = ?1 " +
             "AND p.updated_at >= ?2 " +
             "AND p.updated_at <= ?3 " +
@@ -107,6 +104,16 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
             ") > 0 then (select sum(angsuran_pokok) from angsuran a " +
             "inner join peminjaman p on a.id_pinjaman = p.id " +
             "where p.id_koperasi = ?1 and a.status_bayar = false" +
-            ") else 0 end" , nativeQuery = true)
+            ") else 0 end", nativeQuery = true)
     Integer getpinjamanbelumbayar(Integer id);
+
+    @Query(value = "select case when (" +
+            "select count(*) from angsuran a " +
+            "inner join peminjaman p on a.id_pinjaman = p.id " +
+            "where p.id_koperasi = ?1 and a.status_bayar = false" +
+            ") > 0 then (select sum(angsuran_pokok) from angsuran a " +
+            "inner join peminjaman p on a.id_pinjaman = p.id " +
+            "where p.id_koperasi = ?1 and a.status_bayar = true" +
+            ") else 0 end", nativeQuery = true)
+    Integer getpinjamanSudahBayarbelumbayar(Integer id);
 }

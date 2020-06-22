@@ -50,7 +50,7 @@
       <br>
       <center>
         <q-btn color="red" label="Close" v-close-popup/>&nbsp;
-        <q-btn color="primary" label="Ajukan" @click="ajukan"/>
+        <q-btn color="primary" label="Ajukan" v-close-popup @click="ajukan"/>
       </center>
     </q-card-section>
     <q-dialog v-model="namaPengaju" persistent transition-show="scale"
@@ -96,27 +96,7 @@
         namaPengaju: false,
         filter: '',
         data: [],
-        columns: [
-          {
-            name: 'nama',
-            label: 'Nama',
-            align: 'center',
-            field: row => `${row.first_name} ${row.last_name}`,
-            sortable: true,
-          }, {
-            name: 'alamat',
-            label: 'Alamat',
-            align: 'center',
-            field: row => row.address,
-            sortable: true,
-          }, {
-            name: 'notelepon',
-            label: 'No Telepon',
-            align: 'center',
-            field: row => row.no_telepon,
-            sortable: true,
-          },
-        ],
+        columns: [],
         selected: [],
         select: null,
         options: [
@@ -194,7 +174,7 @@
         }
       },
       setNama() {
-        this.nama = `${this.selected[0].first_name} ${this.selected[0].last_name}`
+        this.nama = `${this.selected[0][this.columns[0].name]}`
       },
       deleteName() {
         this.nama = null
@@ -209,7 +189,52 @@
           headers: this.$auth.getHeader()
         })
           .then((res) => {
-            this.data = res.data
+            const datas = res.data
+            const columns = JSON.parse(datas.pengaturan);
+            this.columns = []
+            for (let i = 0; i < columns.length; i++) {
+              this.columns.push(
+                {
+                  name: columns[i].cid,
+                  label: columns[i].label,
+                  align: 'center',
+                  field: columns[i].cid,
+                  sortable: true,
+                }
+              )
+            }
+            this.data = []
+            const data = datas.anggota
+            for (let i = 0; i < data.length; i++) {
+              let str = `{"id" : ${data[i].id},`
+              const obj = JSON.parse(data[i].data)
+              for (let j = 0; j < obj.length; j++) {
+                str = `${str} "${obj[j].uid}":`
+                if (obj[j].value instanceof Object) {
+                  const val = Object.values(obj[j].value)
+                  for (let k = 0; k < val.length; k++) {
+                    if (k === val.length - 1) {
+                      if (j === obj.length - 1) {
+                        str = `${str} ${val[k]}"`
+                      } else {
+                        str = `${str} ${val[k]}",`
+                      }
+                    } else if (k === 0) {
+                      str = `${str} "${val[k]}`
+                    } else {
+                      str = `${str} ${val[k]}`
+                    }
+                  }
+                } else if (j === obj.length - 1) {
+                  str = `${str} "${obj[j].value}"`
+                } else {
+                  str = `${str} "${obj[j].value}",`
+                }
+              }
+              str = `${str} }`
+              const ll = JSON.parse(str)
+              this.data.push(ll)
+            }
             this.$q.loading.hide()
           })
           .catch(() => {

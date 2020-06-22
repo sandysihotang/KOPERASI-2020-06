@@ -29,12 +29,18 @@ public class SimpananService {
     KoperasiRepository koperasiRepository;
 
     public void saveAturanSimpanan(Requestbody requestbody, Integer koperasi) {
-        pengaturanSimpananRepository.saveAturanSimpanan(requestbody.getPokok(),koperasi,1);
-        pengaturanSimpananRepository.saveAturanSimpanan(requestbody.getWajib(),koperasi,2);
-        pengaturanSimpananRepository.saveAturanSimpanan(requestbody.getSukarela(),koperasi,3);
+        if (pengaturanSimpananRepository.adaAturan(koperasi)) {
+            pengaturanSimpananRepository.saveAturanSimpananUpdate(requestbody.getPokok(), koperasi, 1);
+            pengaturanSimpananRepository.saveAturanSimpananUpdate(requestbody.getWajib(), koperasi, 2);
+            pengaturanSimpananRepository.saveAturanSimpananUpdate(requestbody.getSukarela(), koperasi, 3);
+        } else {
+            pengaturanSimpananRepository.saveAturanSimpanan(requestbody.getPokok(), koperasi, 1);
+            pengaturanSimpananRepository.saveAturanSimpanan(requestbody.getWajib(), koperasi, 2);
+            pengaturanSimpananRepository.saveAturanSimpanan(requestbody.getSukarela(), koperasi, 3);
+        }
     }
 
-    public void saveActivasiSimpanan(Requestbody requestbody, Map<String,Object> koperasi, Integer user, Integer jenis_simpanan) {
+    public void saveActivasiSimpanan(Requestbody requestbody, Map<String, Object> koperasi, Integer user, Integer jenis_simpanan) {
 //        Koperasi koperasi1 = koperasiRepository.getOne();
         AktivasiSimpanan aktivasiSimpanan = new AktivasiSimpanan();
         aktivasiSimpanan.setAktif(true);
@@ -53,7 +59,7 @@ public class SimpananService {
 //        transaksiSimpanan.setJenisTransaksi(1);
 //        transaksiSimpanan.setKodeTransaksi();
 
-        transaksiSimpananRepository.insertToTransaksi(requestbody.getJumlahSimpanan().intValue(),aktivasiSimpanan.getId(),new Date(),
+        transaksiSimpananRepository.insertToTransaksi(requestbody.getJumlahSimpanan().intValue(), aktivasiSimpanan.getId(), new Date(),
                 1, getKodeTransaksiSimpanan((Integer) koperasi.get("id")));
 
     }

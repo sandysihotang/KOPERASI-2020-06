@@ -167,14 +167,6 @@ public class KoperasiService {
         RoleUser roleUser = new RoleUser(role.getId(), user.getId());
         roleUserRepository.save(roleUser);
 
-        UserDetail userDetail = new UserDetail();
-        userDetail.setFirstName(requestbody.getFirstName());
-        userDetail.setLastName(requestbody.getLastName());
-        userDetail.setUser(user);
-        userDetail.setAddress(requestbody.getAlamat());
-        userDetail.setNoTelepon(requestbody.getTelepon());
-        detailUserRepository.save(userDetail);
-
         AnggotaKoperasi anggotaKoperasi = new AnggotaKoperasi();
         anggotaKoperasi.setData(requestbody.getFieldData());
         anggotaKoperasi.setKoperasi(koperasiRepository.getOne((Integer) koperasi.get("id")));
@@ -284,7 +276,6 @@ public class KoperasiService {
         for (Map<String, Object> transaksiSimpanan : transaksiSimpanans) {
             Map<String, Object> temp = new HashMap<>();
             temp.put("noTransaksi", transaksiSimpanan.get("kode_transaksi"));
-            temp.put("nama", transaksiSimpanan.get("first_name") + " " + transaksiSimpanan.get("last_name"));
             temp.put("tipeTransaksi", ((Integer) transaksiSimpanan.get("jenis_transaksi") == 1 ? "Setor Dana" : "Tarik Dana"));
             temp.put("produk", ((Integer) transaksiSimpanan.get("jenis_simpanan") == 1 ? "Simpanan Pokok" : ((Integer) transaksiSimpanan.get("jenis_simpanan") == 2 ? "Simpanan Wajib" : "Simpanan Sukarela")));
             temp.put("tglTransaksi", transaksiSimpanan.get("created_at"));
@@ -304,7 +295,6 @@ public class KoperasiService {
         for (Map<String, Object> pinjaman : transaksiPinjaman) {
             Map<String, Object> temp = new HashMap<>();
             temp.put("noTransaksi", pinjaman.get("kode_pinjaman"));
-            temp.put("nama", pinjaman.get("first_name") + " " + pinjaman.get("last_name"));
             temp.put("jaminan", pinjaman.get("jaminan"));
             temp.put("jumlahPinjaman", pinjaman.get("jumlah_pinjaman"));
             temp.put("tenor", pinjaman.get("tenor"));

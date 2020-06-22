@@ -15,7 +15,6 @@
       >
         <q-form class="q-px-sm q-pt-xl">
           <q-input square clearable type="text" v-model="pokok" label="Minimal Jumlah Setoran"
-                   :disable="Aturan"
                    mask="Rp #,###,###,###"
                    fill-mask="0"
                    reverse-fill-mask
@@ -36,7 +35,6 @@
       >
         <q-form class="q-px-sm q-pt-xl">
           <q-input square clearable type="text" v-model="wajib" label="Minimal Jumlah Setoran"
-                   :disable="Aturan"
                    mask="Rp #,###,###,###"
                    fill-mask="0"
                    reverse-fill-mask
@@ -56,7 +54,6 @@
       >
         <q-form class="q-px-sm q-pt-xl">
           <q-input square clearable type="text" v-model="sukarela" label="Minimal Jumlah Setoran"
-                   :disable="Aturan"
                    mask="Rp #,###,###,###"
                    fill-mask="0"
                    reverse-fill-mask
@@ -71,16 +68,16 @@
       <template v-slot:navigation>
         <q-stepper-navigation>
           <q-stepper-navigation>
-            <q-btn v-if="step===3" unelevated @click="saveAturan" :disable="Aturan"
+            <q-btn v-if="step===3" unelevated @click="saveAturan"
                    size="lg"
-                   color="purple-4" class="full-width text-white" label="Save Pengaturan">
+                   color="purple-4" class="full-width text-white" label="Simpan Pengaturan">
             </q-btn>
             <q-btn v-else @click="$refs.stepper.next()" unelevated
                    size="lg"
-                   color="purple-4" class="full-width text-white" label="Continue">
+                   color="purple-4" class="full-width text-white" label="Lanjutkan">
             </q-btn>
             <q-btn v-if="step > 1" flat color="primary"
-                   @click="$refs.stepper.previous()" label="Back" class="q-ml-sm"/>
+                   @click="$refs.stepper.previous()" label="Kembali" class="q-ml-sm"/>
           </q-stepper-navigation>
         </q-stepper-navigation>
       </template>

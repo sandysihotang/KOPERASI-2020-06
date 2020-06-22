@@ -1,80 +1,107 @@
 <template>
   <div class="q-pa-md">
-    <q-table
-      :dense="$q.screen.lt.md"
-      title="Daftar Transaksi Simpanan"
-      :data="data"
-      :columns="columns"
-      row-key="id"
-      :filter="filter">
-      <template v-slot:top-right>
-        <div class="row">
-          <div class="col">
-            <q-btn-dropdown size="xs" color="green" label="Setor Dana" icon="fa fa-arrow-up">
-              <q-list>
-                <q-item clickable v-close-popup @click="setorDanaWajib = true">
-                  <q-item-section>
-                    <q-item-label>Simpanan Wajib</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item clickable v-close-popup @click="setorDanaSukarela = true">
-                  <q-item-section>
-                    <q-item-label>Simpanan Sukarela</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
+    <div v-if="!adaAturanExist">
+      <q-card
+        class="my-card text-white"
+        style="height: 100%; width:100%; background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
+      >
+        <q-card-section>
+          <div class="text-h6" align="center">Warning</div>
+        </q-card-section>
+        <q-card-section>
+          <div class="row">
+            <div class="col"/>
+            <div class="col">
+              <q-icon name="warning" class="text-red" style="font-size: 5rem;"/>
+            </div>
+            <div class="col"/>
           </div>
-          <div class="col">
-            <q-btn-dropdown size="xs" color="green" label="Penarikan Dana" icon="fa fa-arrow-down">
-              <q-list>
-                <q-item clickable v-close-popup @click="penarikanDanaWajib = true">
-                  <q-item-section>
-                    <q-item-label>Simpanan Wajib</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item clickable v-close-popup @click="penarikanDanaSukarela = true">
-                  <q-item-section>
-                    <q-item-label>Simpanan Sukarela</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <div align="justify">
+            Silahkan isi pengaturan pinjaman
           </div>
-          <div class="col">
-            <q-input borderless dense debounce="300" v-model="filter" placeholder="Cari">
-              <template v-slot:append>
-                <q-icon name="search"/>
-              </template>
-            </q-input>
+        </q-card-section>
+      </q-card>
+    </div>
+    <div v-else>
+      <q-table
+        :dense="$q.screen.lt.md"
+        title="Daftar Transaksi Simpanan"
+        :data="data"
+        :columns="columns"
+        row-key="id"
+        :filter="filter">
+        <template v-slot:top-right>
+          <div class="row">
+            <div class="col">
+              <q-btn-dropdown size="xs" color="green" label="Setor Dana" icon="fa fa-arrow-up">
+                <q-list>
+                  <q-item clickable v-close-popup @click="setorDanaWajib = true">
+                    <q-item-section>
+                      <q-item-label>Simpanan Wajib</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item clickable v-close-popup @click="setorDanaSukarela = true">
+                    <q-item-section>
+                      <q-item-label>Simpanan Sukarela</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+            </div>
+            <div class="col">
+              <q-btn-dropdown size="xs" color="green" label="Penarikan Dana"
+                              icon="fa fa-arrow-down">
+                <q-list>
+                  <q-item clickable v-close-popup @click="penarikanDanaWajib = true">
+                    <q-item-section>
+                      <q-item-label>Simpanan Wajib</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item clickable v-close-popup @click="penarikanDanaSukarela = true">
+                    <q-item-section>
+                      <q-item-label>Simpanan Sukarela</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+            </div>
+            <div class="col">
+              <q-input borderless dense debounce="300" v-model="filter" placeholder="Cari">
+                <template v-slot:append>
+                  <q-icon name="search"/>
+                </template>
+              </q-input>
+            </div>
           </div>
-        </div>
-      </template>
-    </q-table>
-    <q-dialog v-model="setorDanaWajib" persistent transition-show="scale"
-              transition-hide="scale">
-      <q-card style="width: 700px; max-width: 80vw">
-        <form-setor-dana-wajib @refresh="getData"/>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="setorDanaSukarela" persistent transition-show="scale"
-              transition-hide="scale">
-      <q-card style="width: 700px; max-width: 80vw">
-        <form-setor-dana-sukarela @refresh="getData"/>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="penarikanDanaSukarela" persistent transition-show="scale"
-              transition-hide="scale">
-      <q-card style="width: 700px; max-width: 80vw">
-        <form-penarikan-dana-sukarela @refresh="getData"/>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="penarikanDanaWajib" persistent transition-show="scale"
-              transition-hide="scale">
-      <q-card style="width: 700px; max-width: 80vw">
-        <form-penarikan-dana-wajib @refresh="getData"/>
-      </q-card>
-    </q-dialog>
+        </template>
+      </q-table>
+      <q-dialog v-model="setorDanaWajib" persistent transition-show="scale"
+                transition-hide="scale">
+        <q-card style="width: 700px; max-width: 80vw">
+          <form-setor-dana-wajib @refresh="getData"/>
+        </q-card>
+      </q-dialog>
+      <q-dialog v-model="setorDanaSukarela" persistent transition-show="scale"
+                transition-hide="scale">
+        <q-card style="width: 700px; max-width: 80vw">
+          <form-setor-dana-sukarela @refresh="getData"/>
+        </q-card>
+      </q-dialog>
+      <q-dialog v-model="penarikanDanaSukarela" persistent transition-show="scale"
+                transition-hide="scale">
+        <q-card style="width: 700px; max-width: 80vw">
+          <form-penarikan-dana-sukarela @refresh="getData"/>
+        </q-card>
+      </q-dialog>
+      <q-dialog v-model="penarikanDanaWajib" persistent transition-show="scale"
+                transition-hide="scale">
+        <q-card style="width: 700px; max-width: 80vw">
+          <form-penarikan-dana-wajib @refresh="getData"/>
+        </q-card>
+      </q-dialog>
+    </div>
   </div>
 </template>
 
@@ -94,6 +121,7 @@
     },
     data() {
       return {
+        adaAturanExist: false,
         penarikanDanaWajib: false,
         penarikanDanaSukarela: false,
         setorDanaSukarela: false,
@@ -106,12 +134,6 @@
             label: 'No Transaksi',
             align: 'center',
             field: row => row.kode_transaksi,
-            sortable: true,
-          }, {
-            name: 'namanasabah',
-            label: 'Nama Nasabah',
-            align: 'center',
-            field: row => `${row.first_name} ${row.last_name}`,
             sortable: true,
           }, {
             name: 'produksimpanan',
@@ -180,15 +202,43 @@
           .catch(() => {
             this.$q.loading.hide()
           })
+      },
+      adaAturan() {
+        this.$http.get('/api/getadaaturansimpanan', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.adaAturanExist = res.data.exist
+            if (this.adaAturanExist) {
+              this.getData()
+            } else {
+              this.$q.loading.hide()
+            }
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
       }
     },
     created() {
       this.$q.loading.show()
-      this.getData()
+      this.adaAturan()
     }
   }
 </script>
 
 <style scoped>
-
+  .my-card {
+    width: 100%;
+    height: 100%;
+    max-height: 400px;
+    max-width: 250px;
+    margin-top: 40px;
+    padding: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+  }
 </style>

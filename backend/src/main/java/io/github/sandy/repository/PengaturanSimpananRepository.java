@@ -32,4 +32,16 @@ public interface PengaturanSimpananRepository extends JpaRepository<PengaturanSi
     @Query(value = "insert into aturan_simpanan (minimal_simpanan, id_koperasi, jenis_simpanan) VALUES (?1, ?2, ?3)", nativeQuery = true)
     @Transactional
     void saveAturanSimpanan(Integer min, Integer idKoperasi, Integer jen);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update aturan_simpanan set minimal_simpanan = ?1 " +
+            "where id_koperasi = ?2 AND jenis_simpanan = ?3", nativeQuery = true)
+    @Transactional
+    void saveAturanSimpananUpdate(Integer min, Integer idKoperasi, Integer jen);
+
+    @Query(value = "SELECT CASE WHEN (" +
+            "SELECT count(*) FROM aturan_simpanan where id_koperasi = ?1" +
+            ") = 3 THEN TRUE ELSE FALSE END",
+            nativeQuery = true)
+    boolean adaAturan(Integer koperasi);
 }

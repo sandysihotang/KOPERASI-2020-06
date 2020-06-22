@@ -1,14 +1,16 @@
 <template>
-  <div>
-    <q-layout>
-      <q-page-container>
+  <div
+    style="height: 700px
+       ;background: radial-gradient(circle at 40% 91%, rgba(251, 251, 251,0.04) 0%, rgba(251, 251, 251,0.04) 50%,rgba(229, 229, 229,0.04) 50%, rgba(229, 229, 229,0.04) 100%),radial-gradient(circle at 66% 97%, rgba(36, 36, 36,0.04) 0%, rgba(36, 36, 36,0.04) 50%,rgba(46, 46, 46,0.04) 50%, rgba(46, 46, 46,0.04) 100%),radial-gradient(circle at 86% 7%, rgba(40, 40, 40,0.04) 0%, rgba(40, 40, 40,0.04) 50%,rgba(200, 200, 200,0.04) 50%, rgba(200, 200, 200,0.04) 100%),radial-gradient(circle at 15% 16%, rgba(99, 99, 99,0.04) 0%, rgba(99, 99, 99,0.04) 50%,rgba(45, 45, 45,0.04) 50%, rgba(45, 45, 45,0.04) 100%),radial-gradient(circle at 75% 99%, rgba(243, 243, 243,0.04) 0%, rgba(243, 243, 243,0.04) 50%,rgba(37, 37, 37,0.04) 50%, rgba(37, 37, 37,0.04) 100%),linear-gradient(90deg, rgb(34, 222, 237),rgb(135, 89, 215));"
+  >
+    <q-layout class="full-height">
+      <q-page-container class="full-height">
         <q-page
-          class="window-height window-width row justify-center items-center"
-          style="background: radial-gradient(circle at 40% 91%, rgba(251, 251, 251,0.04) 0%, rgba(251, 251, 251,0.04) 50%,rgba(229, 229, 229,0.04) 50%, rgba(229, 229, 229,0.04) 100%),radial-gradient(circle at 66% 97%, rgba(36, 36, 36,0.04) 0%, rgba(36, 36, 36,0.04) 50%,rgba(46, 46, 46,0.04) 50%, rgba(46, 46, 46,0.04) 100%),radial-gradient(circle at 86% 7%, rgba(40, 40, 40,0.04) 0%, rgba(40, 40, 40,0.04) 50%,rgba(200, 200, 200,0.04) 50%, rgba(200, 200, 200,0.04) 100%),radial-gradient(circle at 15% 16%, rgba(99, 99, 99,0.04) 0%, rgba(99, 99, 99,0.04) 50%,rgba(45, 45, 45,0.04) 50%, rgba(45, 45, 45,0.04) 100%),radial-gradient(circle at 75% 99%, rgba(243, 243, 243,0.04) 0%, rgba(243, 243, 243,0.04) 50%,rgba(37, 37, 37,0.04) 50%, rgba(37, 37, 37,0.04) 100%),linear-gradient(90deg, rgb(34, 222, 237),rgb(135, 89, 215));"
+          class="window-height window-width row justify-center items-center full-width full-height"
         >
           <div class="column q-pa-lg">
             <div class="row">
-              <q-card square class="shadow-24" style="width:600px;height:540px;">
+              <q-card square class="shadow-24" style="width:600px;height:600px;">
                 <q-card-section class="bg-deep-purple-6">
                   <div class="row justify-between">
                     <div class="col-4">
@@ -34,18 +36,6 @@
                         icon="settings"
                         :done="step > 1"
                       >
-                        <q-input square clearable v-model="form.firstName" type="text"
-                                 label="First Name">
-                          <template v-slot:prepend>
-                            <q-icon name="fa fa-id-card"/>
-                          </template>
-                        </q-input>
-                        <q-input square clearable v-model="form.lastName" type="text"
-                                 label="Last Name">
-                          <template v-slot:prepend>
-                            <q-icon name="fa fa-address-card"/>
-                          </template>
-                        </q-input>
                         <q-input square clearable v-model="form.username" type="username"
                                  label="Username">
                           <template v-slot:prepend>
@@ -58,6 +48,12 @@
                             <q-icon name="lock"/>
                           </template>
                         </q-input>
+                        <q-input square clearable v-model="form.konfirmPassword" type="password"
+                                 label="Konfirmasi Password">
+                          <template v-slot:prepend>
+                            <q-icon name="lock"/>
+                          </template>
+                        </q-input>
                       </q-step>
 
                       <q-step
@@ -66,6 +62,18 @@
                         icon="create_new_folder"
                         :done="step > 2"
                       >
+                        <q-input square clearable v-model="form.firstName" type="text"
+                                 label="First Name">
+                          <template v-slot:prepend>
+                            <q-icon name="fa fa-id-card"/>
+                          </template>
+                        </q-input>
+                        <q-input square clearable v-model="form.lastName" type="text"
+                                 label="Last Name">
+                          <template v-slot:prepend>
+                            <q-icon name="fa fa-address-card"/>
+                          </template>
+                        </q-input>
                         <q-input square clearable v-model="form.email" type="email"
                                  label="Email">
                           <template v-slot:prepend>
@@ -89,7 +97,8 @@
                         <q-stepper-navigation>
                           <q-btn v-if="step===2" :loading="loading" @click="register" unelevated
                                  size="lg"
-                                 color="purple-4" class="full-width text-white" label="Daftar Pemilik Koperasi">
+                                 color="purple-4" class="full-width text-white"
+                                 label="Daftar Pemilik Koperasi">
                             <template v-slot:loading>
                               <q-spinner-hourglass class="on-left"/>
                               Loading...
@@ -97,10 +106,10 @@
                           </q-btn>
                           <q-btn v-else @click="$refs.stepper.next()" unelevated
                                  size="lg"
-                                 color="purple-4" class="full-width text-white" label="Continue">
+                                 color="purple-4" class="full-width text-white" label="Selanjutnya">
                           </q-btn>
                           <q-btn v-if="step > 1" flat color="primary"
-                                 @click="$refs.stepper.previous()" label="Back" class="q-ml-sm"/>
+                                 @click="$refs.stepper.previous()" label="Kembali" class="q-ml-sm"/>
                         </q-stepper-navigation>
                       </template>
                     </q-stepper>
@@ -124,6 +133,7 @@
         form: {
           username: '',
           password: '',
+          konfirmPassword: '',
           firstName: '',
           lastName: '',
           email: '',
@@ -136,6 +146,11 @@
     methods: {
       register() {
         this.loading = true;
+        if (this.form.konfirmPassword !== this.form.password) {
+          this.showAlert('Password dan Konfirmasi Password harus sama.', 'error');
+          this.loading = false;
+          return;
+        }
         this.$http.post('/register', this.form)
           .then((e) => {
             const { data } = e;

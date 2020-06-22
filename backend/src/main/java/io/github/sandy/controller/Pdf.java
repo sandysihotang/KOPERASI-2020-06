@@ -76,8 +76,6 @@ public class Pdf {
         context.put("noPinjaman", pinjaman.get("kode_pinjaman"));
         Map<String, Object> koperasi = koperasiRepository.getKoperasiID((Integer) pinjaman.get("id_koperasi"));
         context.put("namaKoperasi", koperasi.get("nama_koperasi"));
-        Map<String, Object> userDetail = detailUserRepository.findUserDetail((Integer) pinjaman.get("id_user"));
-        context.put("nama", String.format("%s %s", userDetail.get("first_name"), userDetail.get("last_name")));
         context.put("danapinjaman", kursIndonesia.format(pinjaman.get("jumlah_pinjaman")));
         context.put("bulan", pinjaman.get("tenor"));
         Map<String, Object> pengaturanPinjaman = pengaturanPinjamanRepository.getFirstByPinjaman((Integer) pinjaman.get("id"));

@@ -20,9 +20,8 @@ public interface AktivasiSimpananRepository extends JpaRepository<AktivasiSimpan
     Boolean existsByKoperasiAndUserAndJenisSimpanan(Integer koperasi, Integer user, Integer jenisSimpanan);
 
     @Query(value = "SELECT a.created_at, a.tanggal_mulai, a.total_simpanan, a.jenis_simpanan," +
-            "a.aktif, first_name,last_name from aktivasi_simpanan a " +
+            "a.aktif from aktivasi_simpanan a " +
             "INNER JOIN users u on a.id_user = u.id " +
-            "INNER JOIN user_detail ud on u.id = ud.user_id " +
             "where a.id_koperasi = ?1",
             nativeQuery = true)
     List<Map<String, Object>> findAllByKoperasi(Integer koperasi);

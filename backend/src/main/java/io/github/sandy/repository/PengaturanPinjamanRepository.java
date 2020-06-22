@@ -21,4 +21,16 @@ public interface PengaturanPinjamanRepository extends JpaRepository<PengaturanPi
             "INNER JOIN peminjaman p on pp.id = p.id_pengaturan_pinjaman WHERE p.id=?1 LIMIT 1",
             nativeQuery = true)
     Map<String, Object> getFirstByPinjaman(Integer id);
+
+    @Query(value = "SELECT CASE WHEN (" +
+            "SELECT count(*) FROM koperasi_pengaturan_pinjaman where id_koperasi = ?1 AND status = true" +
+            ") > 0 THEN TRUE ELSE FALSE END",
+            nativeQuery = true)
+    Boolean getAdaAturan(Integer id);
+
+    @Query(value = "SELECT CASE WHEN (" +
+            "SELECT count(*) FROM aturan_simpanan where id_koperasi = ?1" +
+            ") = 3 THEN TRUE ELSE FALSE END",
+            nativeQuery = true)
+    Boolean getAdaAturanSimpanan(Integer id);
 }
