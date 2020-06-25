@@ -140,7 +140,7 @@
         adaAturanExist: false,
         tableAngsuran: false,
         tableAngsuranBayar: false,
-        status: ['Cancel', 'Approved', 'Rejected', 'On Reviewed', 'Awaiting Approval', 'Close'],
+        status: ['Dibatalkan', 'Disetujui', 'Ditolak', 'Sedang Ditinjau', 'Menunggu Persetujuan', 'Close'],
         selected: [],
         data: [],
         columns: [

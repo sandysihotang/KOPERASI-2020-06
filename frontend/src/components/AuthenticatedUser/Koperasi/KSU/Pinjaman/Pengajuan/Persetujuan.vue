@@ -102,7 +102,7 @@
         persentase: null,
         model: '',
         options: [
-          'Cancel', 'Approved', 'Rejected', 'On Reviewed', 'Awaiting Approval',
+          'Dibatalkan', 'Disetujui', 'Ditolak', 'Sedang Ditinjau', 'Menunggu Persetujuan',
         ]
       };
     },
@@ -159,10 +159,10 @@
       call() {
         this.$q.loading.show()
         const status = new Map();
-        status.set('Awaiting Approval', 5)
-        status.set('On Reviewed', 4)
-        status.set('Rejected', 3)
-        status.set('Approved', 2)
+        status.set('Menunggu Persetujuan', 5)
+        status.set('Sedang Ditinjau', 4)
+        status.set('Ditolak', 3)
+        status.set('Disetujui', 2)
         status.set('Cancel', 1)
         this.$http.put(`/api/savepinjamanfrompengurus/${this.user.id}`, {
           price: this.price,

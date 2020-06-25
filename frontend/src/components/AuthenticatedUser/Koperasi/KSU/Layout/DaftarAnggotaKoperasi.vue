@@ -9,7 +9,7 @@
     >
       <q-step
         :name="1"
-        title="Kelengkapan data di koperasi"
+        title="Form Pendaftaran Anggota"
         icon="create_new_folder"
         :done="step > 1"
       >

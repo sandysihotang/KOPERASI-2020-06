@@ -98,9 +98,9 @@
               <q-btn color="deep-orange"
                      v-if="step === 3" label="Finish" @click="createKoperasi"/>
               <q-btn @click="$refs.stepper.next()" color="deep-orange"
-                     v-else label="Continue"/>
+                     v-else label="Selanjutnya"/>
               <q-btn v-if="step > 1" flat color="deep-orange" @click="$refs.stepper.previous()"
-                     label="Back" class="q-ml-sm"/>
+                     label="Kembali" class="q-ml-sm"/>
             </q-stepper-navigation>
           </template>
         </q-stepper>
