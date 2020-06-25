@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<Map<String, Object>> getdataFromUname(String s);
 
     @Query(
-            value = "SELECT first_name, last_name, username, ud.address, users.email, users.id FROM users " +
+            value = "SELECT no_telepon ,first_name, last_name, username, ud.address, users.email, users.id FROM users " +
                     "INNER JOIN role_user " +
                     "ON users.id = role_user.user_id " +
                     "INNER JOIN user_detail ud on users.id = ud.user_id " +

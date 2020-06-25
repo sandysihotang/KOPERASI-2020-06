@@ -19,8 +19,11 @@
           <q-td key="address" :props="props">
             {{ props.row.address }}
           </q-td>
-          <q-td key="email" :props="props">
-            {{ props.row.email }}
+          <q-td key="telepon" :props="props">
+            {{ props.row.no_telepon }}
+          </q-td>
+          <q-td key="address" :props="props">
+            {{ props.row.address }}
           </q-td>
           <q-td key="aksi" :props="props">
             <div class="row">
@@ -77,6 +80,13 @@
             align: 'center',
             label: 'Alamat',
             field: 'address',
+            sortable: true,
+          },
+          {
+            name: 'telepon',
+            align: 'center',
+            label: 'No Telepon / HP',
+            field: 'telepon',
             sortable: true,
           },
           {
