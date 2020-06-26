@@ -1,6 +1,8 @@
 package io.github.sandy.controller;
 
+import com.google.api.services.drive.Drive;
 import io.github.sandy.ErrorCode.Err;
+import io.github.sandy.gdrive.DriveQuickstart;
 import io.github.sandy.model.FieldDaftarAnggota;
 import io.github.sandy.model.LaporanKoperasi;
 import io.github.sandy.model.NotifikasiKoperasi;
@@ -15,9 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,13 +59,27 @@ public class DaftarAnggotaKoperasiController {
     }
 
     @RequestMapping(value = "/api/getlaporanterkirim/{id}", method = RequestMethod.GET)
-    public Map<String, Object> getOneData(@PathVariable("id") Integer id) throws IOException {
-        File files = new File("");
+    public Map<String, Object> getOneData(@PathVariable("id") Integer id) throws Exception {
+//        File files = new File("");
         LaporanKoperasi laporanKoperasi = laporanKoperasiRepository.findById(id).get();
-        FileInputStream file = new FileInputStream(String.format("%s%s", files.getAbsoluteFile(),
-                laporanKoperasi.getPathLaporan()));
+//        FileInputStream file = new FileInputStream(String.format("%s%s", files.getAbsoluteFile(),
+//                laporanKoperasi.getPathLaporan()));
         Map<String, Object> data = new HashMap<>();
-        data.put("file", IOUtils.toByteArray(file));
+        DriveQuickstart driveQuickstart = new DriveQuickstart();
+        if(!laporanKoperasi.getExtensiFile().equals("pdf")){
+            Drive.Files.Export file = driveQuickstart.getFileXLS(laporanKoperasi.getPathLaporan(),laporanKoperasi.getExtensiFile());
+            OutputStream outputStream = new ByteArrayOutputStream();
+            file.executeMediaAndDownloadTo(outputStream);
+            ByteArrayOutputStream bos = (ByteArrayOutputStream) outputStream;
+            data.put("file", bos.toByteArray());
+        }else {
+            OutputStream outputStream = new ByteArrayOutputStream();
+            driveQuickstart.getFilePDF(laporanKoperasi.getPathLaporan()).executeMediaAndDownloadTo(outputStream);
+            ByteArrayOutputStream bos = (ByteArrayOutputStream) outputStream;
+            data.put("file", bos.toByteArray());
+        }
+        data.put("ext", laporanKoperasi.getExtensiFile());
+        System.out.println();
         return data;
     }
 
@@ -78,14 +92,34 @@ public class DaftarAnggotaKoperasiController {
     }
 
     @RequestMapping(value = "/api/downloadlaporankeuangan/{id}", method = RequestMethod.GET)
-    public void downloadLaporanKoperasi(@PathVariable("id") Integer id, HttpServletResponse response) throws IOException {
+    public Map<String, Object> downloadLaporanKoperasi(@PathVariable("id") Integer id, HttpServletResponse response) throws Exception {
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xls");
-        File files = new File("");
+//        File files = new File("");
         LaporanKoperasi laporanKoperasi = laporanKoperasiRepository.findById(id).get();
-        FileInputStream file = new FileInputStream(String.format("%s%s", files.getAbsoluteFile(),
-                laporanKoperasi.getPathLaporan()));
-        IOUtils.copy(file, response.getOutputStream());
+//        FileInputStream file = new FileInputStream(String.format("%s%s", files.getAbsoluteFile(),
+//                laporanKoperasi.getPathLaporan()));
+//        IOUtils.copy(file, response.getOutputStream());
+
+        Map<String, Object> data = new HashMap<>();
+        DriveQuickstart driveQuickstart = new DriveQuickstart();
+        if(!laporanKoperasi.getExtensiFile().equals("pdf")){
+            Drive.Files.Export file = driveQuickstart.getFileXLS(laporanKoperasi.getPathLaporan(),laporanKoperasi.getExtensiFile());
+            OutputStream outputStream = new ByteArrayOutputStream();
+            file.executeMediaAndDownloadTo(outputStream);
+            ByteArrayOutputStream bos = (ByteArrayOutputStream) outputStream;
+            data.put("file", bos.toByteArray());
+        }else {
+            OutputStream outputStream = new ByteArrayOutputStream();
+            driveQuickstart.getFilePDF(laporanKoperasi.getPathLaporan()).executeMediaAndDownloadTo(outputStream);
+            ByteArrayOutputStream bos = (ByteArrayOutputStream) outputStream;
+            data.put("file", bos.toByteArray());
+        }
+        data.put("ext", laporanKoperasi.getExtensiFile());
+//                IOUtils.write(bos.toByteArray(), response.getOutputStream());
+//        IOUtils.copy(bytearr, response.getOutputStream());
+        return data;
+
     }
 
     @RequestMapping(value = "/api/getlaporanterkirimkoperasi", method = RequestMethod.GET)
@@ -101,7 +135,7 @@ public class DaftarAnggotaKoperasiController {
 
     @RequestMapping(value = "/api/kirimlaporankoperasi", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Err> kirimLaporanKoperasi(HttpServletRequest request, @ModelAttribute Requestbody requestbody) {
+    public ResponseEntity<Err> kirimLaporanKoperasi(HttpServletRequest request, @ModelAttribute Requestbody requestbody) throws Exception {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
@@ -174,7 +208,7 @@ public class DaftarAnggotaKoperasiController {
 
     @RequestMapping(value = "/api/simpaneditlaporan/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public void editLaporanKoperasi(@ModelAttribute Requestbody requestbody, @PathVariable("id") Integer id) {
+    public void editLaporanKoperasi(@ModelAttribute Requestbody requestbody, @PathVariable("id") Integer id) throws Exception {
         koperasiService.saveEditLaporan(id, requestbody);
     }
 }

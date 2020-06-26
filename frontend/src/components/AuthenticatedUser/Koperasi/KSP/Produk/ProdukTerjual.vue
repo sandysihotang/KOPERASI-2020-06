@@ -12,7 +12,7 @@
       <template v-slot:top-right>
         <q-btn size="xs" color="green" label="Detail Transaksi" icon="print"
                @click="detailTransaksi" :disable="selected.length === 0"/>&nbsp;
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Cari">
           <template v-slot:append>
             <q-icon name="search"/>
           </template>
@@ -86,31 +86,31 @@
             name: 'namaproduk',
             label: 'Nama Produk',
             align: 'center',
-            field: row => row.harga.produk.namaProduk,
+            field: row => row.nama_produk,
             sortable: true,
           }, {
             name: 'kodeproduk',
             label: 'Kode Produk',
             align: 'center',
-            field: row => row.harga.produk.kodeProduk,
+            field: row => row.kode_produk,
             sortable: true,
           }, {
             name: 'jumlah',
             label: 'Jumlah',
             align: 'center',
-            field: row => row.jumlahBeli,
+            field: row => row.jumlah_beli,
             sortable: true,
           }, {
             name: 'harga',
             label: 'Harga',
             align: 'center',
-            field: row => this.toIDR(parseInt((row.keanggotaan ? row.harga.hargaJualAnggota : row.harga.hargaJualNonAnggota))),
+            field: row => this.toIDR(parseInt((row.keanggotaan ? row.harga_jual_anggota : row.harga_jual_non_anggota))),
             sortable: true,
           }, {
             name: 'total',
             label: 'Total',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.jumlahBeli * (row.keanggotaan ? row.harga.hargaJualAnggota : row.harga.hargaJualNonAnggota))),
+            field: row => this.toIDR(parseInt(row.jumlah_beli * (row.keanggotaan ? row.harga_jual_anggota : row.harga_jual_non_anggota))),
             sortable: true,
           },
         ]

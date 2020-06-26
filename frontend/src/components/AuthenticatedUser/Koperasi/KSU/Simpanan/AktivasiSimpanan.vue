@@ -1,33 +1,60 @@
 <template>
   <div class="q-pa-md">
-    <q-table
-      :dense="$q.screen.lt.md"
-      title="Daftar Aktivasi Simpanan"
-      :data="data"
-      :columns="columns"
-      :filter="filter">
-      <template v-slot:top-right>
-        <div class="row">
-          <div class="col">
-            <q-btn size="xs" color="green" label="Pengajuan Simpanan" @click="pengajuanBaru = true"
-                   icon="table"/>
+    <div v-if="!adaAturanExist">
+      <q-card
+        class="my-card text-white"
+        style="height: 100%; width:100%; background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
+      >
+        <q-card-section>
+          <div class="text-h6" align="center">Warning</div>
+        </q-card-section>
+        <q-card-section>
+          <div class="row">
+            <div class="col"/>
+            <div class="col">
+              <q-icon name="warning" class="text-red" style="font-size: 5rem;"/>
+            </div>
+            <div class="col"/>
           </div>
-          <div class="col">
-            <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-              <template v-slot:append>
-                <q-icon name="search"/>
-              </template>
-            </q-input>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <div align="justify">
+            Silahkan isi pengaturan pinjaman
           </div>
-        </div>
-      </template>
-    </q-table>
-    <q-dialog v-model="pengajuanBaru" persistent transition-show="scale"
-              transition-hide="scale">
-      <q-card style="width: 700px; max-width: 80vw">
-        <form-pengajuan-simpanan @call="getData"/>
+        </q-card-section>
       </q-card>
-    </q-dialog>
+    </div>
+    <div>
+      <q-table
+        :dense="$q.screen.lt.md"
+        title="Daftar Aktivasi Simpanan"
+        :data="data"
+        :columns="columns"
+        :filter="filter">
+        <template v-slot:top-right>
+          <div class="row">
+            <div class="col">
+              <q-btn size="xs" color="green" label="Pengajuan Simpanan"
+                     @click="pengajuanBaru = true"
+                     icon="table"/>
+            </div>
+            <div class="col">
+              <q-input borderless dense debounce="300" v-model="filter" placeholder="Cari">
+                <template v-slot:append>
+                  <q-icon name="search"/>
+                </template>
+              </q-input>
+            </div>
+          </div>
+        </template>
+      </q-table>
+      <q-dialog v-model="pengajuanBaru" persistent transition-show="scale"
+                transition-hide="scale">
+        <q-card style="width: 700px; max-width: 80vw">
+          <form-pengajuan-simpanan @call="getData"/>
+        </q-card>
+      </q-dialog>
+    </div>
   </div>
 </template>
 
@@ -41,17 +68,12 @@
     },
     data() {
       return {
+        adaAturanExist: false,
         filter: '',
         pengajuanBaru: false,
         data: [],
         columns: [
           {
-            name: 'nama',
-            label: 'Nama Nasabah',
-            align: 'center',
-            field: row => `${row.first_name} ${row.last_name}`,
-            sortable: true,
-          }, {
             name: 'status',
             label: 'Status',
             align: 'center',
@@ -128,11 +150,27 @@
           .catch(() => {
             this.$q.loading.hide()
           })
+      },
+      adaAturan() {
+        this.$http.get('/api/getadaaturansimpanan', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.adaAturanExist = res.data.exist
+            if (this.adaAturanExist) {
+              this.getData()
+            } else {
+              this.$q.loading.hide()
+            }
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
       }
     },
     created() {
       this.$q.loading.show()
-      this.getData()
+      this.adaAturan()
     }
   }
 </script>

@@ -33,7 +33,7 @@
             {{ props.row.noIzinKoperasi }}
           </q-td>
           <q-td key="logoKoperasi" :props="props">
-            <div v-if="props.row.logoKoperasi">
+            <div v-if="props.row.logoKoperasi!==null">
               <q-avatar>
                 <img :src="dataUrl(props.row.logoKoperasi)" alt="">
               </q-avatar>
@@ -51,7 +51,7 @@
         </q-tr>
       </template>
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Cari">
           <template v-slot:append>
             <q-icon name="search"/>
           </template>
@@ -188,18 +188,19 @@
       changeState(id) {
         this.$swal.fire({
           title: 'Anda yakin?',
-          text: `Ingin ${this.selected[id] ? 'menghidupkan' : 'nonaktifkan'} koperasi ini?`,
+          text: `Ingin ${this.selected[id] ? 'nonaktifkan' : 'mengaktifkan'} koperasi ini?`,
           type: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
-          confirmButtonText: `Ya, ${this.selected[id] ? 'aktifkan' : 'nonaktifkan'}!`,
+          confirmButtonText: `Ya, ${this.selected[id] ? 'nonaktifkan' : 'aktifkan'}!`,
         })
           .then((result) => {
             if (result.value) {
               this.change(id);
             } else {
               this.$q.loading.show();
+              this.text = null
               this.getData();
               this.$q.loading.hide();
             }
@@ -209,6 +210,13 @@
         this.selected[id] = (state === 3);
       },
       change(id) {
+        if (this.text === null) {
+          this.$q.notify({
+            type: 'negative',
+            message: 'Isi pesan untuk koperasi'
+          })
+          return
+        }
         this.$q.loading.show();
         this.$http.post('/api/changestatekoperasi', {
           id,

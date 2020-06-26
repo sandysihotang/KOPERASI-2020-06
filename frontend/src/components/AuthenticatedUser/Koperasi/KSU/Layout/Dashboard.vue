@@ -2,165 +2,183 @@
   <div class="q-pa-md">
     <div class="row justify-between">
       <div class="col-md-4">
-        <q-card flat bordered class="full-width full-height">
-          <q-card-section>
-            <div class="text-caption">Laba, Pemasukan dan Pengeluaran {{ getDate() }}</div>
-          </q-card-section>
-          <q-separator/>
-          <q-card-section>
-            <pemasukan-simpanan/>
-          </q-card-section>
-        </q-card>
+        <div class="q-pa-md full-width">
+          <q-card flat bordered class="full-width full-height">
+            <q-card-section>
+              <div class="text-caption">Laba, Pemasukan dan Pengeluaran {{ getDate() }}</div>
+            </q-card-section>
+            <q-separator/>
+            <q-card-section>
+              <pemasukan-simpanan/>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
       <div class="col-md-4">
-        <q-card flat bordered class="full-height full-width">
-          <q-card-section>
-            <div class="text-caption">Anggota</div>
-          </q-card-section>
+        <div class="q-pa-md full-width">
+          <q-card flat bordered class="full-height full-width">
+            <q-card-section>
+              <div class="text-caption">Anggota</div>
+            </q-card-section>
 
-          <q-separator/>
+            <q-separator/>
 
-          <q-card-section>
-            <anggota/>
-          </q-card-section>
-        </q-card>
+            <q-card-section>
+              <anggota/>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
       <div class="col-md-4">
-        <q-card flat bordered class="full-width full-height">
-          <q-card-section>
-            <div class="text-caption">Simpanan Anggota</div>
-          </q-card-section>
+        <div class="q-pa-md full-width">
+          <q-card flat bordered class="full-width full-height">
+            <q-card-section>
+              <div class="text-caption">Simpanan Anggota</div>
+            </q-card-section>
 
-          <q-separator/>
+            <q-separator/>
 
-          <q-card-section>
-            <simpanan/>
-          </q-card-section>
-        </q-card>
+            <q-card-section>
+              <simpanan/>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
     </div>
     <div class="row q-mt-lg justify-between">
       <div class="col-md-4">
-        <q-card flat bordered class="full-width">
-          <q-card-section>
-            <q-item v-ripple>
-              <q-item-section avatar>
-                <q-avatar color="primary" text-color="white">
-                  <q-icon name="settings"/>
-                </q-avatar>
-              </q-item-section>
+        <div class="q-pa-md full-width">
+          <q-card flat bordered class="full-width">
+            <q-card-section>
+              <q-item v-ripple>
+                <q-item-section avatar>
+                  <q-avatar color="primary" text-color="white">
+                    <q-icon name="settings"/>
+                  </q-avatar>
+                </q-item-section>
 
-              <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(parseInt(tersalur)) }}</q-item-label>
-                <q-item-label caption>
-                  Total Pinjaman Tersalur
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-card-section>
-        </q-card>
+                <q-item-section class="text-black">
+                  <q-item-label>{{ toIDR(parseInt(tersalur)) }}</q-item-label>
+                  <q-item-label caption>
+                    Pinjaman Tersalur
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
       <div class="col-md-4">
-        <q-card flat bordered class="full-width">
-          <q-card-section>
-            <q-item v-ripple>
-              <q-item-section avatar>
-                <q-avatar color="primary" text-color="white">
-                  <q-icon name="check"/>
-                </q-avatar>
-              </q-item-section>
+        <div class="q-pa-md full-width">
+          <q-card flat bordered class="full-width">
+            <q-card-section>
+              <q-item v-ripple>
+                <q-item-section avatar>
+                  <q-avatar color="primary" text-color="white">
+                    <q-icon name="check"/>
+                  </q-avatar>
+                </q-item-section>
 
-              <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(parseInt(terbayar)) }}</q-item-label>
-                <q-item-label caption>
-                  Total Pinjaman Terbayar
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-card-section>
-        </q-card>
+                <q-item-section class="text-black">
+                  <q-item-label>{{ toIDR(parseInt(terbayar)) }}</q-item-label>
+                  <q-item-label caption>
+                    Pinjaman Terbayar
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
       <div class="col-md-4">
-        <q-card flat bordered class="full-width">
-          <q-card-section>
-            <q-item v-ripple>
-              <q-item-section avatar>
-                <q-avatar color="primary" text-color="white">
-                  <q-icon name="fa fa-ban"/>
-                </q-avatar>
-              </q-item-section>
+        <div class="q-pa-md full-width">
+          <q-card flat bordered class="full-width">
+            <q-card-section>
+              <q-item v-ripple>
+                <q-item-section avatar>
+                  <q-avatar color="primary" text-color="white">
+                    <q-icon name="fa fa-ban"/>
+                  </q-avatar>
+                </q-item-section>
 
-              <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(parseInt(jatuhTempo)) }}</q-item-label>
-                <q-item-label caption>
-                  Total Pinjaman Jatuh Tempo
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-card-section>
-        </q-card>
+                <q-item-section class="text-black">
+                  <q-item-label>{{ toIDR(parseInt(jatuhTempo)) }}</q-item-label>
+                  <q-item-label caption>
+                    Pinjaman Jatuh Tempo
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
     </div>
     <div class="row q-mt-lg justify-between" v-show="produk">
       <div class="col-md-4">
-        <q-card flat bordered class="full-width">
-          <q-card-section>
-            <q-item v-ripple>
-              <q-item-section avatar>
-                <q-avatar color="primary" text-color="white">
-                  <q-icon name="inventory"/>
-                </q-avatar>
-              </q-item-section>
+        <div class="q-pa-md full-width">
+          <q-card flat bordered class="full-width">
+            <q-card-section>
+              <q-item v-ripple>
+                <q-item-section avatar>
+                  <q-avatar color="primary" text-color="white">
+                    <q-icon name="inventory"/>
+                  </q-avatar>
+                </q-item-section>
 
-              <q-item-section class="text-black">
-                <q-item-label>{{ totalProduk }}</q-item-label>
-                <q-item-label caption>
-                  Total Produk
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-card-section>
-        </q-card>
+                <q-item-section class="text-black">
+                  <q-item-label>{{ totalProduk }}</q-item-label>
+                  <q-item-label caption>
+                    Total Produk
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
       <div class="col-md-4">
-        <q-card flat bordered class="full-width">
-          <q-card-section>
-            <q-item v-ripple>
-              <q-item-section avatar>
-                <q-avatar color="primary" text-color="white">
-                  <q-icon name="fa fa-shopping-bag"/>
-                </q-avatar>
-              </q-item-section>
+        <div class="q-pa-md full-width">
+          <q-card flat bordered class="full-width">
+            <q-card-section>
+              <q-item v-ripple>
+                <q-item-section avatar>
+                  <q-avatar color="primary" text-color="white">
+                    <q-icon name="fa fa-shopping-bag"/>
+                  </q-avatar>
+                </q-item-section>
 
-              <q-item-section class="text-black">
-                <q-item-label>{{ totalProdukterjual }}</q-item-label>
-                <q-item-label caption>
-                  Produk Terjual
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-card-section>
-        </q-card>
+                <q-item-section class="text-black">
+                  <q-item-label>{{ totalProdukterjual }}</q-item-label>
+                  <q-item-label caption>
+                    Produk Terjual
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
       <div class="col-md-4">
-        <q-card flat bordered class="full-width">
-          <q-card-section>
-            <q-item v-ripple>
-              <q-item-section avatar>
-                <q-avatar color="primary" text-color="white">
-                  <q-icon name="fa fa-coins"/>
-                </q-avatar>
-              </q-item-section>
+        <div class="q-pa-md full-width">
+          <q-card flat bordered class="full-width">
+            <q-card-section>
+              <q-item v-ripple>
+                <q-item-section avatar>
+                  <q-avatar color="primary" text-color="white">
+                    <q-icon name="fa fa-coins"/>
+                  </q-avatar>
+                </q-item-section>
 
-              <q-item-section class="text-black">
-                <q-item-label>{{ toIDR(parseInt(totalHargaProdukterjual)) }}</q-item-label>
-                <q-item-label caption>
-                  Total Penjualan
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-card-section>
-        </q-card>
+                <q-item-section class="text-black">
+                  <q-item-label>{{ toIDR(parseInt(totalHargaProdukterjual)) }}</q-item-label>
+                  <q-item-label caption>
+                    Total Penjualan
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
     </div>
   </div>
@@ -192,7 +210,8 @@
     methods: {
       getDate() {
         moment.lang('id')
-        return moment(new Date()).format('MMMM YYYY')
+        return moment(new Date())
+          .format('MMMM YYYY')
       },
       isProduk() {
         if (parseInt(localStorage.getItem('jenisKoperasi')) === 1) {

@@ -80,12 +80,6 @@
             field: row => row.noTransaksi,
             sortable: true,
           }, {
-            name: 'nama',
-            label: 'Nama Nasabah',
-            align: 'center',
-            field: row => row.nama,
-            sortable: true,
-          }, {
             name: 'tipe',
             label: 'Tipe Transaksi',
             align: 'center',
@@ -171,8 +165,7 @@
           showConfirmButton: false,
           timer: 1500
         })
-      }
-      ,
+      },
       download() {
         if (this.dateFrom === null || this.dateTo === null) {
           this.$q.notify({

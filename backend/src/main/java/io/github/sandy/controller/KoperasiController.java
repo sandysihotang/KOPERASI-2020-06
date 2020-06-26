@@ -4,6 +4,8 @@ import com.itextpdf.text.log.Logger;
 import com.itextpdf.text.log.LoggerFactory;
 import io.github.sandy.ErrorCode.Err;
 import io.github.sandy.additional.ExportExcel;
+import io.github.sandy.gdrive.DriveQuickstart;
+import io.github.sandy.gdrive.GmailQuickStart;
 import io.github.sandy.model.*;
 import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
@@ -24,9 +26,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -90,6 +98,9 @@ public class KoperasiController {
     @Autowired
     NotifikasiAnggotaRepository notifikasiAnggotaRepository;
 
+    @Autowired
+    LaporanKoperasiRepository laporanKoperasiRepository;
+
     @RequestMapping(value = "/api/createkoperasi", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Err> createKoperasi(@ModelAttribute Requestbody requestbody, HttpServletRequest request) throws Exception {
@@ -100,8 +111,22 @@ public class KoperasiController {
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/coba", method = RequestMethod.GET)
+    public void cal() throws IOException, GeneralSecurityException, MessagingException {
+        GmailQuickStart gmailQuickStart = new GmailQuickStart();
+//        gmailQuickStart.call();
+        Properties properties = new Properties();
+        Session session = Session.getDefaultInstance(properties, null);
+        MimeMessage mimeMessage = new MimeMessage(session);
+        mimeMessage.addFrom(new InternetAddress[]{new InternetAddress("TobaKo")});
+        mimeMessage.setRecipients(Message.RecipientType.TO, new InternetAddress[]{new InternetAddress("sandysihotang868@gmail.com")});
+        mimeMessage.setSubject("Testing Subject");
+        mimeMessage.setText("Testing Text");
+        gmailQuickStart.sendMessage("me", mimeMessage);
+    }
+
     @RequestMapping(value = "/api/getallkoperasi", method = RequestMethod.GET)
-    public List<Map<String, Object>> get() throws IOException {
+    public List<Map<String, Object>> get() throws Exception {
         List<Map<String, Object>> data = new ArrayList<>();
         List<Map<String, Object>> koperasis = koperasiRepository.findByIsHaveKoperasi();
         for (Map<String, Object> koperasi : koperasis) {
@@ -116,9 +141,13 @@ public class KoperasiController {
             res.put("noIzinKoperasi", koperasi.get("no_izin_koperasi"));
             res.put("haveKoperasi", koperasi.get("have_koperasi"));
             if (koperasi.get("logo_koperasi") != null) {
-                File files = new File("");
-                FileInputStream file = new FileInputStream(files.getAbsoluteFile() + (String) koperasi.get("logo_koperasi"));
-                res.put("logoKoperasi", IOUtils.toByteArray(file));
+                DriveQuickstart driveQuickstart = new DriveQuickstart();
+                InputStream files = driveQuickstart.getFile((String) koperasi.get("logo_koperasi"));
+//                FileInputStream file = new FileInputStream(files.get);
+//                String ss = files.getFullFileExtension();
+//                GenericUrl url = new GenericUrl();
+                res.put("logoKoperasi", IOUtils.toByteArray(files));
+                System.out.println();
             } else {
                 res.put("logoKoperasi", null);
             }
@@ -144,7 +173,7 @@ public class KoperasiController {
     }
 
     @RequestMapping(value = "/api/changestatekoperasi", method = RequestMethod.POST)
-    public ResponseEntity<Err> changeState(@RequestBody Requestbody requestbody, HttpServletRequest request) {
+    public ResponseEntity<Err> changeState(@RequestBody Requestbody requestbody, HttpServletRequest request) throws GeneralSecurityException, IOException, MessagingException {
         Principal principal = request.getUserPrincipal();
         String user = principal.getName();
         koperasiService.changeStateKoperasi(requestbody.getId(), requestbody.getText(), requestbody.isState());
@@ -225,6 +254,21 @@ public class KoperasiController {
         return data;
     }
 
+    @RequestMapping(value = "/api/getlaporankoperasiforanggota", method = RequestMethod.GET)
+    public Map<String, Object> getLaporanKoperasiAnggota(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> anggota = angotaKoperasiRepository.getByFirstByIdUser((Integer) user.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        Boolean exist = laporanKoperasiRepository.existsByIdKoperasi((Integer) anggota.get("id_koperasi"));
+        data.put("exist", exist);
+        if (exist) {
+            data.put("datatable", laporanKoperasiRepository.getAllByKoperasiAndStatus((Integer) anggota.get("id_koperasi")));
+        }
+        return data;
+    }
+
     @RequestMapping(value = "/api/getlaporanproduk", method = RequestMethod.GET)
     public Map<String, Object> getLaporanProduk(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
@@ -245,11 +289,12 @@ public class KoperasiController {
         response.setHeader("Content-Disposition", "attachment; filename=pemasukanbarang.xlsx");
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
-        User user = userRepository.findByUsername(uname).get();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         Map<String, Object> data = new HashMap<>();
-        data.put("namaKoperasi", user.getKoperasi().getNamaKoperasi());
-        data.put("dataTable", produkRepository.getAllData(user.getKoperasi().getId()));
-        data.put("jumlahProduk", produkRepository.getTotalProduk(user.getKoperasi().getId()));
+        data.put("namaKoperasi", koperasi.get("nama_koperasi"));
+        data.put("dataTable", produkRepository.getAllData((Integer) koperasi.get("id")));
+        data.put("jumlahProduk", produkRepository.getTotalProduk((Integer) koperasi.get("id")));
         ByteArrayInputStream byteArray = exportExcel.downloadLaporanProduk(data);
         IOUtils.copy(byteArray, response.getOutputStream());
     }
@@ -461,6 +506,19 @@ public class KoperasiController {
         return data;
     }
 
+    @RequestMapping(value = "/api/getpinjamanfortransasaksi", method = RequestMethod.GET)
+    public HashMap<String, Integer> getPinjamanForTransaksi(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        HashMap<String, Integer> data = new HashMap<>();
+        data.put("pinjamanbelumbayar", pinjamanRepository.getpinjamanbelumbayar((Integer) koperasi.get("id")));
+        data.put("pinjamanterbayar", pinjamanRepository.getpinjamanSudahBayarbelumbayar((Integer) koperasi.get("id")));
+        data.put("pinjamanJatuhTempo", pinjamanRepository.getPinjamanJatuhTempo((Integer) koperasi.get("id")));
+        return data;
+    }
+
 
     @RequestMapping(value = "/api/getcolumnmember", method = RequestMethod.GET)
     public String getcolumn(HttpServletRequest request) {
@@ -496,7 +554,7 @@ public class KoperasiController {
 
     @RequestMapping(value = "/api/saveanggota", method = RequestMethod.POST)
     public ResponseEntity<Err> saveMemberKoperasi(@RequestBody Requestbody requestbody, HttpServletRequest request) {
-        Err data = userDetailService.check(requestbody);
+        Err data = userDetailService.checkAnggota(requestbody);
         if (data.getErrCode() == 404) {
             return new ResponseEntity<>(data, HttpStatus.FORBIDDEN);
         }
@@ -505,14 +563,15 @@ public class KoperasiController {
             return new ResponseEntity<>(data, HttpStatus.FORBIDDEN);
         }
         Principal principal = request.getUserPrincipal();
-        String user = principal.getName();
-        Koperasi koperasi = koperasiRepository.getOne(userRepository.findByUsername(user).get().getKoperasi().getId());
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         koperasiService.saveUser(requestbody, koperasi);
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/getstatekoperasi", method = RequestMethod.GET)
-    public Map<String, Object> getStateKoperasi(HttpServletRequest request) throws IOException {
+    public Map<String, Object> getStateKoperasi(HttpServletRequest request) throws Exception {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
@@ -520,9 +579,9 @@ public class KoperasiController {
         Map<String, Object> data = new HashMap<>();
         data.put("nama", koperasi.get("nama_koperasi"));
         if (koperasi.get("logo_koperasi") != null) {
-            File files = new File("");
-            FileInputStream file = new FileInputStream(String.format("%s%s", files.getAbsoluteFile(), koperasi.get("logo_koperasi")));
-            data.put("logoKoperasi", IOUtils.toByteArray(file));
+            DriveQuickstart driveQuickstart = new DriveQuickstart();
+            InputStream files = driveQuickstart.getFile((String) koperasi.get("logo_koperasi"));
+            data.put("logoKoperasi", IOUtils.toByteArray(files));
         } else {
             data.put("logoKoperasi", null);
         }
@@ -550,9 +609,9 @@ public class KoperasiController {
         Map<String, Object> anggotaKoperasi = angotaKoperasiRepository.getFirstByUser((Integer) user.get("id"));
         Map<String, Object> koperasi = koperasiRepository.getKoperasiID((Integer) anggotaKoperasi.get("id_koperasi"));
         if (koperasi.get("logo_koperasi") != null) {
-            File files = new File("");
-            FileInputStream file = new FileInputStream(files.getAbsoluteFile() + (String) koperasi.get("logo_koperasi"));
-            data.put("logoKoperasi", IOUtils.toByteArray(file));
+            DriveQuickstart driveQuickstart = new DriveQuickstart();
+            InputStream files = driveQuickstart.getFile((String) koperasi.get("logo_koperasi"));
+            data.put("logoKoperasi", IOUtils.toByteArray(files));
         } else {
             data.put("logoKoperasi", null);
         }
@@ -573,13 +632,14 @@ public class KoperasiController {
     }
 
     @RequestMapping(value = "/api/getpengaturanpinjamanreqpinjaman", method = RequestMethod.GET)
-    public PengaturanPinjaman getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
+    public Map<String, Object> getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        User user = userRepository.findByUsername(principal.getName()).get();
-        AnggotaKoperasi anggotaKoperasi = angotaKoperasiRepository.findFirstByUser(user).get();
-        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(anggotaKoperasi.getKoperasi(), true)) {
-            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(anggotaKoperasi.getKoperasi(), true).get();
-            return pengaturanPinjamanRepository.findFirstById(koperasiPengaturanPinjaman.getPengaturanPinjaman().getId()).get();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> anggotaKoperasi = angotaKoperasiRepository.getByFirstByIdUser((Integer) user.get("id"));
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatusInPengaturan((Integer) anggotaKoperasi.get("id_koperasi"), true)) {
+            Map<String, Object> koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatusInPengaturan((Integer) anggotaKoperasi.get("id_koperasi"), true);
+            return pengaturanPinjamanRepository.getFirstById((Integer) koperasiPengaturanPinjaman.get("id_pengaturan"));
         }
         return null;
     }
@@ -602,7 +662,7 @@ public class KoperasiController {
         Map<String, Object> data = new HashMap<>();
         data.put("exist", exist);
         if (exist) {
-            data.put("total", notifikasiAnggotaRepository.getTotal((Integer)user.get("id")));
+            data.put("total", notifikasiAnggotaRepository.getTotal((Integer) user.get("id")));
         }
         return data;
     }
@@ -615,7 +675,7 @@ public class KoperasiController {
         Boolean exist = notifikasiAnggotaRepository.checkExistByUserHome((Integer) user.get("id"));
         Map<String, Object> data = new HashMap<>();
         data.put("exist", exist);
-        if(exist){
+        if (exist) {
             data.put("notif", notifikasiAnggotaRepository.getNotifikasiByUser((Integer) user.get("id")));
         }
         return data;
@@ -626,17 +686,17 @@ public class KoperasiController {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
-        notifikasiAnggotaRepository.ubahStatus((Integer)user.get("id"));
+        notifikasiAnggotaRepository.ubahStatus((Integer) user.get("id"));
     }
 
     @RequestMapping(value = "/api/nonactivememberkoperasi/{id}", method = RequestMethod.PUT)
-    public void nonAktifkanAnggota(@PathVariable("id") Integer id) {
+    public void nonAktifkanAnggota(@PathVariable("id") Integer id) throws GeneralSecurityException, IOException, MessagingException {
         AnggotaKoperasi anggotaKoperasi = angotaKoperasiRepository.getOne(id);
         User user = userRepository.getOne(anggotaKoperasi.getUser().getId());
         user.setEnabled(false);
         userRepository.save(user);
         MailSender mailSender = new MailSender();
-//        mailSender.sendEmailNonActiveAccountMember(javaMailSender, user.getEmail(), "Account anda telah di nonaktifkan");
+        mailSender.sendEmailNonActiveAccountMember(user.getEmail(), "Account anda telah di nonaktifkan");
 
     }
 

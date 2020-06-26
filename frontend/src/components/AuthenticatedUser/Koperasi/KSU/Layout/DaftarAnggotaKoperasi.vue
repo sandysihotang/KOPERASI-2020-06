@@ -9,22 +9,23 @@
     >
       <q-step
         :name="1"
-        title="Kelengkapan Akun"
-        icon="settings"
+        title="Form Pendaftaran Anggota"
+        icon="create_new_folder"
         :done="step > 1"
       >
-        <q-input square clearable v-model="form.firstName" type="text"
-                 label="First Name">
-          <template v-slot:prepend>
-            <q-icon name="fa fa-id-card"/>
-          </template>
-        </q-input>
-        <q-input square clearable v-model="form.lastName" type="text"
-                 label="Last Name">
-          <template v-slot:prepend>
-            <q-icon name="fa fa-address-card"/>
-          </template>
-        </q-input>
+        <div v-for="(field, index) in fields" :key="index">
+          <component v-model="fieldData[field.cid]" @input="onInput" v-bind:is="getElement(field)"
+                     :label="field.label" :required="field.required"
+                     :field_options="field.field_options" :id="field.cid" :cid="field.cid"
+                     :ref="field.cid" debounce="500"/>
+        </div>
+      </q-step>
+      <q-step
+        :name="2"
+        title="Kelengkapan Akun"
+        icon="settings"
+        :done="step > 2"
+      >
         <q-input square clearable v-model="form.username" type="username"
                  label="Username">
           <template v-slot:prepend>
@@ -43,45 +44,20 @@
             <q-icon name="email"/>
           </template>
         </q-input>
-        <q-input v-model="form.alamat" type="text" label="Alamat Lengkap">
-          <template v-slot:prepend>
-            <q-icon name="place"/>
-          </template>
-        </q-input>
-        <q-input square clearable v-model="form.telepon" type="text"
-                 label="No Telepon">
-          <template v-slot:prepend>
-            <q-icon name="phone"/>
-          </template>
-        </q-input>
-      </q-step>
-
-      <q-step
-        :name="2"
-        title="Kelengkapan data di koperasi"
-        icon="create_new_folder"
-        :done="step > 2"
-      >
-        <div v-for="(field, index) in fields" :key="index">
-          <component v-model="fieldData[field.cid]" @input="onInput" v-bind:is="getElement(field)"
-                     :label="field.label" :required="field.required"
-                     :field_options="field.field_options" :id="field.cid" :cid="field.cid"
-                     :ref="field.cid" debounce="500"/>
-        </div>
       </q-step>
       <template v-slot:navigation>
         <q-stepper-navigation>
           <q-stepper-navigation>
             <q-btn v-if="step===2" @click="save" unelevated
                    size="lg"
-                   color="purple-4" class="full-width text-white" label="Get Started">
+                   color="purple-4" class="full-width text-white" label="Daftarkan Anggota">
             </q-btn>
             <q-btn v-else @click="$refs.stepper.next()" unelevated
                    size="lg"
-                   color="purple-4" class="full-width text-white" label="Continue">
+                   color="purple-4" class="full-width text-white" label="Selanjutnya">
             </q-btn>
             <q-btn v-if="step > 1" flat color="primary"
-                   @click="$refs.stepper.previous()" label="Back" class="q-ml-sm"/>
+                   @click="$refs.stepper.previous()" label="Kembali" class="q-ml-sm"/>
           </q-stepper-navigation>
         </q-stepper-navigation>
       </template>
@@ -138,11 +114,7 @@
         form: {
           username: '',
           password: '',
-          firstName: '',
-          lastName: '',
           email: '',
-          telepon: '',
-          alamat: '',
         },
       }
     },
@@ -174,7 +146,7 @@
           })
           .catch((error) => {
             this.$q.loading.hide()
-            this.showAlert(error.response.data.error_description, 'error')
+            this.showAlert(error.response.data.err, 'error')
           })
       },
       onInput(val, id) {

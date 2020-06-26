@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-table
       :dense="$q.screen.lt.md"
-      title="Account yang pending"
+      title="Akun yang pending"
       :data="data"
       :columns="columns"
       row-key="name"
@@ -19,8 +19,11 @@
           <q-td key="address" :props="props">
             {{ props.row.address }}
           </q-td>
-          <q-td key="email" :props="props">
-            {{ props.row.email }}
+          <q-td key="telepon" :props="props">
+            {{ props.row.no_telepon }}
+          </q-td>
+          <q-td key="address" :props="props">
+            {{ props.row.address }}
           </q-td>
           <q-td key="aksi" :props="props">
             <div class="row">
@@ -41,7 +44,7 @@
         </q-tr>
       </template>
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="Cari">
           <template v-slot:append>
             <q-icon name="search"/>
           </template>
@@ -77,6 +80,13 @@
             align: 'center',
             label: 'Alamat',
             field: 'address',
+            sortable: true,
+          },
+          {
+            name: 'telepon',
+            align: 'center',
+            label: 'No Telepon / HP',
+            field: 'telepon',
             sortable: true,
           },
           {

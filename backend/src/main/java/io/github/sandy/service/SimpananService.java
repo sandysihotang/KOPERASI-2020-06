@@ -28,48 +28,39 @@ public class SimpananService {
     @Autowired
     KoperasiRepository koperasiRepository;
 
-    public void saveAturanSimpanan(Requestbody requestbody, Koperasi koperasi) {
-        List<PengaturanSimpanan> pengaturanSimpananList = new ArrayList<>();
-        PengaturanSimpanan pengaturanSimpanan = new PengaturanSimpanan();
-        pengaturanSimpanan.setJenisSimpanan(1);
-        pengaturanSimpanan.setKoperasi(koperasi);
-        pengaturanSimpanan.setMinimalSimpanan(requestbody.getPokok());
-        pengaturanSimpananList.add(pengaturanSimpanan);
-        pengaturanSimpanan = new PengaturanSimpanan();
-        pengaturanSimpanan.setJenisSimpanan(2);
-        pengaturanSimpanan.setKoperasi(koperasi);
-        pengaturanSimpanan.setMinimalSimpanan(requestbody.getWajib());
-        pengaturanSimpananList.add(pengaturanSimpanan);
-        pengaturanSimpanan = new PengaturanSimpanan();
-        pengaturanSimpanan.setJenisSimpanan(3);
-        pengaturanSimpanan.setKoperasi(koperasi);
-        pengaturanSimpanan.setMinimalSimpanan(requestbody.getSukarela());
-        pengaturanSimpananList.add(pengaturanSimpanan);
-
-        pengaturanSimpananRepository.saveAll(pengaturanSimpananList);
-
+    public void saveAturanSimpanan(Requestbody requestbody, Integer koperasi) {
+        if (pengaturanSimpananRepository.adaAturan(koperasi)) {
+            pengaturanSimpananRepository.saveAturanSimpananUpdate(requestbody.getPokok(), koperasi, 1);
+            pengaturanSimpananRepository.saveAturanSimpananUpdate(requestbody.getWajib(), koperasi, 2);
+            pengaturanSimpananRepository.saveAturanSimpananUpdate(requestbody.getSukarela(), koperasi, 3);
+        } else {
+            pengaturanSimpananRepository.saveAturanSimpanan(requestbody.getPokok(), koperasi, 1);
+            pengaturanSimpananRepository.saveAturanSimpanan(requestbody.getWajib(), koperasi, 2);
+            pengaturanSimpananRepository.saveAturanSimpanan(requestbody.getSukarela(), koperasi, 3);
+        }
     }
 
-    public void saveActivasiSimpanan(Requestbody requestbody, Map<String,Object> koperasi, User user, Integer jenis_simpanan) {
-        Koperasi koperasi1 = koperasiRepository.getOne((Integer) koperasi.get("id"));
+    public void saveActivasiSimpanan(Requestbody requestbody, Map<String, Object> koperasi, Integer user, Integer jenis_simpanan) {
+//        Koperasi koperasi1 = koperasiRepository.getOne();
         AktivasiSimpanan aktivasiSimpanan = new AktivasiSimpanan();
         aktivasiSimpanan.setAktif(true);
-        aktivasiSimpanan.setKoperasi(koperasi1);
-        aktivasiSimpanan.setUser(user);
+        aktivasiSimpanan.setIdKoperasi((Integer) koperasi.get("id"));
+        aktivasiSimpanan.setIdUser(user);
         aktivasiSimpanan.setJenisSimpanan(jenis_simpanan);
         aktivasiSimpanan.setTotalSimpanan(requestbody.getJumlahSimpanan());
         aktivasiSimpanan.setTanggalMulai(new Date(requestbody.getDate()));
         aktivasiSimpanan.setCreatedAt(new Date());
         aktivasiSimpananRepository.save(aktivasiSimpanan);
 
-        TransaksiSimpanan transaksiSimpanan = new TransaksiSimpanan();
-        transaksiSimpanan.setAktivasiSimpanan(aktivasiSimpanan);
-        transaksiSimpanan.setCreatedAt(new Date());
-        transaksiSimpanan.setJumlahTransaksi(requestbody.getJumlahSimpanan().intValue());
-        transaksiSimpanan.setJenisTransaksi(1);
-        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan(koperasi1.getId()));
+//        TransaksiSimpanan transaksiSimpanan = new TransaksiSimpanan();
+//        transaksiSimpanan.setAktivasiSimpanan(aktivasiSimpanan);
+//        transaksiSimpanan.setCreatedAt(new Date());
+//        transaksiSimpanan.setJumlahTransaksi(requestbody.getJumlahSimpanan().intValue());
+//        transaksiSimpanan.setJenisTransaksi(1);
+//        transaksiSimpanan.setKodeTransaksi();
 
-        transaksiSimpananRepository.save(transaksiSimpanan);
+        transaksiSimpananRepository.insertToTransaksi(requestbody.getJumlahSimpanan().intValue(), aktivasiSimpanan.getId(), new Date(),
+                1, getKodeTransaksiSimpanan((Integer) koperasi.get("id")));
 
     }
 
@@ -101,7 +92,7 @@ public class SimpananService {
     public void saveTransaksiPenarikanSimpanan(Integer id, Requestbody requestbody) {
         AktivasiSimpanan aktivasiSimpanan = aktivasiSimpananRepository.getOne(id);
         TransaksiSimpanan transaksiSimpanan = new TransaksiSimpanan();
-        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan(aktivasiSimpanan.getKoperasi().getId()));
+        transaksiSimpanan.setKodeTransaksi(getKodeTransaksiSimpanan(aktivasiSimpanan.getIdKoperasi()));
         transaksiSimpanan.setJumlahTransaksi(requestbody.getJumlahTransaksi());
         transaksiSimpanan.setJenisTransaksi(2);
         transaksiSimpanan.setCreatedAt(new Date(requestbody.getDate()));

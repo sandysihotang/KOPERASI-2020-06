@@ -85,14 +85,14 @@
           <q-stepper-navigation>
             <q-btn v-if="step===2" @click="save" unelevated
                    size="lg"
-                   color="purple-4" class="full-width text-white" label="Get Started">
+                   color="purple-4" class="full-width text-white" label="Simpan Pengaturan Pinjaman">
             </q-btn>
             <q-btn v-else @click="$refs.stepper.next()" unelevated
                    size="lg"
-                   color="purple-4" class="full-width text-white" label="Continue">
+                   color="purple-4" class="full-width text-white" label="Selanjutnya">
             </q-btn>
             <q-btn v-if="step > 1" flat color="primary"
-                   @click="$refs.stepper.previous()" label="Back" class="q-ml-sm"/>
+                   @click="$refs.stepper.previous()" label="Kembali" class="q-ml-sm"/>
           </q-stepper-navigation>
         </q-stepper-navigation>
       </template>

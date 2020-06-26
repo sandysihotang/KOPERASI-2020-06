@@ -24,6 +24,16 @@ public interface ProdukBaruRepository extends JpaRepository<ProdukBaru, Integer>
             nativeQuery = true)
     List<Map<String, Object>> getTransaksiProdukMasukLaporan(Integer idKoperasi, Date from, Date to);
 
+    @Query(value = "SELECT pb.id,pb.harga_beli, pb.harga_jual_non_anggota, pb.harga_jual_anggota, pb.jumlah_produk," +
+            "p.nama_produk, p.kode_produk," +
+            "kp.nama_kategori from produk_baru pb " +
+            "INNER JOIN produk p on pb.id_produk = p.id " +
+            "INNER JOIN vendor v on pb.id_vendor = v.id " +
+            "INNER JOIN kategori_produk kp on p.id_kategori = kp.id " +
+            "WHERE v.id = ?1",
+            nativeQuery = true)
+    List<Map<String, Object>> getPembelianProdukBaru(Integer vendor);
+
     @Query(value = "SELECT CASE WHEN " +
             "((SELECT count(*) from produk_baru pb " +
             "INNER JOIN produk p on pb.id_produk = p.id " +

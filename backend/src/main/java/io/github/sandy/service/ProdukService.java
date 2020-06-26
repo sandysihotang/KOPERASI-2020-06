@@ -6,10 +6,7 @@ import io.github.sandy.request.Requestbody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ProdukService {
@@ -37,10 +34,10 @@ public class ProdukService {
     @Autowired
     KoperasiRepository koperasiRepository;
 
-    public Vendor saveVendor(Koperasi koperasi, Requestbody requestbody) {
+    public Vendor saveVendor(Map<String, Object> koperasi, Requestbody requestbody) {
         Vendor vendor = new Vendor();
         vendor.setAlamatVendor(requestbody.getAlamat());
-        vendor.setKoperasi(koperasi);
+        vendor.setIdKoperasi((Integer) koperasi.get("id"));
         vendor.setStatus(false);
         vendor.setNamaVendor(requestbody.getName());
         vendor.setNoTelepon(requestbody.getTelepon());
@@ -49,17 +46,17 @@ public class ProdukService {
         return vendor;
     }
 
-    public void saveKategori(Koperasi koperasi, String kategori) {
+    public void saveKategori(Map<String, Object> koperasi, String kategori) {
         KategoriProduk kategoriProduk = new KategoriProduk();
-        kategoriProduk.setKoperasi(koperasi);
+        kategoriProduk.setIdKoperasi((Integer) koperasi.get("id"));
         kategoriProduk.setNamaKategori(kategori);
         kategoriProdukRepository.save(kategoriProduk);
     }
 
-    public void saveProdukBaru(Requestbody requestbody, Koperasi koperasi, Integer idVendor) {
+    public void saveProdukBaru(Requestbody requestbody, Map<String,Object> koperasi, Integer idVendor) {
         Produk produk = new Produk();
         produk.setJumlahProduk(0);
-        produk.setKoperasi(koperasi);
+        produk.setIdKoperasi((Integer) koperasi.get("id"));
         produk.setNamaProduk(requestbody.getNamaProduk());
         produk.setKodeProduk(requestbody.getBarCode());
         KategoriProduk kategoriProduk = kategoriProdukRepository.getOne(requestbody.getKategoriProduk());
@@ -67,7 +64,7 @@ public class ProdukService {
         produkRepository.save(produk);
 
         Harga harga = new Harga();
-        harga.setProduk(produk);
+        harga.setIdProduk(produk.getId());
         harga.setHargaBeli(0);
         harga.setHargaJualNonAnggota(0);
         harga.setHargaJualAnggota(0);
@@ -78,7 +75,7 @@ public class ProdukService {
         produkBaru.setHargaBeli(requestbody.getHargaBeli());
         produkBaru.setHargaJualAnggota(requestbody.getHargaJualAnggota());
         produkBaru.setHargaJualNonAnggota(requestbody.getHargaJualNonAnggota());
-        produkBaru.setProduk(produk);
+        produkBaru.setIdProduk(produk.getId());
         produkBaru.setJumlahProduk(requestbody.getJumlahBarang());
         produkBaru.setVendor(vendorRepository.getOne(idVendor));
         produkBaruRepository.save(produkBaru);
@@ -90,7 +87,7 @@ public class ProdukService {
 
         ProdukBaru produkBaru = new ProdukBaru();
         produkBaru.setVendor(vendor);
-        produkBaru.setProduk(produk);
+        produkBaru.setIdProduk(produk.getId());
         produkBaru.setJumlahProduk(requestbody.getJumlahBarang());
         produkBaru.setHargaBeli(requestbody.getHargaBeli());
         produkBaru.setHargaJualAnggota(requestbody.getHargaJualAnggota());
@@ -102,11 +99,11 @@ public class ProdukService {
     public void simpanProduk(Vendor vendor) {
         Set<ProdukBaru> produkBaru = vendor.getProdukBaru();
         for (ProdukBaru produkBaru1 : produkBaru) {
-            Produk produk = produkRepository.getOne(produkBaru1.getProduk().getId());
+            Produk produk = produkRepository.getOne(produkBaru1.getIdProduk());
             produk.setJumlahProduk(produk.getJumlahProduk() + produkBaru1.getJumlahProduk());
             produkRepository.save(produk);
-            if (hargaRepository.existsByProdukAndStatus(produk, true)) {
-                List<Harga> hargas = hargaRepository.getAllByProdukAndStatus(produk, true);
+            if (hargaRepository.existsByIdProdukAndStatus(produk.getId(), true)) {
+                List<Harga> hargas = hargaRepository.getAllByIdProdukAndStatus(produk.getId(), true);
                 for (Harga harga : hargas) {
                     Harga harga1 = hargaRepository.getOne(harga.getId());
                     harga1.setStatus(false);
@@ -118,7 +115,7 @@ public class ProdukService {
             harga.setHargaBeli(produkBaru1.getHargaBeli());
             harga.setHargaJualAnggota(produkBaru1.getHargaJualAnggota());
             harga.setHargaJualNonAnggota(produkBaru1.getHargaJualNonAnggota());
-            harga.setProduk(produk);
+            harga.setIdProduk(produk.getId());
             hargaRepository.save(harga);
         }
         Vendor vendor1 = vendorRepository.getOne(vendor.getId());
@@ -137,14 +134,14 @@ public class ProdukService {
         return "R0000000001";
     }
 
-    public void tambahKeranjang(Requestbody requestbody, Koperasi koperasi) {
+    public void tambahKeranjang(Requestbody requestbody, Map<String, Object> koperasi) {
         PenjualanProduk penjualanProduk = new PenjualanProduk();
         penjualanProduk.setKeanggotaan(requestbody.getAnggota());
         penjualanProduk.setJumlahBeli(requestbody.getJumlahBeli());
         penjualanProduk.setStatus(false);
-        penjualanProduk.setKoperasi(koperasi);
+        penjualanProduk.setIdKoperasi((Integer) koperasi.get("id"));
         Produk produk = produkRepository.getOne(requestbody.getId());
-        penjualanProduk.setHarga(hargaRepository.getFirstByProdukAndStatus(produk, true));
+        penjualanProduk.setHarga(hargaRepository.getFirstByIdProdukAndStatus(produk.getId(), true));
         penjualanProdukRepository.save(penjualanProduk);
     }
 
@@ -154,18 +151,17 @@ public class ProdukService {
         transaksiProduk.setKodeTransaksi(getKodeTransaksi(koperasi));
         transaksiProduk.setKeanggotaan(requestbody.getAnggota());
         transaksiProduk.setUangMasuk(requestbody.getUangBeli());
-        Koperasi koperasi1 = koperasiRepository.getOne(koperasi);
-        transaksiProduk.setKoperasi(koperasi1);
+        transaksiProduk.setIdKoperasi(koperasi);
 
         transaksiProdukRepository.save(transaksiProduk);
 
-        List<PenjualanProduk> penjualanProduks = penjualanProdukRepository.findAllByKoperasiAndStatus(koperasi1, false);
+        List<PenjualanProduk> penjualanProduks = penjualanProdukRepository.findAllByIdKoperasiAndStatus(koperasi, false);
         for (PenjualanProduk penjualanProduk : penjualanProduks) {
             PenjualanProduk penjualanProduk1 = penjualanProdukRepository.getOne(penjualanProduk.getId());
             penjualanProduk1.setStatus(true);
             penjualanProduk1.setTransaksiProduk(transaksiProduk);
             penjualanProdukRepository.save(penjualanProduk1);
-            Produk produk = produkRepository.getOne(penjualanProduk.getHarga().getProduk().getId());
+            Produk produk = produkRepository.getOne(penjualanProduk.getHarga().getIdProduk());
             produk.setJumlahProduk(produk.getJumlahProduk() - penjualanProduk.getJumlahBeli());
             produkRepository.save(produk);
         }

@@ -12,6 +12,20 @@ const routes = [
     meta: {
       forVisitor: true,
     },
+  }, {
+    path: '/lupapassword',
+    name: 'Forgot',
+    component: () => import('../views/Authentication/LupaPassword.vue'),
+    meta: {
+      forVisitor: true,
+    },
+  }, {
+    path: '/gantipassword/:uuid',
+    name: 'Ganti',
+    component: () => import('../views/Authentication/UbahPassword.vue'),
+    meta: {
+      forVisitor: true,
+    },
   },
   {
     path: '/register',

@@ -97,12 +97,6 @@
             field: row => row.noTransaksi,
             sortable: true,
           }, {
-            name: 'nama',
-            label: 'Nama Nasabah',
-            align: 'center',
-            field: row => row.nama,
-            sortable: true,
-          }, {
             name: 'nom',
             label: 'Jumlah Pinjaman',
             align: 'center',

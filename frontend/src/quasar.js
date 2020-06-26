@@ -9,6 +9,8 @@ import '@quasar/extras/ionicons-v4/ionicons-v4.css';
 import '@quasar/extras/mdi-v3/mdi-v3.css';
 import '@quasar/extras/eva-icons/eva-icons.css';
 import {
+  QCarousel,
+  QCarouselSlide,
   Loading,
   QTable,
   Quasar,
@@ -74,6 +76,8 @@ import {
 Vue.use(Quasar, {
   config: {},
   components: {
+    QCarousel,
+    QCarouselSlide,
     QFile,
     QBtnDropdown,
     QDialog,

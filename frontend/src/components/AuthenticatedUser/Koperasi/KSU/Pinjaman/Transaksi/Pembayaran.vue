@@ -96,7 +96,7 @@
         persentase: null,
         model: '',
         options: [
-          'Cancel', 'Approved', 'Rejected', 'On Reviewed', 'Awaiting Approval',
+          'Dibatalkan', 'Disetujui', 'Ditolak', 'Sedang Ditinjau', 'Menunggu Persetujuan',
         ]
       };
     },

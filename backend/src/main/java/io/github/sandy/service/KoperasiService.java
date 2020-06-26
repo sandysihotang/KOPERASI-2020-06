@@ -2,6 +2,7 @@ package io.github.sandy.service;
 
 import io.github.sandy.ErrorCode.Err;
 import io.github.sandy.config.AuthorizationServerConfiguration;
+import io.github.sandy.gdrive.DriveQuickstart;
 import io.github.sandy.model.*;
 import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
@@ -10,12 +11,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -48,8 +51,6 @@ public class KoperasiService {
     @Autowired
     DaftarAnggotaKoperasiRepository daftarAnggotaKoperasiRepository;
 
-    @Autowired
-    JavaMailSender javaMailSender;
 
     @Autowired
     AngotaKoperasiRepository angotaKoperasiRepository;
@@ -81,23 +82,35 @@ public class KoperasiService {
 
     public Err createKoperasi(Requestbody requestbody, String uname) throws Exception {
         Map<String, Object> user = userRepository.getUserUsername(uname);
-        Koperasi koperasi = new Koperasi();
+        //Koperasi koperasi = new Koperasi();
 
-        koperasi.setAlamatKoperasi(requestbody.getAlamat());
-        koperasi.setNamaKoperasi(requestbody.getName());
-        koperasi.setJenisKoperasi(requestbody.getJenis().trim().equals("Koperasi Serba Usaha (KSU)") ? 1 : 2);
-        koperasi.setNamaPendiri(requestbody.getPendiri());
-        koperasi.setNoIzinKoperasi(requestbody.getIzin());
-        koperasi.setTahunBerdiriKoperasi(new Date(requestbody.getDate()));
-        koperasi.setEmail(requestbody.getEmail());
-        koperasi.setUser(userRepository.getOne((Integer) user.get("id")));
+//        koperasi.setAlamatKoperasi(requestbody.getAlamat());
+//        koperasi.setNamaKoperasi(requestbody.getName());
+//        koperasi.setJenisKoperasi(requestbody.getJenis().trim().equals("Koperasi Serba Usaha (KSU)") ? 1 : 2);
+//        koperasi.setNamaPendiri(requestbody.getPendiri());
+//        koperasi.setNoIzinKoperasi(requestbody.getIzin());
+//        koperasi.setTahunBerdiriKoperasi(new Date(requestbody.getDate()));
+//        koperasi.setEmail(requestbody.getEmail());
+//        koperasi.setUser(userRepository.getOne((Integer) user.get("id")));
         String path = saveImage(requestbody.getImage());
-        koperasi.setLogoKoperasi(path);
-        koperasiRepository.save(koperasi);
+        if (path != null) {
+            DriveQuickstart driveQuickstart = new DriveQuickstart();
+            File t = new File("");
+            File file = new File(t.getAbsolutePath() + path);
+            path = driveQuickstart.uploadLogo(file);
+            file.delete();
+        }
+        //koperasi.setLogoKoperasi(path);
+        koperasiRepository.createKoperasi(requestbody.getAlamat(), requestbody.getName(),
+                requestbody.getJenis().trim().equals("Koperasi Serba Usaha (KSU)") ? 1 : 2,
+                requestbody.getPendiri(), requestbody.getIzin(), new Date(requestbody.getDate()),
+                requestbody.getEmail(), (Integer) user.get("id"), path);
+        //koperasiRepository.save(koperasi);
 
-        User user1 = userRepository.getOne((Integer) user.get("id"));
-        user1.setHaveKoperasi(2);
-        userRepository.save(user1);
+        userRepository.sethaveKoperasi((Integer) user.get("id"));
+//        User user1 = userRepository.getOne((Integer) user.get("id"));
+//        user1.setHaveKoperasi(2);
+//        userRepository.save(user1);
 
         return new Err(200, "Koperasi berhasil");
     }
@@ -118,15 +131,15 @@ public class KoperasiService {
             Files.write(path, images);
             return "/backend/src/main/resources/static/images/" + pict;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return null;
         }
     }
 
-    public void changeStateKoperasi(int id, String text, boolean state) {
+    public void changeStateKoperasi(int id, String text, boolean state) throws GeneralSecurityException, IOException, MessagingException {
         Map<String, Object> koperasi = koperasiRepository.getKoperasiID(id);
         MailSender mailSender = new MailSender();
-//        mailSender.sendEmailSetStateKoperasi(javaMailSender, (String) koperasi.get("email"), text, (state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
+        mailSender.sendEmailSetStateKoperasi((String) koperasi.get("email"), text, (!state ? "Koperasi Telah Diaktifkan" : "Maaf Koperasi dinonaktifkan"));
 
         userRepository.update((Integer) koperasi.get("id_user"), (!state ? 3 : 2));
     }
@@ -134,17 +147,12 @@ public class KoperasiService {
     public void saveFormRegisterMember(Map<String, Object> user, String pattern) {
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
 
-        FieldDaftarAnggota fieldDaftarAnggota = new FieldDaftarAnggota();
-        fieldDaftarAnggota.setKoperasi(koperasiRepository.getOne((Integer) koperasi.get("id")));
-        fieldDaftarAnggota.setPatternField(pattern);
+        daftarAnggotaKoperasiRepository.createHaveFieldKoperasi((Integer) koperasi.get("id"), pattern);
 
-        daftarAnggotaKoperasiRepository.save(fieldDaftarAnggota);
-
-        Koperasi changeStateForm = koperasiRepository.getOne((Integer) koperasi.get("id"));
-        koperasiRepository.save(changeStateForm);
+        koperasiRepository.haveField((Integer) koperasi.get("id"));
     }
 
-    public void saveUser(Requestbody requestbody, Koperasi koperasi) {
+    public void saveUser(Requestbody requestbody, Map<String, Object> koperasi) {
         User user = new User();
         user.setUsername(requestbody.getUsername());
         user.setPassword(auth.passwordEncoder.encode(requestbody.getPassword()));
@@ -159,17 +167,9 @@ public class KoperasiService {
         RoleUser roleUser = new RoleUser(role.getId(), user.getId());
         roleUserRepository.save(roleUser);
 
-        UserDetail userDetail = new UserDetail();
-        userDetail.setFirstName(requestbody.getFirstName());
-        userDetail.setLastName(requestbody.getLastName());
-        userDetail.setUser(user);
-        userDetail.setAddress(requestbody.getAlamat());
-        userDetail.setNoTelepon(requestbody.getTelepon());
-        detailUserRepository.save(userDetail);
-
         AnggotaKoperasi anggotaKoperasi = new AnggotaKoperasi();
         anggotaKoperasi.setData(requestbody.getFieldData());
-        anggotaKoperasi.setKoperasi(koperasi);
+        anggotaKoperasi.setKoperasi(koperasiRepository.getOne((Integer) koperasi.get("id")));
         anggotaKoperasi.setUser(user);
 
         angotaKoperasiRepository.save(anggotaKoperasi);
@@ -212,6 +212,8 @@ public class KoperasiService {
             long day = days + (Integer) pengaturanPinjaman.get("ambang_batas_denda");
             Double total = ((Double) pinjaman.get("jumlah_pinjaman") * (Double) pengaturanPinjaman.get("persentase_denda") / 100) * day;
             angsuran.setDenda(total);
+            angsuran.setTotalTagihan(angsuran.getAngsuranPokok() + angsuran.getDenda() + angsuran.getBunga());
+            angsuran.setTotalAngsuran(angsuran.getAngsuranPokok() + angsuran.getDenda() + angsuran.getBunga());
             angsuranRepository.save(angsuran);
             Boolean existNotif = notifikasiAnggotaRepository.checkExistBy(angsuran.getId());
             if (!existNotif || denda.intValue() != angsuran.getDenda().intValue()) {
@@ -274,7 +276,6 @@ public class KoperasiService {
         for (Map<String, Object> transaksiSimpanan : transaksiSimpanans) {
             Map<String, Object> temp = new HashMap<>();
             temp.put("noTransaksi", transaksiSimpanan.get("kode_transaksi"));
-            temp.put("nama", transaksiSimpanan.get("first_name") + " " + transaksiSimpanan.get("last_name"));
             temp.put("tipeTransaksi", ((Integer) transaksiSimpanan.get("jenis_transaksi") == 1 ? "Setor Dana" : "Tarik Dana"));
             temp.put("produk", ((Integer) transaksiSimpanan.get("jenis_simpanan") == 1 ? "Simpanan Pokok" : ((Integer) transaksiSimpanan.get("jenis_simpanan") == 2 ? "Simpanan Wajib" : "Simpanan Sukarela")));
             temp.put("tglTransaksi", transaksiSimpanan.get("created_at"));
@@ -294,7 +295,6 @@ public class KoperasiService {
         for (Map<String, Object> pinjaman : transaksiPinjaman) {
             Map<String, Object> temp = new HashMap<>();
             temp.put("noTransaksi", pinjaman.get("kode_pinjaman"));
-            temp.put("nama", pinjaman.get("first_name") + " " + pinjaman.get("last_name"));
             temp.put("jaminan", pinjaman.get("jaminan"));
             temp.put("jumlahPinjaman", pinjaman.get("jumlah_pinjaman"));
             temp.put("tenor", pinjaman.get("tenor"));
@@ -336,8 +336,15 @@ public class KoperasiService {
         return data;
     }
 
-    public void buatLaporan(Integer id, Integer tahun, MultipartFile file) {
+    public void buatLaporan(Integer id, Integer tahun, MultipartFile file) throws Exception {
         String pathLaporan = saveLaporan(file);
+        DriveQuickstart driveQuickstart = new DriveQuickstart();
+        File t = new File("");
+        String[] split = file.getOriginalFilename().split("\\.");
+        String extensiFile = split[split.length - 1];
+        File files = new File(t.getAbsolutePath() + pathLaporan);
+        pathLaporan = driveQuickstart.uploadSpreedSheet(files, extensiFile);
+        files.delete();
         LaporanKoperasi laporanKoperasi = new LaporanKoperasi();
         laporanKoperasi.setCreatedAt(new Date());
         laporanKoperasi.setIdKoperasi(id);
@@ -346,6 +353,7 @@ public class KoperasiService {
         laporanKoperasi.setTahunLaporan(tahun);
         laporanKoperasi.setStatus(1);
         laporanKoperasi.setUpdatedAt(new Date());
+        laporanKoperasi.setExtensiFile(extensiFile);
         laporanKoperasiRepository.save(laporanKoperasi);
     }
 
@@ -357,7 +365,7 @@ public class KoperasiService {
         File curFile = new File("");
         String helper = curFile.getAbsolutePath();
         String curDir = helper + "/backend/src/main/resources/static/laporan/";
-        String pict = name + ".xls";
+        String pict = files.getOriginalFilename();
         Path path = Paths.get(curDir + pict);
         byte[] images = new byte[0];
         try {
@@ -370,13 +378,22 @@ public class KoperasiService {
         }
     }
 
-    public void saveEditLaporan(Integer id, Requestbody requestbody) {
+    public void saveEditLaporan(Integer id, Requestbody requestbody) throws Exception {
         LaporanKoperasi laporanKoperasi = laporanKoperasiRepository.getOne(id);
         laporanKoperasi.setTahunLaporan(requestbody.getTahun());
-        if(requestbody.getFiles() != null){
-            String pathLaporan = saveImage(requestbody.getFiles());
+        if (requestbody.getFiles() != null) {
+            MultipartFile file = requestbody.getFiles();
+            String pathLaporan = saveLaporan(file);
+            DriveQuickstart driveQuickstart = new DriveQuickstart();
+            File t = new File("");
+            String[] split = file.getOriginalFilename().split("\\.");
+            String extensiFile = split[split.length - 1];
+            File files = new File(t.getAbsolutePath() + pathLaporan);
+            pathLaporan = driveQuickstart.uploadSpreedSheet(files, extensiFile);
+            files.delete();
+            laporanKoperasi.setExtensiFile(extensiFile);
             laporanKoperasi.setPathLaporan(pathLaporan);
-            laporanKoperasi.setOriginalName(requestbody.getFiles().getOriginalFilename());
+            laporanKoperasi.setOriginalName(file.getOriginalFilename());
         }
         laporanKoperasiRepository.save(laporanKoperasi);
     }

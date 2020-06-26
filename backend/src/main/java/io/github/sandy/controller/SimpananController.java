@@ -68,7 +68,7 @@ public class SimpananController {
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        simpananService.saveAturanSimpanan(requestbody, koperasiRepository.getOne((Integer) koperasi.get("id")));
+        simpananService.saveAturanSimpanan(requestbody, (Integer) koperasi.get("id"));
     }
 
     @RequestMapping(value = "/api/aktivasisimpanan/{id}/{jenis_simpanan}", method = RequestMethod.POST)
@@ -80,39 +80,48 @@ public class SimpananController {
         String uname = principal.getName();
         Map<String, Object> u = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
-        User user = userRepository.getOne(id);
-        if (aktivasiSimpananRepository.existsByKoperasiAndUserAndJenisSimpanan(koperasiRepository.getOne((Integer) koperasi.get("id")), user, jenis_simpanan)) {
+//        User user = userRepository.getOne(id);
+        if (aktivasiSimpananRepository.existsByKoperasiAndUserAndJenisSimpanan((Integer) koperasi.get("id"), id, jenis_simpanan)) {
             return new ResponseEntity<>(new Err(400, ""), HttpStatus.OK);
         }
-        simpananService.saveActivasiSimpanan(requestbody, koperasi, user, jenis_simpanan);
+        simpananService.saveActivasiSimpanan(requestbody, koperasi, id, jenis_simpanan);
         return new ResponseEntity<>(new Err(200, ""), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/getdatapengajusimpanan", method = RequestMethod.GET)
-    public List<User> getDataPengajuSimpanan(HttpServletRequest request) {
+    public Map<String, Object> getDataPengajuSimpanan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> u = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
-        return userRepository.findAllForPengaju((Integer) koperasi.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("pengaturan", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")).get("pattern_field"));
+        data.put("anggota", userRepository.findAllForPengaju((Integer) koperasi.get("id")));
+        return data;
     }
 
     @RequestMapping(value = "/api/getdataanggotasimpananwajib", method = RequestMethod.GET)
-    public List<Map<String, Object>> getDataAnggotaSimpananWajib(HttpServletRequest request) {
+    public Map<String, Object> getDataAnggotaSimpananWajib(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> u = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
-        return userRepository.findAllByJenisSimpanan((Integer) koperasi.get("id"), 2);
+        Map<String, Object> data = new HashMap<>();
+        data.put("pengaturan", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")).get("pattern_field"));
+        data.put("anggota", userRepository.findAllByJenisSimpanan((Integer) koperasi.get("id"), 2));
+        return data;
     }
 
     @RequestMapping(value = "/api/getdataanggotasimpanansukarela", method = RequestMethod.GET)
-    public List<Map<String, Object>> getDataAnggotaSimpananSukarela(HttpServletRequest request) {
+    public Map<String, Object> getDataAnggotaSimpananSukarela(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> u = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) u.get("id"));
-        return userRepository.findAllByJenisSimpanan((Integer) koperasi.get("id"), 3);
+        Map<String, Object> data = new HashMap<>();
+        data.put("pengaturan", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")).get("pattern_field"));
+        data.put("anggota", userRepository.findAllByJenisSimpanan((Integer) koperasi.get("id"), 3));
+        return data;
     }
 
     @RequestMapping(value = "/api/getanggotasimpananaktivasi", method = RequestMethod.GET)

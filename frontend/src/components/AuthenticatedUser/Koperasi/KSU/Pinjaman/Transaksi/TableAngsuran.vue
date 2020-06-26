@@ -164,6 +164,17 @@
           })
           return
         }
+        const dateNow = new Date()
+        const dateIn = new Date(this.date)
+        const totDateNow = (dateNow.getFullYear() * 12 * 30) + (dateNow.getMonth() * 30) + dateNow.getDate()
+        const totDateIn = (dateIn.getFullYear() * 12 * 30) + (dateIn.getMonth() * 30) + dateIn.getDate()
+        if (totDateIn > totDateNow || totDateNow > totDateIn) {
+          this.$q.notify({
+            type: 'negative',
+            message: `Tanggal pembayaran harus valid`
+          })
+          return;
+        }
         this.$q.loading.show()
         this.$http.put(`/api/pembayaransukses/${this.selectedAngsuran[0].id}`, { date: this.date }, {
           headers: this.$auth.getHeader()

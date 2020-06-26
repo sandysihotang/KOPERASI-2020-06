@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<Map<String, Object>> getdataFromUname(String s);
 
     @Query(
-            value = "SELECT first_name, last_name, username, ud.address, users.email, users.id FROM users " +
+            value = "SELECT no_telepon ,first_name, last_name, username, ud.address, users.email, users.id FROM users " +
                     "INNER JOIN role_user " +
                     "ON users.id = role_user.user_id " +
                     "INNER JOIN user_detail ud on users.id = ud.user_id " +
@@ -39,22 +39,22 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Map<String, Object> getUserUsername(String user);
 
 
-    @Query(value = "SELECT * FROM users u " +
+    @Query(value = "SELECT u.id, data FROM users u " +
             "INNER JOIN anggota_koperasi a ON u.id = a.id_user " +
             "WHERE a.id_koperasi = ?1", nativeQuery = true)
-    List<User> findAllForPengaju(Integer idKoperasi);
+    List<Map<String, Object>> findAllForPengaju(Integer idKoperasi);
 
-    @Query(value = "SELECT first_name, last_name, ud.address, ud.no_telepon," +
-            "a.id as id_aktivasi, u.id, a.aktif, a.jenis_simpanan, a.total_simpanan FROM users u " +
+    @Query(value = "SELECT " +
+            "a.id as id_aktivasi, u.id, a.aktif, a.jenis_simpanan, a.total_simpanan, data FROM users u " +
             "INNER JOIN aktivasi_simpanan a ON u.id = a.id_user " +
-            "INNER JOIN user_detail ud on u.id = ud.user_id " +
+            "INNER JOIN anggota_koperasi ak on u.id = ak.id_user " +
             "WHERE a.id_koperasi = ?1 AND a.jenis_simpanan= ?2", nativeQuery = true)
     List<Map<String, Object>> findAllByJenisSimpanan(Integer idKoperasi, Integer jenisSimpanan);
 
-    @Query(value = "SELECT * FROM users u " +
+    @Query(value = "SELECT u.id, a.data FROM users u " +
             "INNER JOIN anggota_koperasi a ON u.id = a.id_user " +
             "WHERE a.id_koperasi = ?1 AND u.enabled = true", nativeQuery = true)
-    List<User> findByKoperasiForRequest(Integer koperasi, Integer[] i);
+    List<Map<String, Object>> findByKoperasiForRequest(Integer koperasi, Integer[] i);
 
     @Query(value = "SELECT first_name, last_name, u.id, email, enabled, account_non_expired, credentials_non_expired, account_non_locked, username, password, have_koperasi FROM users u " +
             "INNER JOIN anggota_koperasi ak on u.id = ak.id_user " +
@@ -69,4 +69,19 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "update users set have_koperasi= ?2 where id = ?1", nativeQuery = true)
     @Transactional
     void update(Integer id, Integer state);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update users set enabled= true where id = ?1", nativeQuery = true)
+    @Transactional
+    void setEnablbe(Integer id);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update users set have_koperasi= 2 where id = ?1", nativeQuery = true)
+    @Transactional
+    void sethaveKoperasi(Integer id);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "update users set password= ?2 where id = ?1", nativeQuery = true)
+    @Transactional
+    void updateUser(Integer idUser, String encode);
 }

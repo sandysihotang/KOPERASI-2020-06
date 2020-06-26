@@ -108,7 +108,7 @@
               />
               <br>
               <center>
-                <q-btn label="Cari Barang" type="submit" color="primary"/>
+                <q-btn label="Tambah Barang" type="submit" color="primary"/>
               </center>
             </q-form>
           </q-card-section>
@@ -116,7 +116,7 @@
         <q-card style="width: 700px; max-width: 80vw" v-else>
           <div v-if="produkExist">
             <q-card-section>
-              Nama Produk: {{ restProduk.namaProduk }}
+              Nama Produk: {{ restProduk.nama_produk }}
             </q-card-section>
             <q-separator/>
             <q-card-section>
@@ -306,40 +306,40 @@
             name: 'barcode',
             label: 'Kode Barang',
             align: 'center',
-            field: row => row.produk.kodeProduk,
+            field: row => row.kode_produk,
             sortable: true,
           },
           {
             name: 'nama',
             label: 'Nama Barang',
             align: 'center',
-            field: row => row.produk.namaProduk,
+            field: row => row.nama_produk,
             sortable: true,
           },
           {
             name: 'kategori',
             label: 'Kategori Barang',
             align: 'center',
-            field: row => row.produk.kategoriProduk.namaKategori,
+            field: row => row.nama_kategori,
             sortable: true,
           },
           {
             name: 'hargabeli',
             label: 'Harga Beli',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.hargaBeli)),
+            field: row => this.toIDR(parseInt(row.harga_beli)),
             sortable: true,
           }, {
             name: 'jumlahbarang',
             label: 'Jumlah Barang',
             align: 'center',
-            field: row => row.jumlahProduk,
+            field: row => row.jumlah_produk,
             sortable: true,
           }, {
             name: 'subtotal',
             label: 'Sub total',
             align: 'center',
-            field: row => this.toIDR(parseInt(row.jumlahProduk * row.hargaBeli)),
+            field: row => this.toIDR(parseInt(row.jumlah_produk * row.harga_beli)),
             sortable: true,
           },
         ],
@@ -412,8 +412,9 @@
         })
           .then((res) => {
             this.data = res.data;
+            this.total = 0;
             for (let i = 0; i < this.data.length; i++) {
-              this.total += (this.data[i].jumlahProduk * this.data[i].hargaBeli)
+              this.total += (this.data[i].jumlah_produk * this.data[i].harga_beli)
             }
             this.$q.loading.hide()
           })
@@ -463,6 +464,7 @@
               type: 'positive',
               message: `Berhasil mengubah data`
             })
+            this.selected = []
             this.$q.loading.hide()
           })
           .catch(() => {
@@ -480,6 +482,7 @@
               type: 'positive',
               message: `Berhasil menghapus data`
             })
+            this.selected = []
             this.$q.loading.hide()
           })
           .catch(() => {
@@ -488,8 +491,8 @@
       },
       update() {
         const obj = this.selected[0]
-        this.hargaBeli = obj.hargaBeli
-        this.jumlahBarang = obj.jumlahProduk
+        this.hargaBeli = obj.harga_beli
+        this.jumlahBarang = obj.jumlah_produk
         this.ubah = true;
       },
       tambahProduk() {

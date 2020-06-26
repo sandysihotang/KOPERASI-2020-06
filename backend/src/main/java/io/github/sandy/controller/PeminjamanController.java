@@ -23,6 +23,9 @@ public class PeminjamanController {
     PeminjamanService peminjamanService;
 
     @Autowired
+    DaftarAnggotaKoperasiRepository daftarAnggotaKoperasiRepository;
+
+    @Autowired
     UserRepository userRepository;
 
     @Autowired
@@ -124,7 +127,7 @@ public class PeminjamanController {
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> data = new HashMap<>();
-        Map<String, Object> pinjaman =pinjamanRepository.getFirstByUserAndStatus((Integer) user.get("id"), 2);
+        Map<String, Object> pinjaman = pinjamanRepository.getFirstByUserAndStatus((Integer) user.get("id"), 2);
         data.put("kodePinjaman", pinjaman.get("kode_pinjaman"));
         data.put("id", pinjaman.get("id"));
         Map<String, Object> angsuran = angsuranRepository.getFirstByPinjamanAndStatusBayarOrderByUrutanKe((Integer) pinjaman.get("id"), false);
@@ -145,24 +148,48 @@ public class PeminjamanController {
     }
 
     @RequestMapping(value = "/api/getdatapengajureqpinjaman", method = RequestMethod.GET)
-    public List<User> getDataPengajuSimpanan(HttpServletRequest request) {
+    public Map<String, Object> getDataPengajuSimpanan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        return userRepository.findByKoperasiForRequest((Integer) koperasi.get("id"), new Integer[]{2, 4, 5});
+        Map<String, Object> data = new HashMap<>();
+        data.put("pengaturan", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")).get("pattern_field"));
+        data.put("anggota", userRepository.findByKoperasiForRequest((Integer) koperasi.get("id"), new Integer[]{2, 4, 5}));
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getadaaturanpinjaman", method = RequestMethod.GET)
+    public Map<String, Object> getAdaAturanPinjaman(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("exist", pengaturanPinjamanRepository.getAdaAturan((Integer)koperasi.get("id")));
+        return data;
+    }
+
+    @RequestMapping(value = "/api/getadaaturansimpanan", method = RequestMethod.GET)
+    public Map<String, Object> getAdaAturanSimpanan(HttpServletRequest request) {
+        Principal principal = request.getUserPrincipal();
+        String uname = principal.getName();
+        Map<String, Object> user = userRepository.getUserUsername(uname);
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("exist", pengaturanPinjamanRepository.getAdaAturanSimpanan((Integer) koperasi.get("id")));
+        return data;
     }
 
     @RequestMapping(value = "/api/getpengaturanpinjamanreqpinjamaninpengurus", method = RequestMethod.GET)
-    public PengaturanPinjaman getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
+    public Map<String, Object> getPengaturanPeminjamanForRequestPinjaman(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        Koperasi kop =koperasiRepository.getOne((Integer) koperasi.get("id"));
-        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatus(kop, true)) {
-            KoperasiPengaturanPinjaman koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatus(kop, true).get();
-            return pengaturanPinjamanRepository.findFirstById(koperasiPengaturanPinjaman.getPengaturanPinjaman().getId()).get();
+        if (koperasiPengaturanPinjamanRepository.existsByKoperasiAndStatusInPengaturan((Integer) koperasi.get("id"), true)) {
+            Map<String, Object> koperasiPengaturanPinjaman = koperasiPengaturanPinjamanRepository.getFirstByKoperasiAndStatusInPengaturan((Integer) koperasi.get("id"), true);
+            return pengaturanPinjamanRepository.getFirstById((Integer) koperasiPengaturanPinjaman.get("id_pengaturan"));
         }
         return null;
     }

@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface HargaRepository extends JpaRepository<Harga, Integer> {
 
-    Boolean existsByProdukAndStatus(Produk produk, Boolean status);
+    Boolean existsByIdProdukAndStatus(Integer produk, Boolean status);
 
-    List<Harga> getAllByProdukAndStatus(Produk produk, Boolean status);
+    List<Harga> getAllByIdProdukAndStatus(Integer produk, Boolean status);
 
-    Harga getFirstByProdukAndStatus(Produk produk, Boolean status);
+    Harga getFirstByIdProdukAndStatus(Integer produk, Boolean status);
 }

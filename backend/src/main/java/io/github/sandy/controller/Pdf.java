@@ -4,7 +4,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
-import io.github.sandy.model.*;
+import io.github.sandy.gdrive.DriveQuickstart;
 import io.github.sandy.repository.*;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.velocity.Template;
@@ -15,9 +15,7 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +23,6 @@ import java.io.*;
 import java.security.Principal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -79,8 +76,6 @@ public class Pdf {
         context.put("noPinjaman", pinjaman.get("kode_pinjaman"));
         Map<String, Object> koperasi = koperasiRepository.getKoperasiID((Integer) pinjaman.get("id_koperasi"));
         context.put("namaKoperasi", koperasi.get("nama_koperasi"));
-        Map<String,Object> userDetail = detailUserRepository.findUserDetail((Integer) pinjaman.get("id_user"));
-        context.put("nama", String.format("%s %s", userDetail.get("first_name"), userDetail.get("last_name")));
         context.put("danapinjaman", kursIndonesia.format(pinjaman.get("jumlah_pinjaman")));
         context.put("bulan", pinjaman.get("tenor"));
         Map<String, Object> pengaturanPinjaman = pengaturanPinjamanRepository.getFirstByPinjaman((Integer) pinjaman.get("id"));
@@ -90,14 +85,14 @@ public class Pdf {
         calendar.add(Calendar.DATE, (Integer) pengaturanPinjaman.get("ambang_batas_denda"));
         calendar.add(Calendar.MONTH, (Integer) pinjaman.get("tenor"));
         context.put("bulanAkhir", simpleDateFormat.format(calendar.getTime()));
-        context.put("pokok", kursIndonesia.format((Double) pinjaman.get("jumlah_pinjaman") / (Integer)pinjaman.get("tenor")));
+        context.put("pokok", kursIndonesia.format((Double) pinjaman.get("jumlah_pinjaman") / (Integer) pinjaman.get("tenor")));
         context.put("totalPokok", kursIndonesia.format(pinjaman.get("jumlah_pinjaman")));
-        context.put("jasaPinjaman", kursIndonesia.format((Double) pinjaman.get("jumlah_pinjaman") * ((Double)pengaturanPinjaman.get("bunga_pinjaman") / 100)));
-        context.put("totalJasaPinjaman", kursIndonesia.format((Double) pinjaman.get("jumlah_pinjaman") * ((Double)pengaturanPinjaman.get("bunga_pinjaman") / 100) * (Integer)pinjaman.get("tenor")));
-        context.put("total", kursIndonesia.format(((Double) pinjaman.get("jumlah_pinjaman") * ((Double)pengaturanPinjaman.get("bunga_pinjaman") / 100)) + (Double) pinjaman.get("jumlah_pinjaman") / (Integer)pinjaman.get("tenor")));
+        context.put("jasaPinjaman", kursIndonesia.format((Double) pinjaman.get("jumlah_pinjaman") * ((Double) pengaturanPinjaman.get("bunga_pinjaman") / 100)));
+        context.put("totalJasaPinjaman", kursIndonesia.format((Double) pinjaman.get("jumlah_pinjaman") * ((Double) pengaturanPinjaman.get("bunga_pinjaman") / 100) * (Integer) pinjaman.get("tenor")));
+        context.put("total", kursIndonesia.format(((Double) pinjaman.get("jumlah_pinjaman") * ((Double) pengaturanPinjaman.get("bunga_pinjaman") / 100)) + (Double) pinjaman.get("jumlah_pinjaman") / (Integer) pinjaman.get("tenor")));
         context.put("totalJumlah", kursIndonesia.format(((Double) pinjaman.get("jumlah_pinjaman") *
-                ((Double)pengaturanPinjaman.get("bunga_pinjaman") / 100) *
-                (Integer)pinjaman.get("tenor")) + (Double) pinjaman.get("jumlah_pinjaman")));
+                ((Double) pengaturanPinjaman.get("bunga_pinjaman") / 100) *
+                (Integer) pinjaman.get("tenor")) + (Double) pinjaman.get("jumlah_pinjaman")));
         context.put("pengurus", String.format("%s %s", userDetailPengurus.get("first_name"), userDetailPengurus.get("last_name")));
         /* now render the template into a StringWriter */
         StringWriter writer = new StringWriter();
@@ -155,5 +150,11 @@ public class Pdf {
             return null;
         }
 
+    }
+
+    @RequestMapping(value = "/testwrew", method = RequestMethod.GET)
+    public void call() throws Exception {
+        DriveQuickstart driveQuickstart = new DriveQuickstart();
+        driveQuickstart.call();
     }
 }

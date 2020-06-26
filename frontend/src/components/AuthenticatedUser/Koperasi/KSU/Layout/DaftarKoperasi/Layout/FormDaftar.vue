@@ -47,19 +47,13 @@
           <q-step
             :name="2"
             prefix="2"
-            title="Create an ad group"
-            caption="Optional"
+            title="Pertanyaan Untuk Koperasi"
           >
-            <q-input filled square v-model="form.date"
-                     :rules="[val => !!val || 'Field is required']"
-                     label="Tahun Berdiri Koperasi">
-              <template v-slot:prepend>
-                <q-icon name="event"/>
-              </template>
+            <q-input filled v-model="form.date" label="Tanggal Berdiri" mask="date" :rules="['date']">
               <template v-slot:append>
-                <q-icon name="access_time" class="cursor-pointer">
-                  <q-popup-proxy transition-show="scale" transition-hide="scale">
-                    <q-date v-model="form.date"/>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                    <q-date v-model="form.date" @input="() => $refs.qDateProxy.hide()" />
                   </q-popup-proxy>
                 </q-icon>
               </template>
@@ -72,7 +66,7 @@
               </template>
             </q-input>
             <q-select filled square ref="input" clearable type="text" v-model="form.jenis"
-                      :options="options" :rules="['date', val => !!val || 'Field is required']"
+                      :options="options"
                       label="Jenis Koperasi">
               <template v-slot:prepend>
                 <q-icon name="list"/>
@@ -83,7 +77,7 @@
           <q-step
             :name="3"
             prefix="3"
-            title="Create an ad"
+            title="Logo Koperasi"
           >
             <div class="row">
               <div class="col-md-2"/>
@@ -104,9 +98,9 @@
               <q-btn color="deep-orange"
                      v-if="step === 3" label="Finish" @click="createKoperasi"/>
               <q-btn @click="$refs.stepper.next()" color="deep-orange"
-                     v-else label="Continue"/>
+                     v-else label="Selanjutnya"/>
               <q-btn v-if="step > 1" flat color="deep-orange" @click="$refs.stepper.previous()"
-                     label="Back" class="q-ml-sm"/>
+                     label="Kembali" class="q-ml-sm"/>
             </q-stepper-navigation>
           </template>
         </q-stepper>
@@ -151,7 +145,7 @@
                 headers: this.$auth.getHeader(),
               })
                 .then((res) => {
-                  this.$auth.setHaveKoperasi(res.data.haveKoperasi);
+                  this.$auth.setHaveKoperasi(res.data.have_koperasi);
                   window.location.href = '/';
                 })
                 .catch((err) => {

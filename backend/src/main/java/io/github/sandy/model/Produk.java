@@ -29,11 +29,8 @@ public class Produk implements Serializable {
     @Column(name = "jumlah_produk")
     private Integer jumlahProduk;
 
-    @JsonBackReference
-    @JsonIgnoreProperties({"produk", "hibernateLazyInitializer", "handler"})
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_koperasi", nullable = false)
-    private Koperasi koperasi;
+    @Column(name = "id_koperasi")
+    private Integer idKoperasi;
 
 
     @JsonIgnoreProperties({"produk", "hibernateLazyInitializer", "handler"})
@@ -41,40 +38,13 @@ public class Produk implements Serializable {
     @JoinColumn(name = "id_kategori", nullable = false)
     private KategoriProduk kategoriProduk;
 
-    @JsonIgnoreProperties({"produk", "hibernateLazyInitializer", "handler"})
-    @Fetch(FetchMode.JOIN)
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(mappedBy = "produk")
-    private Set<Harga> harga = new HashSet<>();
 
-    @JsonIgnoreProperties({"produk", "hibernateLazyInitializer", "handler"})
-    @Fetch(FetchMode.JOIN)
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(mappedBy = "produk", fetch = FetchType.EAGER)
-    private Set<ProdukBaru> produkBaru = new HashSet<>();
 
     public Produk() {
     }
 
-
-    public Set<ProdukBaru> getProdukBaru() {
-        return produkBaru;
-    }
-
-    public void setProdukBaru(Set<ProdukBaru> produkBaru) {
-        this.produkBaru = produkBaru;
-    }
-
     public Integer getId() {
         return id;
-    }
-
-    public Set<Harga> getHarga() {
-        return harga;
-    }
-
-    public void setHarga(Set<Harga> harga) {
-        this.harga = harga;
     }
 
     public void setId(Integer id) {
@@ -105,12 +75,12 @@ public class Produk implements Serializable {
         this.jumlahProduk = jumlahProduk;
     }
 
-    public Koperasi getKoperasi() {
-        return koperasi;
+    public Integer getIdKoperasi() {
+        return idKoperasi;
     }
 
-    public void setKoperasi(Koperasi koperasi) {
-        this.koperasi = koperasi;
+    public void setIdKoperasi(Integer idKoperasi) {
+        this.idKoperasi = idKoperasi;
     }
 
     public KategoriProduk getKategoriProduk() {

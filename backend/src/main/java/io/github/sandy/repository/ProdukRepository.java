@@ -11,9 +11,16 @@ import java.util.Set;
 
 public interface ProdukRepository extends JpaRepository<Produk, Integer> {
 
-    Boolean existsByKodeProdukAndKoperasi(String kodeProduk, Koperasi koperasi);
 
-    Produk getFirstByKodeProdukAndKoperasi(String kodeProduk, Koperasi koperasi);
+    @Query(value = "SELECT CASE When (" +
+            "select count(*) from produk where kode_produk= ?1 AND id_koperasi = ?2" +
+            ")> 0 then true else false end",
+            nativeQuery = true)
+    Boolean getExistByKodeProdukAndKoperasi(String kodeProduk,Integer koperasi);
+
+    @Query(value = "SELECT * from produk where id_koperasi=?2 and kode_produk=?1 limit 1",
+            nativeQuery = true)
+    Map<String,Object> getFirstForScan(String kodeProduk, Integer koperasi);
 
     @Query(value = "SELECT nama_produk, kode_produk, jumlah_produk, " +
             " nama_kategori," +

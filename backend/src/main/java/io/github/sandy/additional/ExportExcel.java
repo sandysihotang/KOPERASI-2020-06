@@ -2,11 +2,14 @@ package io.github.sandy.additional;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.github.sandy.model.*;
+import io.github.sandy.repository.ProdukRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,7 +18,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Service
 public class ExportExcel {
+    @Autowired
+    ProdukRepository produkRepository;
+
     public String toIDR(Integer num) {
         String nums = String.format("%d", num);
 
@@ -81,8 +88,9 @@ public class ExportExcel {
             int totalHarga = 0;
             for (ProdukBaru produkBaru1 : vendor.getProdukBaru()) {
                 Row dataRow = sheet.createRow(i + 1);
-                dataRow.createCell(0).setCellValue(produkBaru1.getProduk().getNamaProduk());
-                dataRow.createCell(1).setCellValue(produkBaru1.getProduk().getKodeProduk());
+                Produk produk = produkRepository.findById(produkBaru1.getIdProduk()).get();
+                dataRow.createCell(0).setCellValue(produk.getNamaProduk());
+                dataRow.createCell(1).setCellValue(produk.getKodeProduk());
                 dataRow.createCell(2).setCellValue(produkBaru1.getJumlahProduk());
                 dataRow.createCell(3).setCellValue(toIDR(produkBaru1.getHargaBeli()));
                 dataRow.createCell(4).setCellValue(toIDR(produkBaru1.getHargaBeli() * produkBaru1.getJumlahProduk()));
@@ -275,22 +283,18 @@ public class ExportExcel {
             cell.setCellStyle(headerCellStyle);
 
             cell = row.createCell(2);
-            cell.setCellValue("Nama Nasabah");
-            cell.setCellStyle(headerCellStyle);
-
-            cell = row.createCell(3);
             cell.setCellValue("Tipe Transaksi");
             cell.setCellStyle(headerCellStyle);
 
-            cell = row.createCell(4);
+            cell = row.createCell(3);
             cell.setCellValue("Produk");
             cell.setCellStyle(headerCellStyle);
 
-            cell = row.createCell(5);
+            cell = row.createCell(4);
             cell.setCellValue("Tanggal Transaksi");
             cell.setCellStyle(headerCellStyle);
 
-            cell = row.createCell(6);
+            cell = row.createCell(5);
             cell.setCellValue("Nominal Transaksi");
             cell.setCellStyle(headerCellStyle);
 
@@ -299,13 +303,12 @@ public class ExportExcel {
             for (Map<String, Object> dataTable : aktivasiSimpananList) {
                 Row dataRow = sheet.createRow(i + 1);
                 dataRow.createCell(1).setCellValue(String.valueOf(dataTable.get("noTransaksi")));
-                dataRow.createCell(2).setCellValue(String.valueOf(dataTable.get("nama")));
-                dataRow.createCell(3).setCellValue(String.valueOf(dataTable.get("tipeTransaksi")));
-                dataRow.createCell(4).setCellValue(String.valueOf(dataTable.get("produk")));
+                dataRow.createCell(2).setCellValue(String.valueOf(dataTable.get("tipeTransaksi")));
+                dataRow.createCell(3).setCellValue(String.valueOf(dataTable.get("produk")));
                 String pattern = "MM/dd/yyyy";
                 DateFormat df = new SimpleDateFormat(pattern);
-                dataRow.createCell(5).setCellValue(df.format((Date) dataTable.get("tglTransaksi")));
-                dataRow.createCell(6).setCellValue(toIDR((Integer) dataTable.get("nominal")));
+                dataRow.createCell(4).setCellValue(df.format((Date) dataTable.get("tglTransaksi")));
+                dataRow.createCell(5).setCellValue(toIDR((Integer) dataTable.get("nominal")));
                 i++;
             }
 
@@ -745,13 +748,16 @@ public class ExportExcel {
         }
 
 
-        Set<AnggotaKoperasi> temp = (Set<AnggotaKoperasi>) data.get("anggota");
-        AnggotaKoperasi[] dataCol = new AnggotaKoperasi[temp.size()];
-        temp.toArray(dataCol);
-        for (int i = 0; i < dataCol.length; i++) {
+        Set<Map<String, Object>> temp = (Set<Map<String, Object>>) data.get("anggota");
+//        AnggotaKoperasi[] dataCol = new AnggotaKoperasi[temp.size()];
+//        ArrayList<AnggotaKoperasi> dataCol = new ArrayList<>(temp);
+//        temp.toArray(dataCol);
+        int i = 0;
+        for (Iterator<Map<String, Object>> it = temp.iterator(); it.hasNext(); ) {
             Row rowData = sheet.createRow(4 + i + 1);
             headerCellStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
-            JSONArray rowTable = new JSONArray(dataCol[i].getData());
+            Map<String, Object> a = it.next();
+            JSONArray rowTable = new JSONArray((String) a.get("data"));
             JSONObject temps = new JSONObject();
             for (int k = 0; k < rowTable.length(); k++) {
                 JSONObject jsonObject = (JSONObject) rowTable.get(k);
@@ -773,6 +779,7 @@ public class ExportExcel {
                 Cell cell = rowData.createCell(j + 1);
                 cell.setCellValue(String.valueOf(temps.get(cid.get(j))));
             }
+            i++;
         }
 
         sheet.autoSizeColumn(0);
@@ -866,31 +873,28 @@ public class ExportExcel {
             cell.setCellValue("No Transaksi");
             cell.setCellStyle(headerCellStyle);
 
-            cell = row.createCell(2);
-            cell.setCellValue("Nama Nasabah");
-            cell.setCellStyle(headerCellStyle);
 
-            cell = row.createCell(3);
+            cell = row.createCell(2);
             cell.setCellValue("Jumlah Pinjaman");
             cell.setCellStyle(headerCellStyle);
 
-            cell = row.createCell(4);
+            cell = row.createCell(3);
             cell.setCellValue("Laba");
             cell.setCellStyle(headerCellStyle);
 
-            cell = row.createCell(5);
+            cell = row.createCell(4);
             cell.setCellValue("Tenor");
             cell.setCellStyle(headerCellStyle);
 
-            cell = row.createCell(6);
+            cell = row.createCell(5);
             cell.setCellValue("Tanggal Pengajuan");
             cell.setCellStyle(headerCellStyle);
 
-            cell = row.createCell(7);
+            cell = row.createCell(6);
             cell.setCellValue("Tanggal Pengajuan Diterima");
             cell.setCellStyle(headerCellStyle);
 
-            cell = row.createCell(8);
+            cell = row.createCell(7);
             cell.setCellValue("Tanggal Cicilan Selesai");
             cell.setCellStyle(headerCellStyle);
 
@@ -901,13 +905,12 @@ public class ExportExcel {
                 DateFormat df = new SimpleDateFormat(pattern);
                 Row dataRow = sheet.createRow(i + 1);
                 dataRow.createCell(1).setCellValue(String.valueOf(dataTable.get("noTransaksi")));
-                dataRow.createCell(2).setCellValue(String.valueOf(dataTable.get("nama")));
-                dataRow.createCell(3).setCellValue(toIDR(((Double) dataTable.get("jumlahPinjaman")).intValue()));
-                dataRow.createCell(4).setCellValue(toIDR(new Double((double) dataTable.get("laba")).intValue()));
-                dataRow.createCell(5).setCellValue((int) dataTable.get("tenor") + " bulan");
-                dataRow.createCell(6).setCellValue(df.format((Date) dataTable.get("tglPengajuan")));
-                dataRow.createCell(7).setCellValue(df.format((Date) dataTable.get("tglDiterimaPengajuan")));
-                dataRow.createCell(8).setCellValue(df.format((Date) dataTable.get("tglSelesaiCicilan")));
+                dataRow.createCell(2).setCellValue(toIDR(((Double) dataTable.get("jumlahPinjaman")).intValue()));
+                dataRow.createCell(3).setCellValue(toIDR(new Double((double) dataTable.get("laba")).intValue()));
+                dataRow.createCell(4).setCellValue((int) dataTable.get("tenor") + " bulan");
+                dataRow.createCell(5).setCellValue(df.format((Date) dataTable.get("tglPengajuan")));
+                dataRow.createCell(6).setCellValue(df.format((Date) dataTable.get("tglDiterimaPengajuan")));
+                dataRow.createCell(7).setCellValue(df.format((Date) dataTable.get("tglSelesaiCicilan")));
                 i++;
             }
 

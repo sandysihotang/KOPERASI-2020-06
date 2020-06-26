@@ -26,10 +26,8 @@ public class ProdukBaru implements Serializable {
     private Integer jumlahProduk;
 
 
-    @JsonIgnoreProperties({"produkBaru", "hibernateLazyInitializer", "handler"})
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_produk", nullable = false)
-    private Produk produk;
+    @Column(name = "id_produk")
+    private Integer idProduk;
 
     @JsonBackReference
     @JsonIgnoreProperties({"produkBaru", "hibernateLazyInitializer", "handler"})
@@ -80,12 +78,12 @@ public class ProdukBaru implements Serializable {
         this.hargaJualAnggota = hargaJualAnggota;
     }
 
-    public Produk getProduk() {
-        return produk;
+    public Integer getIdProduk() {
+        return idProduk;
     }
 
-    public void setProduk(Produk produk) {
-        this.produk = produk;
+    public void setIdProduk(Integer idProduk) {
+        this.idProduk = idProduk;
     }
 
     public Vendor getVendor() {
