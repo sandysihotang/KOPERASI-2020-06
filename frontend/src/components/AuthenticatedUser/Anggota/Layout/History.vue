@@ -110,7 +110,6 @@
             const req = res.data
             const columns = JSON.parse(req.aturan.pattern_field)
             const { data } = req
-            console.log(data);
             for (let i = 0; i < data.length; i++) {
               let str = `{`
               const obj = JSON.parse(data[i].data)
