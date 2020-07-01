@@ -223,5 +223,17 @@
 </script>
 
 <style scoped>
-
+  .my-card {
+    width: 100%;
+    height: 100%;
+    max-height: 400px;
+    max-width: 250px;
+    margin-top: 40px;
+    padding: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+  }
 </style>
