@@ -96,21 +96,27 @@ public class PeminjamanController {
     }
 
     @RequestMapping(value = "/api/getdatapengajuanpinjaman", method = RequestMethod.GET)
-    public List<Map<String, Object>> getDataRequestPinjaman(HttpServletRequest request) {
+    public Map<String, Object> getDataRequestPinjaman(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        return pinjamanRepository.getAllByKoperasi((Integer) koperasi.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("data", pinjamanRepository.getAllByKoperasi((Integer) koperasi.get("id")));
+        data.put("aturan", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")));
+        return data;
     }
 
     @RequestMapping(value = "/api/getdatapengajuanapprove", method = RequestMethod.GET)
-    public List<Map<String, Object>> getDataApprove(HttpServletRequest request) {
+    public Map<String, Object> getDataApprove(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        return pinjamanRepository.getAllByKoperasiAndStatus((Integer) koperasi.get("id"), 2);
+        Map<String, Object> data = new HashMap<>();
+        data.put("data", pinjamanRepository.getAllByKoperasiAndStatus((Integer) koperasi.get("id"), 2));
+        data.put("aturan", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")));
+        return data;
     }
 
     @RequestMapping(value = "/api/existtagihan", method = RequestMethod.GET)
@@ -166,7 +172,7 @@ public class PeminjamanController {
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
         Map<String, Object> data = new HashMap<>();
-        data.put("exist", pengaturanPinjamanRepository.getAdaAturan((Integer)koperasi.get("id")));
+        data.put("exist", pengaturanPinjamanRepository.getAdaAturan((Integer) koperasi.get("id")));
         return data;
     }
 

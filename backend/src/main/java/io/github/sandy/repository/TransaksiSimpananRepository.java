@@ -15,11 +15,12 @@ import java.util.Set;
 public interface TransaksiSimpananRepository extends JpaRepository<TransaksiSimpanan, Integer> {
 
     @Query(value = "SELECT t.jumlah_transaksi, t.id_aktivasi, t.created_at, t.kode_transaksi, t.jenis_transaksi," +
-            " aktif, jenis_simpanan, total_simpanan, id_koperasi, id_user" +
+            " aktif, jenis_simpanan, total_simpanan, a.id_koperasi, a.id_user, data" +
             "  from transaksi_simpanan t " +
             "inner join aktivasi_simpanan a " +
             "on t.id_aktivasi = a.id " +
             "INNER JOIN users u on a.id_user = u.id " +
+            "INNER JOIN anggota_koperasi ak on u.id = ak.id_user " +
             "where a.id_koperasi = ?1 " +
             "order by t.created_at DESC",
             nativeQuery = true)
@@ -32,12 +33,12 @@ public interface TransaksiSimpananRepository extends JpaRepository<TransaksiSimp
     void insertToTransaksi(Integer jumlahTransaksi, Integer idAktivasim, Date createdAt, Integer jenisTransaksi, String kodeTransaksi);
 
     @Query(value = "SELECT t.jumlah_transaksi, t.id_aktivasi, t.created_at, t.kode_transaksi, t.jenis_transaksi," +
-            " aktif, jenis_simpanan, total_simpanan, id_koperasi, id_user," +
-            " first_name, last_name, address, no_telepon, user_id from transaksi_simpanan t " +
+            " aktif, jenis_simpanan, total_simpanan, data from transaksi_simpanan t " +
             "inner join aktivasi_simpanan a " +
             "on t.id_aktivasi = a.id " +
             "INNER JOIN users u on a.id_user = u.id " +
             "INNER JOIN user_detail ud on u.id = ud.user_id " +
+            "INNER JOIN anggota_koperasi ak on u.id = ak.id_user " +
             "where a.id_user = ?1 " +
             "order by t.created_at DESC",
             nativeQuery = true)

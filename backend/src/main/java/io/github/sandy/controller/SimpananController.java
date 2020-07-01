@@ -125,29 +125,39 @@ public class SimpananController {
     }
 
     @RequestMapping(value = "/api/getanggotasimpananaktivasi", method = RequestMethod.GET)
-    public List<Map<String, Object>> getAnggotaSimpananAktivasi(HttpServletRequest request) {
+    public Map<String, Object> getAnggotaSimpananAktivasi(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        return aktivasiSimpananRepository.findAllByKoperasi((Integer) koperasi.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("data", aktivasiSimpananRepository.findAllByKoperasi((Integer) koperasi.get("id")));
+        data.put("aturan", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")));
+        return data;
     }
 
     @RequestMapping(value = "/api/gettransaksisimpanan", method = RequestMethod.GET)
-    public List<Map<String, Object>> getTransaksiSimpanan(HttpServletRequest request) {
+    public Map<String, Object> getTransaksiSimpanan(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
         Map<String, Object> koperasi = koperasiRepository.getKoperasiUserId((Integer) user.get("id"));
-        return transaksiSimpananRepository.findAllByKoperasi((Integer) koperasi.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("data", transaksiSimpananRepository.findAllByKoperasi((Integer) koperasi.get("id")));
+        data.put("aturan", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")));
+        return data;
     }
 
     @RequestMapping(value = "/api/gettransaksisimpananuser", method = RequestMethod.GET)
-    public List<Map<String, Object>> getTransaksiSimpananUser(HttpServletRequest request) {
+    public Map<String, Object> getTransaksiSimpananUser(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String uname = principal.getName();
         Map<String, Object> user = userRepository.getUserUsername(uname);
-        return transaksiSimpananRepository.findAllByUser((Integer) user.get("id"));
+        Map<String, Object> koperasi = koperasiRepository.getKoperasiUserIdInnerAnggota((Integer) user.get("id"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("data", transaksiSimpananRepository.findAllByUser((Integer) user.get("id")));
+        data.put("aturan", daftarAnggotaKoperasiRepository.findByKoperasiId((Integer) koperasi.get("id")));
+        return data;
     }
 
     @RequestMapping(value = "/api/getcolumnmemberfortransaksisimpanan/{id}", method = RequestMethod.GET)

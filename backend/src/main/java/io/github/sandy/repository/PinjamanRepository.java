@@ -58,19 +58,23 @@ public interface PinjamanRepository extends JpaRepository<Pinjaman, Integer> {
     @Query(value = "SELECT " +
             "peminjaman.id, jumlah_pinjaman, jaminan, kode_pinjaman, " +
             " status, date_pengajuan_diterima, tenor, created_at, updated_at," +
-            " bunga_pinjaman, min_tenor, max_tenor, ambang_batas_denda, persentase_denda" +
+            " bunga_pinjaman, min_tenor, max_tenor, ambang_batas_denda, persentase_denda, data" +
             " from peminjaman " +
             "INNER JOIN users u on peminjaman.id_user = u.id " +
-            "INNER JOIN pengaturan_pinjaman pp on peminjaman.id_pengaturan_pinjaman = pp.id where id_koperasi = ?1", nativeQuery = true)
+            "INNER JOIN pengaturan_pinjaman pp on peminjaman.id_pengaturan_pinjaman = pp.id " +
+            "INNER JOIN anggota_koperasi ak on u.id = ak.id_user" +
+            " where peminjaman.id_koperasi = ?1", nativeQuery = true)
     List<Map<String, Object>> getAllByKoperasi(Integer koperasi);
 
     @Query(value = "SELECT " +
             "peminjaman.id, jumlah_pinjaman, jaminan, kode_pinjaman, peminjaman.tenor," +
             " status, date_pengajuan_diterima,  peminjaman.created_at, updated_at," +
-            " bunga_pinjaman, min_tenor, max_tenor, ambang_batas_denda, persentase_denda" +
+            " bunga_pinjaman, min_tenor, max_tenor, ambang_batas_denda, persentase_denda, data" +
             " from peminjaman " +
             "INNER JOIN users u on peminjaman.id_user = u.id " +
-            "INNER JOIN pengaturan_pinjaman pp on peminjaman.id_pengaturan_pinjaman = pp.id where id_koperasi = ?1 and status = ?2", nativeQuery = true)
+            "INNER JOIN pengaturan_pinjaman pp on peminjaman.id_pengaturan_pinjaman = pp.id " +
+            "INNER JOIN anggota_koperasi ak on u.id = ak.id_user" +
+            " where peminjaman.id_koperasi = ?1 and status = ?2", nativeQuery = true)
     List<Map<String, Object>> getAllByKoperasiAndStatus(Integer koperasi, Integer status);
 
     @Query(value = "SELECT id, jumlah_pinjaman, jaminan, kode_pinjaman, id_user, id_koperasi, id_pengaturan_pinjaman, status, date_pengajuan_diterima, tenor, created_at, updated_at FROM peminjaman where id = ?1 LIMIT 1",
