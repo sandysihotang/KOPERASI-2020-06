@@ -42,9 +42,9 @@
             sortable: true,
           }, {
             name: 'namanasabah',
-            label: 'Nama Nasabah',
+            label: 'Nasabah',
             align: 'center',
-            field: row => `${row.first_name} ${row.last_name}`,
+            field: row => `${row.debitur}`,
             sortable: true,
           }, {
             name: 'produksimpanan',
@@ -107,7 +107,49 @@
           headers: this.$auth.getHeader()
         })
           .then((res) => {
-            this.data = res.data
+            const req = res.data
+            const columns = JSON.parse(req.aturan.pattern_field)
+            const { data } = req
+            console.log(data);
+            for (let i = 0; i < data.length; i++) {
+              let str = `{`
+              const obj = JSON.parse(data[i].data)
+              for (let j = 0; j < obj.length; j++) {
+                str = `${str} "${obj[j].uid}":`
+                if (obj[j].value instanceof Object) {
+                  const val = Object.values(obj[j].value)
+                  for (let k = 0; k < val.length; k++) {
+                    if (k === val.length - 1) {
+                      if (j === obj.length - 1) {
+                        str = `${str} ${val[k]}"`
+                      } else {
+                        str = `${str} ${val[k]}",`
+                      }
+                    } else if (k === 0) {
+                      str = `${str} "${val[k]}`
+                    } else {
+                      str = `${str} ${val[k]}`
+                    }
+                  }
+                } else if (j === obj.length - 1) {
+                  str = `${str} "${obj[j].value}"`
+                } else {
+                  str = `${str} "${obj[j].value}",`
+                }
+              }
+              str = `${str} }`
+              const ll = JSON.parse(str)
+              let strs = '';
+              for (let i = 0; i < columns.length; i++) {
+                if (i === columns.length - 1) {
+                  strs = `${strs} ${columns[i].label}: ${ll[columns[i].cid]}`
+                } else {
+                  strs = `${strs} ${columns[i].label}: ${ll[columns[i].cid]} `
+                }
+              }
+              data[i].debitur = strs;
+            }
+            this.data = data
             this.$q.loading.hide()
           })
           .catch(() => {

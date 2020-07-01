@@ -18,8 +18,7 @@
         </q-card-section>
         <q-card-section class="q-pt-none">
           <div align="justify">
-            Tunggu aktivasi dari Diskoperindag
-            anda akan mendapatkan Email koperasi mengenai aktivasi
+            Tunggu aktivasi dari dinas koperasi, info akan dikirim melalui e-mail koperasi
           </div>
         </q-card-section>
       </q-card>
