@@ -99,7 +99,7 @@
         <q-card style="width: 700px; max-width: 80vw;">
           <table-angsuran-bayar :user="selected[0]"/>
           <q-card-actions align="right" class="bg-white text-teal">
-            <q-btn flat label="Close" v-close-popup/>
+            <q-btn flat label="Tutup" v-close-popup/>
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -107,7 +107,7 @@
         <q-card style="width: 700px; max-width: 80vw;">
           <persetujuan-form :user="selected[0]"/>
           <q-card-actions align="right" class="bg-white text-teal">
-            <q-btn flat label="Close" v-close-popup/>
+            <q-btn flat label="Tutup" v-close-popup/>
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -115,7 +115,7 @@
         <q-card style="width: 700px; max-width: 80vw;">
           <table-angsuran :user="selected[0]"/>
           <q-card-actions align="right" class="bg-white text-teal">
-            <q-btn flat label="Close" v-close-popup/>
+            <q-btn flat label="Tutup" v-close-popup/>
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -140,7 +140,7 @@
         adaAturanExist: false,
         tableAngsuran: false,
         tableAngsuranBayar: false,
-        status: ['Dibatalkan', 'Disetujui', 'Ditolak', 'Sedang Ditinjau', 'Menunggu Persetujuan', 'Close'],
+        status: ['Dibatalkan', 'Disetujui', 'Ditolak', 'Sedang Ditinjau', 'Menunggu Persetujuan', 'Pinjaman Selesai'],
         selected: [],
         data: [],
         columns: [

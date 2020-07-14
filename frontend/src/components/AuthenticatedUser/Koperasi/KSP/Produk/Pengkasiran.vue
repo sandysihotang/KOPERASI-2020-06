@@ -163,7 +163,7 @@
             <br>
             <br>
             <center>
-              <q-btn label="Close" color="red" v-close-popup/>
+              <q-btn label="Tutup" color="red" v-close-popup/>
               &nbsp;
               <q-btn label="Simpan" color="primary" type="submit" v-close-popup/>
             </center>

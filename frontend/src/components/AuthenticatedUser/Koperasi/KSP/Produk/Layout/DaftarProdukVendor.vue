@@ -10,7 +10,7 @@
       </q-card-section>
       <q-card-section>
         <center>
-          <q-btn label="Close" color="red" v-close-popup/>&nbsp;
+          <q-btn label="Tutup" color="red" v-close-popup/>&nbsp;
         </center>
       </q-card-section>
     </q-card>

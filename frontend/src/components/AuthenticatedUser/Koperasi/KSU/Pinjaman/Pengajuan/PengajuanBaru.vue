@@ -107,7 +107,7 @@
         </q-card-section>
         <q-card-section>
           <q-card-actions align="right" class="bg-white text-teal">
-            <q-btn flat label="Close" v-close-popup @click="deleteName"/>
+            <q-btn flat label="Tutup" v-close-popup @click="deleteName"/>
             <q-btn flat label="Pilih" v-close-popup :disable="selected.length === 0"
                    @click="setNama"/>
           </q-card-actions>

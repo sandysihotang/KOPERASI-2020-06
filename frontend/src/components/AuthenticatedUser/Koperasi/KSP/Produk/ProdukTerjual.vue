@@ -29,7 +29,7 @@
             :columns="columnsdetail"/>
         </q-card-section>
         <q-card-actions align="right" class="bg-white text-teal">
-          <q-btn flat label="Close" v-close-popup/>
+          <q-btn flat label="Tutup" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
