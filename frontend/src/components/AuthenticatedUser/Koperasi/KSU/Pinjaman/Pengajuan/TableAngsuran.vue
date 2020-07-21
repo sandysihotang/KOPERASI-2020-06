@@ -43,7 +43,7 @@
             name: 'status',
             label: 'Status',
             align: 'center',
-            field: row => (row.status_bayar ? 'Paid' : 'Unpaid'),
+            field: row => (row.status_bayar ? 'Sudah Dibayar' : 'Belum Dibayar'),
             sortable: true,
           },
           {

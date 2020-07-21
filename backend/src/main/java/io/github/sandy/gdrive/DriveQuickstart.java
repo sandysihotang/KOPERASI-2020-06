@@ -15,6 +15,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.google.api.services.gmail.GmailScopes;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,7 +41,17 @@ public class DriveQuickstart {
             DriveScopes.DRIVE_METADATA,
             DriveScopes.DRIVE_PHOTOS_READONLY,
             DriveScopes.DRIVE_READONLY,
-            DriveScopes.DRIVE_SCRIPTS);
+            DriveScopes.DRIVE_SCRIPTS,
+            GmailScopes.GMAIL_METADATA,
+            GmailScopes.GMAIL_LABELS,
+            GmailScopes.GMAIL_COMPOSE,
+            GmailScopes.GMAIL_INSERT,
+            GmailScopes.GMAIL_MODIFY,
+            GmailScopes.GMAIL_READONLY,
+            GmailScopes.GMAIL_SEND,
+            GmailScopes.GMAIL_SETTINGS_BASIC,
+            GmailScopes.GMAIL_SETTINGS_SHARING,
+            GmailScopes.MAIL_GOOGLE_COM);
     private static final String CREDENTIALS_FILE_PATH = "/client_secret.json";
 
     /**

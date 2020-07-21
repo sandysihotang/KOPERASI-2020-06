@@ -27,7 +27,7 @@
         </q-select>
         <br>
         <div class="row">
-          <q-btn color="red" label="close" v-close-popup/>
+          <q-btn color="red" label="Tutup" v-close-popup/>
           <q-btn color="primary" icon-right="send" label="Simpan" @click="simpan"/>
         </div>
       </q-card-section>

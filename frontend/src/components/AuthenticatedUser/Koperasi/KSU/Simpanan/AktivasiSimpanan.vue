@@ -204,7 +204,7 @@
         })
           .then((res) => {
             this.adaAturanExist = res.data.exist
-            if (this.adaAturanExist) {
+            if (this.adaAturanExist === true) {
               this.getData()
             } else {
               this.$q.loading.hide()

@@ -117,7 +117,7 @@
       </q-card-section>
       <q-card-actions align="right" class="bg-white absolute-bottom-right text-teal">
         <q-btn color="primary" icon="print" label="Export Excel" v-if="show" @click="download"/>
-        <q-btn label="Close" color="green" v-close-popup/>
+        <q-btn label="Tutup" color="green" v-close-popup/>
       </q-card-actions>
     </q-card>
   </div>

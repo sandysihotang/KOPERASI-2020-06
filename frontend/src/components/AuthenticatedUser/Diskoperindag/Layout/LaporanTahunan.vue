@@ -55,7 +55,7 @@
         </q-card-section>
         <q-card-section>
           <center>
-            <q-btn color="red" label="Close" v-close-popup/>&nbsp;&nbsp;
+            <q-btn color="red" label="Tutup" v-close-popup/>&nbsp;&nbsp;
             <q-btn color="primary" label="Ubah Status" @click="ubahStatus"/>
           </center>
         </q-card-section>
