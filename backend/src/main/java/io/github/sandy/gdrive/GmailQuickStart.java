@@ -71,9 +71,6 @@ public class GmailQuickStart {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    public int sum() {
-        return 1 + 1;
-    }
 
     public void call() throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
