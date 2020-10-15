@@ -7,60 +7,25 @@
           <q-toolbar-title>
             {{ koperasi }}
           </q-toolbar-title>
+          <q-btn dense color="primary" round icon="info" class="q-ml-md" @click="notif">
+            <q-badge color="red" floating v-if="existNotif">{{ totalNotif }}</q-badge>
+          </q-btn>
           <q-btn flat round dense icon="fa fa-sign-out-alt" @click="logOut"/>
         </q-toolbar>
       </q-header>
-
-      <q-page-container>
-        <q-card>
-          <q-separator/>
-          <q-tab-panels v-model="tab" animated style="height: 100%; width: 100%;">
-            <q-tab-panel name="mails">
-              <Home/>
-            </q-tab-panel>
-
-            <q-tab-panel name="alarms">
-            </q-tab-panel>
-
-            <q-tab-panel name="movies">
-              <Pinjaman/>
-            </q-tab-panel>
-          </q-tab-panels>
-        </q-card>
-      </q-page-container>
-
-      <q-footer class="bg-white">
-        <q-tabs
-          v-model="tab"
-          dense
-          class="text-grey"
-          active-color="primary"
-          indicator-color="primary"
-          align="justify"
-          narrow-indicator
-        >
-          <q-tab name="mails" icon="home" label="Home"/>
-          <q-tab name="alarms" icon="alarm" label="Simpanan"/>
-          <q-tab name="movies" icon="movie" label="Pinjaman"/>
-        </q-tabs>
-      </q-footer>
+      <router-view/>
     </q-layout>
   </div>
 </template>
 
 <script>
-  import Home from './Layout/Home.vue';
-  import Pinjaman from './Layout/Pinjaman.vue'
 
   export default {
-    components: {
-      Home,
-      Pinjaman
-    },
     data() {
       return {
-        tab: 'mails',
-        koperasi: 'Koperasi '
+        koperasi: 'Koperasi ',
+        existNotif: false,
+        totalNotif: 0
       }
     },
     methods: {
@@ -75,9 +40,42 @@
         })
           .then((res) => {
             this.koperasi = `${this.koperasi} ${res.data}`;
+            this.getNotif();
           })
           .catch(() => {
             this.$q.loading.hide()
+          })
+      },
+      getNotif() {
+        this.$q.loading.show();
+        this.$http.get('/api/notifikasianggota', {
+          headers: this.$auth.getHeader(),
+        })
+          .then((res) => {
+            const { data } = res
+            this.existNotif = data.exist
+            if (this.existNotif === true) {
+              this.totalNotif = data.total
+            }
+          })
+          .catch(() => {
+            this.$q.loading.hide()
+          })
+      },
+      notif() {
+        this.$http.get('/api/changestatusnotif', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.getNotif()
+            const temp = window.location;
+            const ss = temp.toString()
+              .split("/")
+            if (ss[ss.length - 1] !== 'notifikasi') {
+              this.$router.push('/notifikasi')
+            } else {
+              this.$q.loading.hide()
+            }
           })
       }
     },

@@ -16,21 +16,87 @@
 
         <q-tab-panels v-model="tab" animated class="bg-primary text-white">
           <q-tab-panel name="mails">
-            <center class="text-white">
-              <q-icon name="fa fa-search" size="xl"/>
-              <h6>Kamu belum mengajukan pinjaman</h6>
-              <q-btn unelevated rounded color="purple" label="Ajukan Peminjaman" size="xs"
-                     @click="showPeminjaman = true"/>
-            </center>
+            <div v-show="!adaPinjaman">
+              <center class="text-white">
+                <q-icon name="fa fa-search" size="xl"/>
+                <h6>Kamu belum mengajukan pinjaman</h6>
+                <q-btn unelevated rounded color="purple" label="Ajukan Peminjaman" size="xs"
+                       @click="showPeminjaman = true"/>
+              </center>
+            </div>
+            <div v-show="adaPinjaman">
+              <div class="q-pa-md flex justify-center">
+                <div class="full-width bg-white">
+                  <q-intersection
+                    transition="flip-right"
+                    class="example-item"
+                  >
+                    <q-item clickable v-ripple>
+                      <q-item-section avatar>
+                        <q-avatar color="primary" text-color="white">
+                          <q-icon name="check"/>
+                        </q-avatar>
+                      </q-item-section>
+
+                      <q-item-section class="text-black">
+                        <q-item-label caption>Kode Pinjaman: {{ dataPinjaman.kode_pinjaman }}
+                        </q-item-label>
+                        <q-item-label class="text-caption">Total pengajuan:{{
+                          toIDR(parseInt(dataPinjaman.jumlah_pinjaman)) }}
+                        </q-item-label>
+                        <q-item-label caption lines="1">
+                          <q-chip class="glossy" color="primary" text-color="white">{{
+                            status[dataPinjaman.status-1] }}
+                          </q-chip>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-intersection>
+                </div>
+              </div>
+            </div>
           </q-tab-panel>
 
           <q-tab-panel name="alarms">
-            <center class="text-white">
-              <q-icon name="fa fa-search" size="xl"/>
-              <h6>Kamu belum mengajukan pinjaman</h6>
-              <q-btn unelevated rounded color="purple" label="Ajukan Peminjaman" size="xs"
-                     @click="showPeminjaman = true"/>
-            </center>
+            <div v-if="!pinjamanSelesai">
+              <center class="text-white">
+                <q-icon name="fa fa-search" size="xl"/>
+                <h6>Kamu belum mengajukan pinjaman</h6>
+              </center>
+            </div>
+            <div v-else>
+              <div class="q-pa-md flex justify-center">
+                <div class="full-width bg-white">
+                  <q-intersection
+                    v-for="dataSelesai in dataPinjamanSelesai"
+                    transition="flip-right"
+                    class="example-item"
+                    v-bind:key="dataSelesai.id"
+                  >
+                    <q-item clickable v-ripple>
+                      <q-item-section avatar>
+                        <q-avatar color="primary" text-color="white">
+                          <q-icon name="check"/>
+                        </q-avatar>
+                      </q-item-section>
+
+                      <q-item-section class="text-black">
+                        <q-item-label caption>Kode Pinjaman: {{ dataSelesai.kode_pinjaman }}
+                        </q-item-label>
+                        <q-item-label class="text-caption">Total pengajuan:{{
+                          toIDR(parseInt(dataSelesai.jumlah_pinjaman)) }}
+                        </q-item-label>
+                        <q-item-label caption lines="1">
+                          <q-chip class="glossy" color="primary" text-color="white">{{
+                            status[dataSelesai.status-1] }}
+                          </q-chip>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-intersection>
+                </div>
+              </div>
+            </div>
           </q-tab-panel>
         </q-tab-panels>
       </q-card>
@@ -61,6 +127,7 @@
               label="Tenor (Bulan)"
               mask="## Bln"
               fill-mask="0"
+              :hint="`Min Tenor:${aturan.min_tenor} Bulan, Max Tenor:${aturan.max_tenor} Bulan` "
               reverse-fill-mask
               unmasked-value
               input-class="text-right"
@@ -75,7 +142,7 @@
           <q-item>
             <q-item-section>Angsuran Pokok</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price / 100) / tenor)}}</q-item-section>
+            <q-item-section>{{ toIDR(parseInt((price / 100) / tenor))}}</q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Bunga(%)</q-item-section>
@@ -85,23 +152,26 @@
           <q-item>
             <q-item-section>Bunga Angsuran</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price/100) * persentase / 100) }}</q-item-section>
+            <q-item-section>{{ toIDR(parseInt((price/100) * persentase / 100)) }}</q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Angsuran</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR(((price/100) / tenor) + ((price/100) * persentase / 100)) }}
+            <q-item-section>{{ toIDR(parseInt(((price/100) / tenor) + ((price/100) * persentase /
+              100))) }}
             </q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Bunga/Jasa</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price / 100) * persentase / 100 * tenor) }}</q-item-section>
+            <q-item-section>{{ toIDR(parseInt((price / 100) * persentase / 100 * tenor)) }}
+            </q-item-section>
           </q-item>
           <q-item>
             <q-item-section>Total Pinjaman</q-item-section>
             <q-item-section>:</q-item-section>
-            <q-item-section>{{ toIDR((price/100) + ((price/100) * persentase / 100 * tenor)) }}
+            <q-item-section>{{ toIDR(parseInt((price/100) + ((price/100) * persentase / 100 *
+              tenor))) }}
             </q-item-section>
           </q-item>
           <q-btn color="primary" class="full-width" @click="ajukanPinjaman">Ajukan Pinjaman</q-btn>
@@ -115,6 +185,9 @@
   export default {
     data() {
       return {
+        pinjamanSelesai: false,
+        status: ['', 'Berjalan', '', 'Sedang Dicek', 'Dalam Persetujuan', 'Selesai'],
+        dataPinjaman: [],
         id: null,
         tab: 'mails',
         showPeminjaman: false,
@@ -122,15 +195,49 @@
         tenor: null,
         showHandle: false,
         persentase: null,
-        jaminan: null
+        jaminan: null,
+        adaPinjaman: false,
+        dataPinjamanSelesai: [],
+        aturan: []
       }
     },
     methods: {
       handle(s) {
         this.showHandle = s.length !== 0
       },
+      existPinjamanSelesai() {
+        this.$http.get('/api/getpinjamanselesai', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.pinjamanSelesai = res.data
+            this.getPinjamanSelesai()
+          })
+      },
+      getPinjamanSelesai() {
+        this.$http.get('/api/getpinjamanselesaidata', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.dataPinjamanSelesai = res.data
+          })
+      },
       ajukanPinjaman() {
-        if (parseInt(this.price) === 0 && parseInt(this.tenor) && this.jaminan.length === 0) {
+        if (this.tenor < this.aturan.min_tenor) {
+          this.$q.notify({
+            type: 'negative',
+            message: `Tenor yang anda pilih tidak boleh kurang dari ${this.aturan.min_tenor}`
+          })
+          return;
+        }
+        if (this.tenor > this.aturan.max_tenor) {
+          this.$q.notify({
+            type: 'negative',
+            message: `Tenor yang anda pilih tidak boleh lebih dari ${this.aturan.max_tenor}`
+          })
+          return;
+        }
+        if (parseInt(this.price) === 0 || parseInt(this.tenor) === 0 || this.jaminan.length === 0) {
           this.$swal({
             position: 'center',
             type: 'error',
@@ -144,24 +251,66 @@
         this.$http.post('/api/requestpeminjaman', {
           id: this.id,
           jaminan: this.jaminan,
+          tenor: this.tenor,
           price: this.price
         }, {
           headers: this.$auth.getHeader()
         })
           .then((res) => {
-            this.$q.loading.hide()
+            this.showPeminjaman = false;
+            this.getAdaPinjaman()
           })
           .catch(() => {
             this.$q.loading.hide()
           })
       },
+      getAdaPinjaman() {
+        this.$q.loading.show()
+        this.$http.get('/api/getadapinjaman', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.adaPinjaman = res.data
+            if (this.adaPinjaman) this.getDataProcessing()
+            else this.getSettings()
+          })
+          .catch(() => {
+            this.$swal({
+              position: 'center',
+              type: 'error',
+              title: 'Ada kesalahan pada sistem, refresh (F5)',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            this.$q.loading.hide()
+          })
+      },
+      getDataProcessing() {
+        this.$http.get('/api/getdatapinjaman', {
+          headers: this.$auth.getHeader()
+        })
+          .then((res) => {
+            this.dataPinjaman = res.data
+            this.$q.loading.hide()
+          })
+          .catch(() => {
+            this.$swal({
+              position: 'center',
+              type: 'error',
+              title: 'Ada kesalahan pada sistem, refresh (F5)',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            this.$q.loading.hide()
+          })
+      },
       getSettings() {
-        this.$q.loading.show();
         this.$http.get('/api/getpengaturanpinjamanreqpinjaman', {
           headers: this.$auth.getHeader(),
         })
           .then((res) => {
-            this.persentase = res.data.bungaPinjaman
+            this.aturan = res.data
+            this.persentase = res.data.bunga_pinjaman
             this.id = res.data.id
             this.$q.loading.hide()
           })
@@ -197,7 +346,8 @@
       }
     },
     created() {
-      this.getSettings()
+      this.getAdaPinjaman()
+      this.existPinjamanSelesai()
     }
   }
 </script>

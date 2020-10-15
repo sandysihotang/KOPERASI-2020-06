@@ -33,7 +33,9 @@ module.exports = {
     'indent-legacy': "off",
     'no-unused-labels': "off",
     'no-unused-expressions': "off",
-    quotes: "off"
+    quotes: "off",
+    'no-nested-ternary': "off",
+
   },
   parserOptions: {
     parser: 'babel-eslint',

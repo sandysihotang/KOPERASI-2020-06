@@ -1,5 +1,6 @@
 package io.github.sandy.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Fetch;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +29,7 @@ public class Koperasi implements Serializable {
     private String alamatKoperasi;
 
     @Column(name = "tahun_berdiri_koperasi")
-    private String tahunBerdiriKoperasi;
+    private Date tahunBerdiriKoperasi;
 
     @Column(name = "no_izin_koperasi")
     private String noIzinKoperasi;
@@ -53,11 +55,27 @@ public class Koperasi implements Serializable {
     @OneToMany(mappedBy = "koperasi")
     private Set<AnggotaKoperasi> anggotaKoperasis = new HashSet<>();
 
+
+
+
+    @JsonManagedReference
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
+    private Set<Pinjaman> pinjaman = new HashSet<>();
+
     @JsonManagedReference
     @Fetch(FetchMode.JOIN)
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "koperasi")
     private Set<KoperasiPengaturanPinjaman> koperasiPengaturanPinjaman = new HashSet<>();
+
+    @JsonManagedReference
+    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy = "koperasi")
+    private Set<PengaturanSimpanan> pengaturanSimpanan = new HashSet<>();
+
 
     @JsonIgnoreProperties({"koperasi", "hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
@@ -68,7 +86,18 @@ public class Koperasi implements Serializable {
     @OneToOne(mappedBy = "koperasi", fetch = FetchType.LAZY)
     private FieldDaftarAnggota fieldDaftarAnggota;
 
+
+
     public Koperasi() {
+    }
+
+
+    public Set<PengaturanSimpanan> getPengaturanSimpanan() {
+        return pengaturanSimpanan;
+    }
+
+    public void setPengaturanSimpanan(Set<PengaturanSimpanan> pengaturanSimpanan) {
+        this.pengaturanSimpanan = pengaturanSimpanan;
     }
 
     public Set<AnggotaKoperasi> getAnggotaKoperasis() {
@@ -77,6 +106,14 @@ public class Koperasi implements Serializable {
 
     public void setAnggotaKoperasis(Set<AnggotaKoperasi> anggotaKoperasis) {
         this.anggotaKoperasis = anggotaKoperasis;
+    }
+
+    public Set<Pinjaman> getPinjaman() {
+        return pinjaman;
+    }
+
+    public void setPinjaman(Set<Pinjaman> pinjaman) {
+        this.pinjaman = pinjaman;
     }
 
     public Set<KoperasiPengaturanPinjaman> getKoperasiPengaturanPinjaman() {
@@ -119,11 +156,11 @@ public class Koperasi implements Serializable {
         this.alamatKoperasi = alamatKoperasi;
     }
 
-    public String getTahunBerdiriKoperasi() {
+    public Date getTahunBerdiriKoperasi() {
         return tahunBerdiriKoperasi;
     }
 
-    public void setTahunBerdiriKoperasi(String tahunBerdiriKoperasi) {
+    public void setTahunBerdiriKoperasi(Date tahunBerdiriKoperasi) {
         this.tahunBerdiriKoperasi = tahunBerdiriKoperasi;
     }
 

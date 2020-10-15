@@ -12,6 +12,20 @@ const routes = [
     meta: {
       forVisitor: true,
     },
+  }, {
+    path: '/lupapassword',
+    name: 'Forgot',
+    component: () => import('../views/Authentication/LupaPassword.vue'),
+    meta: {
+      forVisitor: true,
+    },
+  }, {
+    path: '/gantipassword/:uuid',
+    name: 'Ganti',
+    component: () => import('../views/Authentication/UbahPassword.vue'),
+    meta: {
+      forVisitor: true,
+    },
   },
   {
     path: '/create',
@@ -47,32 +61,93 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/Dashboard.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/Dashboard.vue'),
       },
       {
         path: '/anggotakoperasi',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/AnggotaKoperasi.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/AnggotaKoperasi.vue'),
         meta: {
           roolTo: true,
         },
       },
       {
         path: '/pengaturanpendaftarananggota',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/PengaturanFieldDaftarKoperasi.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/PengaturanFieldDaftarKoperasi.vue'),
         meta: {
           roolTo: true,
         },
       },
       {
         path: '/daftaranggota',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarAnggotaKoperasi.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/DaftarAnggotaKoperasi.vue'),
         meta: {
           roolTo: true,
         },
       },
       {
         path: '/pengaturanpinjaman',
-        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/PengaturanPinjaman.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/PengaturanPinjaman.vue'),
+        meta: {
+          roolTo: true,
+        },
+      },
+      {
+        path: '/pengaturansimpanan',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/PengaturanSimpanan.vue'),
+        meta: {
+          roolTo: true,
+        },
+      }, {
+        path: '/transaksisimpanan',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/TransaksiSimpanan.vue'),
+        meta: {
+          roolTo: true,
+        },
+      }, {
+        path: '/aktivasisimpanan',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/AktivasiSimpanan.vue'),
+        meta: {
+          roolTo: true,
+        },
+      },
+      {
+        path: '/pengajuanpinjaman',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/PengajuanPinjaman.vue'),
+        meta: {
+          roolTo: true,
+        },
+      },
+      {
+        path: '/transaksipinjaman',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/TransaksiPinjaman.vue'),
+        meta: {
+          roolTo: true,
+        },
+      },
+      {
+        path: '/laporan',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Laporan.vue'),
+        meta: {
+          roolTo: true,
+        },
+      },
+      {
+        path: '/kirimlaporan',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Laporan/KirimLaporan/KirimLaporanKoperasi.vue'),
+        meta: {
+          roolTo: true,
+        },
+      },
+      {
+        path: '/laporanterkirim',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Laporan/KirimLaporan/LaporanTerkirim.vue'),
+        meta: {
+          roolTo: true,
+        },
+      },
+      {
+        path: '/notifikasiksp',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Notifikasi.vue'),
         meta: {
           roolTo: true,
         },
@@ -80,20 +155,150 @@ const routes = [
     ],
   },
   {
+    name: 'dashboardkoperasiKSU',
+    path: '/dashboardkoperasiksu',
+    component: () => import('../components/AuthenticatedUser/Koperasi/KSP/App.vue'),
+    meta: {
+      forKoperasiKSU: true
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/Dashboard.vue'),
+      },
+      {
+        path: '/anggotakoperasiksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/AnggotaKoperasi.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/pengaturanpendaftarananggotaksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/PengaturanFieldDaftarKoperasi.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/daftaranggotaksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/DaftarAnggotaKoperasi.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/pengaturanpinjamanksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/PengaturanPinjaman.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/pengaturansimpananksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/PengaturanSimpanan.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      }, {
+        path: '/transaksisimpananksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/TransaksiSimpanan.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      }, {
+        path: '/aktivasisimpananksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Simpanan/AktivasiSimpanan.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/pengajuanpinjamanksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/PengajuanPinjaman.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/transaksipinjamanksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Pinjaman/TransaksiPinjaman.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/daftarproduk',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Produk/DaftarProduk.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/daftarprodukmasuk',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Produk/PembelianProduk.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/pengkasiran',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Produk/Pengkasiran.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/produkterjual',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Produk/ProdukTerjual.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      }, {
+        path: '/laporanksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Laporan.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/kirimlaporanksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Laporan/KirimLaporan/KirimLaporanKoperasi.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/laporanterkirimksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Laporan/KirimLaporan/LaporanTerkirim.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      },
+      {
+        path: '/notifikasiksu',
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSP/Notifikasi.vue'),
+        meta: {
+          roolToKSU: true,
+        },
+      }
+    ],
+  },
+  {
     path: '/daftarkoperasi',
     name: 'daftarkoperasi',
-    component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/DaftarKoperasi.vue'),
+    component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/DaftarKoperasi/DaftarKoperasi.vue'),
     meta: {
       forKoperasi: true,
     },
     children: [
       {
         path: '',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/Layout/FormDaftar.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/DaftarKoperasi/Layout/FormDaftar.vue'),
       },
       {
         path: '/pendingactivation',
-        component: () => import('../components/AuthenticatedUser/Koperasi/Layout/DaftarKoperasi/Layout/PendingActivation.vue'),
+        component: () => import('../components/AuthenticatedUser/Koperasi/KSU/Layout/DaftarKoperasi/Layout/PendingActivation.vue'),
       },
     ],
   },
@@ -104,7 +309,18 @@ const routes = [
     meta: {
       forAnggota: true,
     },
-    children: []
+    children: [
+      {
+        path: '',
+        component: () => import('../components/AuthenticatedUser/Anggota/Layout/Dashboard.vue'),
+      }, {
+        path: '/history',
+        component: () => import('../components/AuthenticatedUser/Anggota/Layout/History.vue'),
+      }, {
+        path: '/notifikasi',
+        component: () => import('../components/AuthenticatedUser/Anggota/Layout/Notifikasi.vue'),
+      },
+    ]
   },
   {
     path: '*',
@@ -126,6 +342,10 @@ const routes = [
       {
         path: '/semuakoperasi',
         component: () => import('../components/AuthenticatedUser/Diskoperindag/Layout/DaftarKoperasi.vue'),
+      },
+      {
+        path: '/laporankoperasi',
+        component: () => import('../components/AuthenticatedUser/Diskoperindag/Layout/LaporanTahunan.vue'),
       },
     ],
   },
@@ -157,9 +377,15 @@ router.beforeEach(
               path: '/pendingactivation',
             });
           } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
-            next({
-              path: '/dashboardkoperasi',
-            });
+            if (parseInt(localStorage.getItem('jenisKoperasi')) === 2) {
+              next({
+                path: '/dashboardkoperasi',
+              });
+            } else {
+              next({
+                path: '/dashboardkoperasiksu',
+              });
+            }
           } else {
             next();
           }
@@ -200,9 +426,53 @@ router.beforeEach(
             path: '/pendingactivation',
           });
         } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
-          if (to.path !== '/dashboardkoperasi' && from.path !== '/dashboardkoperasi' && !to.matched.some(record => record.meta.roolTo)) {
+          if (parseInt(localStorage.getItem('jenisKoperasi')) === 1) {
+            next({
+              path: '/dashboardkoperasiksu',
+            });
+          } else if (to.path !== '/dashboardkoperasi' && from.path !== '/dashboardkoperasi' && !to.matched.some(record => record.meta.roolTo)) {
             next({
               path: '/dashboardkoperasi',
+            });
+          } else {
+            next();
+          }
+        } else {
+          next();
+        }
+      } else {
+        next();
+      }
+    } else if (to.matched.some(record => record.meta.forKoperasiKSU)) {
+      if (!Vue.auth.isAuthenticated()) {
+        next({
+          path: '/login',
+        });
+      } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_admin') {
+        next({
+          path: '/dashboardadmin',
+        });
+      } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_anggota') {
+        next({
+          path: '/dashboardanggotakoperasi',
+        });
+      } else if (Vue.auth.getUserRole() === 'ROLE_koperasi') {
+        if (parseInt(Vue.auth.isHaveKoperasi()) === 0 && to.path !== '/daftarkoperasi') {
+          next({
+            path: '/daftarkoperasi',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 2 && to.path !== '/pendingactivation') {
+          next({
+            path: '/pendingactivation',
+          });
+        } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
+          if (parseInt(localStorage.getItem('jenisKoperasi')) === 2) {
+            next({
+              path: '/dashboardkoperasi',
+            });
+          } else if (to.path !== '/dashboardkoperasiksu' && from.path !== '/dashboardkoperasiksu' && !to.matched.some(record => record.meta.roolToKSU)) {
+            next({
+              path: '/dashboardkoperasiksu',
             });
           } else {
             next();
@@ -232,9 +502,15 @@ router.beforeEach(
             path: '/pendingactivation',
           });
         } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
-          next({
-            path: '/dashboardkoperasi',
-          });
+          if (parseInt(localStorage.getItem('jenisKoperasi')) === 2) {
+            next({
+              path: '/dashboardkoperasi',
+            });
+          } else {
+            next({
+              path: '/dashboardkoperasiksu',
+            });
+          }
         } else {
           next();
         }
@@ -256,9 +532,15 @@ router.beforeEach(
             path: '/pendingactivation',
           });
         } else if (parseInt(Vue.auth.isHaveKoperasi()) === 3) {
-          next({
-            path: '/dashboardkoperasi',
-          });
+          if (parseInt(localStorage.getItem('jenisKoperasi')) === 2) {
+            next({
+              path: '/dashboardkoperasi',
+            });
+          } else {
+            next({
+              path: '/dashboardkoperasiksu',
+            });
+          }
         } else if (Vue.auth.isAuthenticated() && Vue.auth.getUserRole() === 'ROLE_admin') {
           next({
             path: '/dashboardadmin',

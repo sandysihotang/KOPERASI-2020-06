@@ -3,21 +3,19 @@ package io.github.sandy.service;
 import io.github.sandy.ErrorCode.Err;
 import io.github.sandy.config.AuthorizationServerConfiguration;
 import io.github.sandy.model.*;
-import io.github.sandy.repository.DetailUserRepository;
-import io.github.sandy.repository.RoleRepository;
-import io.github.sandy.repository.RoleUserRepository;
-import io.github.sandy.repository.UserRepository;
+import io.github.sandy.repository.*;
 import io.github.sandy.request.Requestbody;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Optional;
+import javax.mail.MessagingException;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.*;
 
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
@@ -37,13 +35,31 @@ public class UserDetailServiceImpl implements UserDetailsService {
     DetailUserRepository detailUserRepository;
 
     @Autowired
-    JavaMailSender javaMailSender;
+    PermissionRepository permissionRepository;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepository.findByUsername(s);
+        Optional<Map<String, Object>> optionalUser = userRepository.getdataFromUname(s);
         optionalUser.orElseThrow(() -> new UsernameNotFoundException("Username or password is Wrong"));
-        UserDetails userDetails = new AuthUserDetail(optionalUser.get());
+        Map<String, Object> temp = optionalUser.get();
+        User user = new User();
+        user.setId((Integer) temp.get("id"));
+        user.setUsername(s);
+        user.setPassword((String) temp.get("password"));
+        user.setEmail((String) temp.get("email"));
+        user.setEnabled((Boolean) temp.get("enabled"));
+        user.setAccountNonExpired((Boolean) temp.get("account_non_expired"));
+        user.setCredentialsNonExpired((Boolean) temp.get("credentials_non_expired"));
+        user.setAccountNonLocked((Boolean) temp.get("account_non_locked"));
+        user.setHaveKoperasi((Integer) temp.get("have_koperasi"));
+        List<Map<String, Object>> roleTemp = roleUserRepository.findAllByIdUser((Integer) temp.get("id"));
+        List<Role> roleUsers = new ArrayList<>();
+        for(Map<String, Object> i : roleTemp){
+            Role role =roleRepository.findById((Integer) i.get("role_id")).get();
+            roleUsers.add(role);
+        }
+        user.setRoles(roleUsers);
+        UserDetails userDetails = new AuthUserDetail(user);
         new AccountStatusUserDetailsChecker().check(userDetails);
         return userDetails;
     }
@@ -87,11 +103,34 @@ public class UserDetailServiceImpl implements UserDetailsService {
         }
         return new Err(200, "");
     }
+    public Err checkAnggota(Requestbody requestbody) {
+        HashMap<String, String> data = new HashMap<>();
+        data.put("Username", requestbody.getUsername());
+        data.put("Password", requestbody.getPassword());
+        data.put("Email", requestbody.getEmail());
+        for (String i : data.keySet()) {
+            if (data.get(i).isEmpty()) {
+                return new Err(404, i + " Must be Field");
+            }
+        }
+        String email = data.get("Email");
+        boolean foundAT = false;
+        for (int i = 0; i < email.length(); i++) {
+            if (email.charAt(i) == '@') {
+                foundAT = true;
+                break;
+            }
+        }
+        if (!foundAT) {
+            return new Err(404, "Email Must be Field with @");
+        }
+        return new Err(200, "");
+    }
 
     public Err searchByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        if (optionalUser.isPresent()) {
-            return new Err(403, "Username already exist");
+        Map<String,Object> user = userRepository.getUserUsername(username);
+        if (!user.isEmpty()) {
+            return new Err(403, "Username ini sudah pernah digunakan");
         }
         return new Err(200, "");
     }
@@ -122,13 +161,12 @@ public class UserDetailServiceImpl implements UserDetailsService {
         return new Err(200, "");
     }
 
-    public void setEnableAcc(int id){
-        User user = userRepository.getOne(id);
+    public void setEnableAcc(int id) throws GeneralSecurityException, IOException, MessagingException {
+        Map<String, Object> user = userRepository.findFirstById(id);
 
         MailSender mailSender = new MailSender();
-        mailSender.sendEmailEnableAccount(javaMailSender,user.getEmail());
+        mailSender.sendEmailEnableAccount((String) user.get("email"));
 
-        user.setEnabled(true);
-        userRepository.save(user);
+        userRepository.setEnablbe(id);
     }
 }

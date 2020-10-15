@@ -9,6 +9,8 @@ import '@quasar/extras/ionicons-v4/ionicons-v4.css';
 import '@quasar/extras/mdi-v3/mdi-v3.css';
 import '@quasar/extras/eva-icons/eva-icons.css';
 import {
+  QCarousel,
+  QCarouselSlide,
   Loading,
   QTable,
   Quasar,
@@ -60,13 +62,29 @@ import {
   QTabPanels,
   QBadge,
   QExpansionItem,
-  QField
+  QField,
+  QChip,
+  QIntersection,
+  QCheckbox,
+  QDialog,
+  ClosePopup,
+  Notify,
+  QBtnDropdown,
+  QFile
 } from 'quasar';
 
 Vue.use(Quasar, {
   config: {},
   components: {
+    QCarousel,
+    QCarouselSlide,
+    QFile,
+    QBtnDropdown,
+    QDialog,
+    QCheckbox,
     QField,
+    QIntersection,
+    QChip,
     QExpansionItem,
     QBadge,
     QTab,
@@ -118,8 +136,10 @@ Vue.use(Quasar, {
   },
   directives: {
     Ripple,
+    ClosePopup
   },
   plugins: {
     Loading,
+    Notify
   },
 });
