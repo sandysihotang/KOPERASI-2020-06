@@ -99,14 +99,14 @@ public class GmailQuickStart {
         Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-        Message message = createMessageWithEmail(email);
+        Message message = constructMessageWithEmail(email);
         message = service.users().messages().send(userId, message).execute();
 
         System.out.println("Message id: " + message.getId());
         System.out.println(message.toPrettyString());
     }
 
-    public Message createMessageWithEmail(MimeMessage email)
+    public Message constructMessageWithEmail(MimeMessage email)
             throws MessagingException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         email.writeTo(baos);
