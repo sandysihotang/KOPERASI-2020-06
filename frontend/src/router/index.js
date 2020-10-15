@@ -28,6 +28,14 @@ const routes = [
     },
   },
   {
+    path: '/create',
+    name: 'Pinjaman',
+    // component: () => import('../views/Pinjaman.vue'),
+    meta: {
+      forVisitor: true,
+    },
+  },
+  {
     path: '/register',
     name: 'Register',
     component: () => import('../views/Authentication/Register.vue'),
@@ -347,7 +355,7 @@ const router = new VueRouter({
   routes,
   scrollBehavior(to, from, next) {
     if (to.hash) {
-      return { selector: to.hash };
+      return {selector: to.hash};
     }
     return {
       x: 0,
