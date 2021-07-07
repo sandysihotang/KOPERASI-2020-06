@@ -48,6 +48,7 @@ public class GmailQuickStart {
 
     /**
      * Creates an authorized Credential object.
+     *
      * @param HTTP_TRANSPORT The network HTTP Transport.
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
@@ -69,6 +70,7 @@ public class GmailQuickStart {
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
+
 
     public void call() throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
@@ -97,14 +99,14 @@ public class GmailQuickStart {
         Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-        Message message = createMessageWithEmail(email);
+        Message message = constructMessageWithEmail(email);
         message = service.users().messages().send(userId, message).execute();
 
         System.out.println("Message id: " + message.getId());
         System.out.println(message.toPrettyString());
     }
-    
-    public Message createMessageWithEmail(MimeMessage email)
+
+    public Message constructMessageWithEmail(MimeMessage email)
             throws MessagingException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         email.writeTo(baos);
