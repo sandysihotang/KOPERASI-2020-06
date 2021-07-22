@@ -20,7 +20,7 @@
     "luhn": "latest",
     "moment": "^2.24.0",
     "node-sass": "^4.13.0",
-    "xlsx": "^0.16.1",
+    "xlsx": "^0.17.0",
     "mammoth": "^1.4.9",
     "npm-cli": "^0.1.0",
     "q-form-builder": "^0.1.9",
