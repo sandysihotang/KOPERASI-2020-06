@@ -19,7 +19,7 @@
     "core-js": "^3.3.2",
     "luhn": "latest",
     "moment": "^2.24.0",
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.0",
     "xlsx": "^0.16.1",
     "mammoth": "^1.4.9",
     "npm-cli": "^0.1.0",
